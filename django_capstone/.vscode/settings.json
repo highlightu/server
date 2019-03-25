@@ -1,0 +1,12 @@
+{
+  "python.linting.pylintEnabled": true,
+  "python.pythonPath": "C:/Users/leehj/AppData/Local/Programs/Python/Python37/python.exe",
+  "python.autoComplete.extraPaths": [
+    "C:/virtualenv/min/Lib",
+    "C:/virtualenv/min/Lib/site-packages",
+    "C:/Program Files(x86)/Google/google_appengine/lib"
+  ],
+  "files.exclude": {
+    "* / **. pyc": true
+  }
+}
