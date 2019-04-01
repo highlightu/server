@@ -13,11 +13,10 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.conf.urls import url, include  # url뿐 아니라 include를 import해야 합니다.
-from django.conf import settings
+from django.conf.urls import include  # url뿐 아니라 include를 import해야 합니다.
 from django.contrib import admin
 from django.urls import path
-from user_management.views import *
+from autohighlight.views import *
 
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
 
@@ -27,15 +26,23 @@ urlpatterns = [
     # base
     path('admin/', admin.site.urls),
 
-    # first ui
-    path('', social_login),
+    # homepage
+    path('', goHome),
+    path('home/', index, name='home'),
+
+    # google login
+    path('social/', social_login, name='login_social'),
 
     # authentication with google
     path('oauth/', include('social_django.urls', namespace='social')),
 
-    # success
-    path('home/', home),
-
     # logout
     path('logout/', logout, name='logout'),
+
+    # dashboard
+    path('mypage/dashboard/', dashboard, name='dashboard'),
+
+    # history
+    path('mypage/history/', history, name='history'),
+
 ]
