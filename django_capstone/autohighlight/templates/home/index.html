@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+    <title>LAJI - Auto-Highlight Editor</title>
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <!-- Custom styles for this template -->
+    <link href="{% static 'css/owl.carousel.css' %}" rel="stylesheet">
+    <link href="{% static 'css/owl.theme.default.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]>
+    <script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="{% static 'js/ie-emulation-modes-warning.js'%}"></script>
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body id="page-top">
+<!-- Navigation -->
+<nav class="navbar navbar-default navbar-fixed-top navbar-transparent">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand page-scroll" href="#page-top"><img src="{% static 'images/logo2.png' %}" width="200"
+                                                                      height="40" alt="logo"></a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li class="hidden">
+                    <a href="#page-top"></a>
+                </li>
+                <li>
+                    <a class="page-scroll" href="#about">About</a>
+                </li>
+                <li>
+                    {% if request.session.session_key == None %}
+                    <a class="page-scroll" href="/social/">
+                        Login</a>
+                    {% else %}
+                    <a class="page-scroll" href="/logout/">
+                        Logout</a>
+                    {% endif %}
+
+                </li>
+                <li>
+                    <a class="page-scroll" href="#why">Why Laji?</a>
+                </li>
+                <li>
+                    <a class="page-scroll" href="#team">Team</a>
+                </li>
+                <li>
+                    <a class="page-scroll" href="#contact">Contact</a>
+                </li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container-fluid -->
+</nav>
+<!-- Header -->
+<header>
+    <div class="container">
+        <div class="slider-container">
+            <div class="intro-text">
+                <div class="intro-lead-in">Be a Famous Streamer</div>
+                <div class="intro-heading">Auto-Highlight Editor</div>
+                {% if request.session.session_key == None %}
+                <a href="/social/" class="page-scroll btn btn-xl">Sign In!</a>
+                {% else %}
+                <div>
+                    <form action="/mypage/dashboard/" method="post" class="form-group">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-xs-3"></div>
+                            <div class="col-xs-6">
+                                <input id="url" class="fieldWrapper form-control mx-sm-3" type="text" name="url"
+                                       placeholder="Enter your Twitch URL"><br/><br/>
+                            </div>
+                            <div class="col-xs-3">
+                                <input id="sender" value="{{ request.session.email }}" hidden >
+                            </div>
+                        </div>
+                        <button type="submit" class="page-scroll btn btn-xl">Get Highlight!</button>
+                    </form>
+                </div>
+
+
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+</header>
+<section id="about" class="light-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="section-title">
+                    <h2>ABOUT</h2>
+                    <p>We provide fully-automated highlight extractor. You don't need to make highlights of each
+                        broadcasts.<br/>
+                        Our service will make you free of editing highlights and managing(hiring) editors.<br/>
+                        Just focus on your game.</p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <!-- about module -->
+            <div class="col-md-3 text-center">
+                <div class="mz-module-about">
+                    <i class="fa fa-photo ot-circle"></i>
+                    <h3>Twitch URL</h3>
+                    <p>All you have to give us is the URL of your full video you took today.</p>
+                </div>
+            </div>
+            <!-- end about module -->
+            <!-- about module -->
+            <div class="col-md-3 text-center">
+                <div class="mz-module-about">
+                    <i class="fa fa-cube ot-circle"></i>
+                    <h3>Your Voice</h3>
+                    <p>We analyze your voice to find the best moment in your video.</p>
+                </div>
+            </div>
+            <!-- end about module -->
+            <!-- about module -->
+            <div class="col-md-3 text-center">
+                <div class="mz-module-about">
+                    <i class="fa fa-camera-retro ot-circle"></i>
+                    <h3>Your Face</h3>
+                    <p>We analyze your face and infer your emotion to find the best moment in your video.</p>
+                </div>
+            </div>
+            <!-- end about module -->
+            <!-- about module -->
+            <div class="col-md-3 text-center">
+                <div class="mz-module-about">
+                    <i class="fa fa-briefcase ot-circle"></i>
+                    <h3>Twitch chat API</h3>
+                    <p>We analyze chats to find the best moment in your video.</p>
+                </div>
+            </div>
+            <!-- end about module -->
+        </div>
+    </div>
+    <!-- /.container -->
+</section>
+<section id="why">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="skills-text">
+                    <h2>The Reason You need Us</h2>
+                    <p>Our mission is to help people become full time streamers. Usually such career choice would need a
+                        lot of time and risk taking on streamers' part. We want to lower the risks and save streamers'
+                        time by providing tools such as Highlight Play. At the same time, we want to contribute to
+                        viewer community. For viewers we aim to provide better content faster than ever before. This
+                        will also allow crowds of viewers to keep up with more streamers' and help the community as a
+                        whole. It is mutual benefit for everybody.</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <!-- skill bar item -->
+                <div class="skillbar-item">
+                    <div class="skillbar-score">
+                        <span class="score">90</span><span class="percent">%</span>
+                    </div>
+                    <div class="skillbar" data-percent="90%">
+                        <h3>Satisfaction</h3>
+                        <div class="skillbar-bar">
+                            <div class="skillbar-percent" style="width: 90%;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- skill bar item -->
+                <div class="skillbar-item">
+                    <div class="skillbar-score">
+                        <span class="score">80</span><span class="percent">%</span>
+                    </div>
+                    <div class="skillbar" data-percent="80%">
+                        <h3>Accuracy</h3>
+                        <div class="skillbar-bar">
+                            <div class="skillbar-percent" style="width: 80%;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- skill bar item -->
+                <div class="skillbar-item">
+                    <div class="skillbar-score">
+                        <span class="score">85</span><span class="percent">%</span>
+                    </div>
+                    <div class="skillbar" data-percent="85%">
+                        <h3>Eligibility</h3>
+                        <div class="skillbar-bar">
+                            <div class="skillbar-percent" style="width: 85%;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- skill bar item -->
+                <div class="skillbar-item">
+                    <div class="skillbar-score">
+                        <span class="score">70</span><span class="percent">%</span>
+                    </div>
+                    <div class="skillbar" data-percent="70%">
+                        <h3>Time Saving</h3>
+                        <div class="skillbar-bar">
+                            <div class="skillbar-percent" style="width: 70%;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="overlay-dark bg-img1 dark-bg short-section">
+    <div class="container text-center">
+        <div class="row">
+            <div class="col-md-3 mb-sm-30">
+                <div class="counter-item">
+                    <h2 data-count="59">0</h2>
+                    <h6>awards</h6>
+                </div>
+            </div>
+            <div class="col-md-3 mb-sm-30">
+                <div class="counter-item">
+                    <h2 data-count="1054">0</h2>
+                    <h6>Clients</h6>
+                </div>
+            </div>
+            <div class="col-md-3 mb-sm-30">
+                <div class="counter-item">
+                    <h2 data-count="34">0</h2>
+                    <h6>Team</h6>
+                </div>
+            </div>
+            <div class="col-md-3 mb-sm-30">
+                <div class="counter-item">
+                    <h2 data-count="154">0</h2>
+                    <h6>Project</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="team" class="light-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="section-title">
+                    <h2>Our Team</h2>
+                    <p>You'll be amazed by our final result! Be prepared to be shocked!</p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <!-- team member item -->
+            <div class="col-md-3">
+                <div class="team-item">
+                    <div class="team-image">
+                        <img src="{% static 'images/member1.png'%}" class="img-responsive" alt="author">
+                    </div>
+                    <div class="team-text">
+                        <h3>Jisu An</h3>
+                        <div class="team-location">Seoul, Korea</div>
+                        <div class="team-position">– Backend & Algorithm –</div>
+                        <p>안녕하세요 안지수입니다. 저는 우리팀에서 버스운전사와 귀요미를 맡고있습니다.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- end team member item -->
+            <!-- team member item -->
+            <div class="col-md-3">
+                <div class="team-item">
+                    <div class="team-image">
+                        <img src="{% static 'images/member2.jpg'%}" class="img-responsive" alt="author">
+                    </div>
+                    <div class="team-text">
+                        <h3>Hyunjae Lee</h3>
+                        <div class="team-location">Seoul, Korea</div>
+                        <div class="team-position">– Backend & Algorithm –</div>
+                        <p>안녕하세요 이현재입니다. 지수가 저를 재현선배로 알고있어 마음이 아프네요.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- end team member item -->
+            <!-- team member item -->
+            <div class="col-md-3">
+                <div class="team-item">
+                    <div class="team-image">
+                        <img src="{% static 'images/member3.jpg'%}" class="img-responsive" alt="author">
+                    </div>
+                    <div class="team-text">
+                        <h3>Jinwoo Jeon</h3>
+                        <div class="team-location">Seoul, Korea</div>
+                        <div class="team-position">– Frontend & Algorithm –</div>
+                        <p>안녕하세요 전진우입니다. 인스타 갬성으로 만들어봣어요. 나는 누구 여긴 어디. 살려주세요.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- end team member item -->
+        </div>
+    </div>
+</section>
+<section id="contact">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="section-title">
+                    <h2>Contact Us</h2>
+                    <p>If you have some Questions or need Help! Please Contact Us!<br>We make Cool and Clean Design for
+                        your Business</p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <h3>Our Business Office</h3>
+                <p>3422 Street, Barcelona 432, Spain, New Building North, 15th Floor</p>
+                <p><i class="fa fa-phone"></i> +101 377 655 22125</p>
+                <p><i class="fa fa-envelope"></i> mail@yourcompany.com</p>
+            </div>
+            <div class="col-md-3">
+                <h3>Business Hours</h3>
+                <p><i class="fa fa-clock-o"></i> <span class="day">Weekdays:</span><span>9am to 8pm</span></p>
+                <p><i class="fa fa-clock-o"></i> <span class="day">Saturday:</span><span>9am to 2pm</span></p>
+                <p><i class="fa fa-clock-o"></i> <span class="day">Sunday:</span><span>Closed</span></p>
+            </div>
+            <div class="col-md-6">
+                <form name="sentMessage" id="contactForm" novalidate="">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Your Name *" id="name" required=""
+                                       data-validation-required-message="Please enter your name.">
+                                <p class="help-block text-danger"></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input type="email" class="form-control" placeholder="Your Email *" id="email"
+                                       required="" data-validation-required-message="Please enter your email address.">
+                                <p class="help-block text-danger"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <textarea class="form-control" placeholder="Your Message *" id="message" required=""
+                                          data-validation-required-message="Please enter a message."></textarea>
+                                <p class="help-block text-danger"></p>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12 text-center">
+                            <div id="success"></div>
+                            <button type="submit" class="btn">Send Message</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+<p id="back-top">
+    <a href="#top"><i class="fa fa-angle-up"></i></a>
+</p>
+<footer>
+    <div class="container text-center">
+        <p>Designed by <a href="http://moozthemes.com"><span>MOOZ</span>Themes.com</a></p>
+    </div>
+</footer>
+
+<!-- Modal for portfolio item 1 -->
+<div class="modal fade" id="Modal-1" tabindex="-1" role="dialog" aria-labelledby="Modal-label-1">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="Modal-label-1">Dean & Letter</h4>
+            </div>
+            <div class="modal-body">
+                <img src="images/demo/portfolio-1.jpg" alt="img01" class="img-responsive"/>
+                <div class="modal-works"><span>Branding</span><span>Web Design</span></div>
+                <p>Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for portfolio item 2 -->
+<div class="modal fade" id="Modal-2" tabindex="-1" role="dialog" aria-labelledby="Modal-label-2">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="Modal-label-2">Startup Framework</h4>
+            </div>
+            <div class="modal-body">
+                <img src="images/demo/portfolio-2.jpg" alt="img01" class="img-responsive"/>
+                <div class="modal-works"><span>Branding</span><span>Web Design</span></div>
+                <p>Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for portfolio item 3 -->
+<div class="modal fade" id="Modal-3" tabindex="-1" role="dialog" aria-labelledby="Modal-label-3">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="Modal-label-3">Lamp & Velvet</h4>
+            </div>
+            <div class="modal-body">
+                <img src="images/demo/portfolio-3.jpg" alt="img01" class="img-responsive"/>
+                <div class="modal-works"><span>Branding</span><span>Web Design</span></div>
+                <p>Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for portfolio item 4 -->
+<div class="modal fade" id="Modal-4" tabindex="-1" role="dialog" aria-labelledby="Modal-label-4">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="Modal-label-4">Smart Name</h4>
+            </div>
+            <div class="modal-body">
+                <img src="images/demo/portfolio-4.jpg" alt="img01" class="img-responsive"/>
+                <div class="modal-works"><span>Branding</span><span>Web Design</span></div>
+                <p>Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for portfolio item 5 -->
+<div class="modal fade" id="Modal-5" tabindex="-1" role="dialog" aria-labelledby="Modal-label-5">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="Modal-label-5">Fast People</h4>
+            </div>
+            <div class="modal-body">
+                <img src="images/demo/portfolio-5.jpg" alt="img01" class="img-responsive"/>
+                <div class="modal-works"><span>Branding</span><span>Web Design</span></div>
+                <p>Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap core JavaScript
+    ================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/owl.carousel.min.js' %}"></script>
+<script src="{% static 'js/cbpAnimatedHeader.js' %}"></script>
+<script src="{% static 'js/theme-scripts.js' %}"></script>
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<script src="{% static 'js/ie10-viewport-bug-workaround.js' %}"></script>
+</body>
+</html>
