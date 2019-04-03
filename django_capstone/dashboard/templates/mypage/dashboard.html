@@ -150,11 +150,27 @@
 
 
                     <!-- Run -->
-                    <div class="col-sm-3" id="run">
+                    {% comment %} <div class="col-sm-3" id="run">
                         <div class="form-check">
                             <a type="submit" class="page-scroll btn btn-xl">Get Highlight!</a>
                         </div>
-                    </div>
+                    </div> {% endcomment %}
+                    <div>
+                    <form action="/mypage/upload/" method="post" class="form-group">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-xs-3"></div>
+                            {% comment %} <div class="col-xs-6">
+                                <input id="url" class="fieldWrapper form-control mx-sm-3" type="text" name="url"
+                                       placeholder="Enter your Twitch URL"><br/><br/>
+                            </div> {% endcomment %}
+                            <div class="col-xs-3">
+                                <input id="sender" value="{{ request.session.email }}" hidden >
+                            </div>
+                        </div>
+                        <button type="submit" class="page-scroll btn btn-xl">Get Highlight!</button>
+                    </form>
+                     </div>
 
 
                 </div>

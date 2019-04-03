@@ -54,20 +54,6 @@ else:  # JSON env
     GOOGLE_KEY = get_env('GOOGLE_KEY', envs)
     GOOGLE_SECRET = get_env('GOOGLE_SECRET', envs)
 
-# # SocialLogin: Facebook
-# SOCIAL_AUTH_FACEBOOK_KEY = FACEBOOK_KEY
-# SOCIAL_AUTH_FACEBOOK_SECRET = FACEBOOK_SECRET
-# SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
-# SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
-#     'fields': 'id, name, email'
-# }
-
-# SocialLogin: Google
-# SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = GOOGLE_KEY
-# SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = GOOGLE_SECRET
-#SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = ['email']
-
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
@@ -94,8 +80,9 @@ INSTALLED_APPS = [
     'social_django',
 
     # my apps
-    'autohighlight',
-    'twitchapi_django'
+    'main',
+    'dashboard',
+    'upload',
 ]
 
 AUTHENTICATION_BACKENDS = [

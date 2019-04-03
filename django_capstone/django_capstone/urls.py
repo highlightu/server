@@ -16,7 +16,9 @@ Including another URLconf
 from django.conf.urls import include  # url뿐 아니라 include를 import해야 합니다.
 from django.contrib import admin
 from django.urls import path
-from autohighlight.views import *
+from main.views import *  # 1st app : main homepage
+from dashboard.views import *  # 2nd app : dashboard
+from upload.views import *  # 3rd app : upload
 from django.conf.urls.static import static
 
 
@@ -42,10 +44,17 @@ urlpatterns = [
     path('logout/', logout, name='logout'),
 
     # dashboard
-    path('mypage/dashboard/', dashboard, name='dashboard'),
+    path('mypage/dashboard/', include('dashboard.urls'), name='dashboard'),
 
     # history
     path('mypage/history/', history, name='history'),
+
+    # upload
+    path('mypage/upload/', include('upload.urls'), name='upload'),
+
+    # loading
+    path('mypage/loading/', loading, name='loading'),
+
 
 ]
 
