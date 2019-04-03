@@ -82,6 +82,10 @@
     <div class="container">
         <div class="slider-container">
             <div class="intro-text">
+                {% if request.session.session_key == None %}
+                {% else %}
+                <div class="intro-lead-in">Mr/Ms "{{user.username}}"</div>
+                {% endif %}
                 <div class="intro-lead-in">Be a Famous Streamer</div>
                 <div class="intro-heading">Auto-Highlight Editor</div>
                 {% if request.session.session_key == None %}
