@@ -23,8 +23,6 @@ urlpatterns = [
     # base
     path('admin/', admin.site.urls),
     path('', include('main.urls')),
-    #path('mypage/', include('dashboard.urls')),
-    #path('mypage/dashboard/', include('upload.urls')),
 ]
 
 # if settings.DEBUG:

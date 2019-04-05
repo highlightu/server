@@ -2,7 +2,8 @@ from django import forms
 from django.shortcuts import redirect, HttpResponseRedirect
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
-# from main.models import Profile
+# from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+# from .models import CustomUser
 
 
 class RequestForm(forms.Form):
@@ -10,13 +11,15 @@ class RequestForm(forms.Form):
     sender = forms.EmailField()
 
 
-# class UserForm(forms.ModelForm):
-#     class Meta:
-#         model = User
-#         fields = ('first_name', 'last_name', 'email')
+# class CustomUserCreationForm(UserCreationForm):
+
+#     class Meta(UserCreationForm):
+#         model = CustomUser
+#         fields = ('username', 'email')
 
 
-# class ProfileForm(forms.ModelForm):
+# class CustomUserChangeForm(UserChangeForm):
+
 #     class Meta:
-#         model = Profile
-#         fields = ('bio', 'location', 'birth_date')
+#         model = CustomUser
+#         fields = UserChangeForm.Meta.fields
