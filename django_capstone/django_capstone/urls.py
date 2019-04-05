@@ -17,45 +17,14 @@ from django.conf.urls import include  # url뿐 아니라 include를 import해야
 from django.contrib import admin
 from django.urls import path
 from main.views import *  # 1st app : main homepage
-from dashboard.views import *  # 2nd app : dashboard
-from upload.views import *  # 3rd app : upload
 from django.conf.urls.static import static
-
-
-SOCIAL_AUTH_URL_NAMESPACE = 'social'
-
-LOGIN_REDIRECT_URL = '/'
 
 urlpatterns = [
     # base
     path('admin/', admin.site.urls),
-
-    # homepage
-    path('', goHome),
-    path('home/', index, name='home'),
-
-    # google login
-    path('social/', social_login, name='login_social'),
-
-    # authentication with google
-    path('oauth/', include('social_django.urls', namespace='social')),
-
-    # logout
-    path('logout/', logout, name='logout'),
-
-    # dashboard
-    path('mypage/dashboard/', include('dashboard.urls'), name='dashboard'),
-
-    # history
-    path('mypage/history/', history, name='history'),
-
-    # upload
-    path('mypage/upload/', include('upload.urls'), name='upload'),
-
-    # loading
-    path('mypage/loading/', loading, name='loading'),
-
-
+    path('', include('main.urls')),
+    #path('mypage/', include('dashboard.urls')),
+    #path('mypage/dashboard/', include('upload.urls')),
 ]
 
 # if settings.DEBUG:

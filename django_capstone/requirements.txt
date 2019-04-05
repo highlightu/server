@@ -1,1 +1,7 @@
 social-auth-app-django
+psycopg2
+requests
+python-dateutil
+twitch-python
+pytz
+django-background-tasks

@@ -75,6 +75,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
     # 3rd party
     'social_django',
@@ -87,7 +88,9 @@ INSTALLED_APPS = [
 
 AUTHENTICATION_BACKENDS = [
     'social_core.backends.google.GoogleOAuth2',  # Google
-    # 'social_core.backends.facebook.FacebookOAuth2',  # Facebook
+    'social_core.backends.open_id.OpenIdAuth',
+    'social_core.backends.google.GoogleOpenId',
+
     'django.contrib.auth.backends.ModelBackend',  # Django basic model
 ]
 

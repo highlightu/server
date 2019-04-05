@@ -1,6 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response
 from django.http import *
 from .forms import RequestForm
+# 썸네일 이미지를 얻기 위해 추가
+import requests
+import json
 
 
 def dashboard(request):
@@ -26,6 +29,8 @@ def videoRequest(request):
         'url': "https://www.twitch.tv/videos/402913218",
     })
 
+
+# Thumbnail
 
 def getVideoId(url):
     VideoId = url.split("/")[-1]

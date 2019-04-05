@@ -1,5 +1,9 @@
 {
   "python.linting.pylintEnabled": true,
+  "python.linting.pylintArgs": [
+    "--load-plugins=pylint_django",
+    "--errors-only"
+  ],
   "python.pythonPath": "C:/Users/leehj/AppData/Local/Programs/Python/Python37/python.exe",
   "python.autoComplete.extraPaths": [
     "C:/virtualenv/min/Lib",
