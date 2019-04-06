@@ -28,6 +28,12 @@
     <![endif]-->
 </head>
 <body id="page-top">
+{% if alert %}
+<script>
+    alert("Login First");
+    window.location.href = '/home/';
+</script>
+{% endif %}
 <!-- Navigation -->
 <nav class="navbar navbar-default navbar-fixed-top navbar-transparent">
     <div class="container">
@@ -101,7 +107,7 @@
                                        placeholder="Enter your Twitch URL"><br/><br/>
                             </div>
                             <div class="col-xs-3">
-                                <input id="sender" value="{{ request.session.email }}" hidden >
+                                <input id="sender" name="sender" value="{{ request.user.email }}" hidden >
                             </div>
                         </div>
                         <button type="submit" class="page-scroll btn btn-xl">Get Highlight!</button>

@@ -55,7 +55,6 @@ urlpatterns = [
     # loading
     path('mypage/loading/', loading, name='loading'),
 
-
 ]
 
 # if settings.DEBUG:

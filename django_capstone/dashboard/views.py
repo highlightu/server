@@ -1,30 +1,27 @@
 from django.shortcuts import render
 from django.http import *
+from django.shortcuts import redirect
 from .forms import RequestForm
+import requests
+import re
 
+thSize = {'width': '1168', 'height': '657'}
 
 def dashboard(request):
-    return render(request, 'mypage/dashboard.html')
+    if request.method == 'POST':  # if form is send by POST...
+        form = RequestForm(request.POST)  # bind it to the request form
+        if form.is_valid():  # if it has all attributes
+            fullURL = form.cleaned_data['url']
+            vid = re.split("[/]",fullURL)[-1]
+            url = "https://player.twitch.tv/?autoplay=false&video=v" + vid
+            # Redirect after POST
+            return render(request, 'mypage/dashboard.html', {'url': url,'thumb':getThumb(vid)})
+    return render(request, 'mypage/alert.html',{'msg':"잘못된 접근입니다"})
 
 
 def history(request):
     return render(request, 'mypage/history.html')
 
-
-def videoRequest(request):
-    if request.method == 'POST':  # 폼이 제출되었을 경우...
-        form = RequestForm(request.POST)  # 폼은 POST 데이터에 바인드됨
-        if form.is_valid():  # 모든 유효성 검증 규칙을 통과
-            # form.cleaned_data에 있는 데이터를 처리
-            url = form.cleaned_data['url']
-            # Redirect after POST
-            return render(request, 'mypage/dashboard.html', {'url': url})
-    else:
-        form = RequestForm()  # An unbound form
-
-    return render_to_response('dashboard.html', {
-        'url': "https://www.twitch.tv/videos/402913218",
-    })
 
 
 def getVideoId(url):
@@ -54,6 +51,6 @@ def getThumb(videoId):
     thumb_template_url = str(video_request_json['preview']['template'])
 
     # 1920x1080크기의 썸네일 이미지를 얻는다.
-    size = {'width': '1920', 'height': '1080'}
+    size = thSize
 
     return thumb_template_url.format(**size)

@@ -1,4 +1,4 @@
-<<!DOCTYPE HTML>
+<!DOCTYPE HTML>
 {% load staticfiles %}
 <!--
 	Striped by HTML5 UP
@@ -20,12 +20,6 @@
 
 </head>
 <body class="is-preload">
-{% if request.session.session_key == None %}
-<script>
-    alert("Login First");
-    window.location.href = '/home/';
-</script>
-{% else %}
 <!-- Content -->
 <div id="content">
     <div class="inner">
@@ -38,7 +32,7 @@
                 if they get too long. You can also remove the <p> entirely if you don't
                 need a subtitle.
             -->
-            {% comment %} <h2><a href="">2019.04.01 - New Highlight</a></h2> {% endcomment %}
+            <h2><a href="">2019.04.01 - New Highlight</a></h2>
 
             <div class="info">
                 <!--
@@ -59,27 +53,22 @@
                     <li><a href="#" class="icon fa-comment">0</a></li>
                 </ul>
             </div>
+            <div>
+                <p>Delay : {{ delay }}</p>
+                <p>Face Recognition : {{ face }}</p>
+                <p>Speech Recognition : {{ speech }}</p>
+                <p>Chat Analysis : {{ chat }}</p>
+                <p>YouTube Upload : {{ youtube }}</p>
             </div>
+            <br/><br/><br/><br/><br/><br/><br/>
+            <form action="/mypage/loading/" method="post" class="form-group" enctype="multipart/form-data" novalidate>
+                {% csrf_token %}
+                <div class="row">
+                    <input name="sender" value="{{ request.user.email }}" hidden>
 
-                    <form action="/mypage/loading/" method="post" class="form-group">
-                        {% csrf_token %}
-                        <div class="row">
-                            <div class="col-xs-3"></div>
-                            {% comment %} <div class="col-xs-6">
-                                <input id="url" class="fieldWrapper form-control mx-sm-3" type="text" name="url"
-                                       placeholder="Enter your Twitch URL"><br/><br/>
-                            </div> {% endcomment %}
-                            <div class="col-xs-3">
-                                <input id="sender" value="{{ request.session.email }}" hidden >
-                            </div>
-                        </div>
-                        <button type="submit" class="page-scroll btn btn-xl">Upload(temp)</button>
-                    </form>
-                     </div>
-
-
-                
-            </div>
+                </div>
+                <button type="submit" class="page-scroll btn btn-xl">Upload(temp)</button>
+            </form>
         </article>
 
 
@@ -93,7 +82,7 @@
 
     <!-- Logo -->
     <a href="/home/"><img src="{% static 'images/logo2.png' %}" width="200" height="40"
-                                                           alt="logo"></a>
+                          alt="logo"></a>
 
     <!-- Nav -->
     <nav id="nav">
@@ -142,5 +131,4 @@
 <script src="{% static 'mypage/js/main.js' %}"></script>
 
 </body>
-{% endif %}
-</html>>
+</html>

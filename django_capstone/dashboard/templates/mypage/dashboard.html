@@ -20,12 +20,6 @@
 
 </head>
 <body class="is-preload">
-{% if request.session.session_key == None %}
-<script>
-    alert("Login First");
-    window.location.href = '/home/';
-</script>
-{% else %}
 <!-- Content -->
 <div id="content">
     <div class="inner">
@@ -60,10 +54,14 @@
                 </ul>
             </div>
             <a href="#" class="image featured"><img src="images/pic01.jpg" alt=""/></a>
-            <iframe src="https://player.twitch.tv/?autoplay=false&video=v402913218" frameborder="0"
+            <!--<iframe src="https://player.twitch.tv/?autoplay=false&video=v402913218" frameborder="0"-->
+            <!--allowfullscreen="true" scrolling="no" height="657" width="1168"></iframe>-->
+            <iframe src="{{ thumb }}" frameborder="0"
                     allowfullscreen="true" scrolling="no" height="657" width="1168"></iframe>
 
-            <div class="container" id="option-box">
+
+            <form action="/mypage/upload/" method="POST" class="container form-group" id="option-box">
+                {% csrf_token %}
                 <div class="row">
 
                     <!-- Delay Time -->
@@ -71,7 +69,7 @@
 
                         <!-- 10 sec -->
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" value="" id="delay_10">
+                            <input class="form-check-input" type="radio" value="10" id="delay_10" name="delay" checked>
                             <label class="form-check-label" for="delay_10">
                                 10 seconds delay
                             </label>
@@ -80,7 +78,7 @@
 
                         <!-- 10 sec -->
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" value="" id="delay_30">
+                            <input class="form-check-input" type="radio" value="30" id="delay_30" name="delay">
                             <label class="form-check-label" for="delay_30">
                                 30 seconds delay
                             </label>
@@ -89,7 +87,7 @@
 
                         <!-- 10 sec -->
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" value="" id="delay_60">
+                            <input class="form-check-input" type="radio" value="60" id="delay_60" name="delay">
                             <label class="form-check-label" for="delay_60">
                                 1 minute delay
                             </label>
@@ -98,7 +96,7 @@
 
                         <!-- 10 sec -->
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" value="" id="delay_120">
+                            <input class="form-check-input" type="radio" value="120" id="delay_120" name="delay">
                             <label class="form-check-label" for="delay_120">
                                 2 minutes delay
                             </label>
@@ -112,8 +110,8 @@
 
                         <!-- Check Face Recognition -->
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="ch_fr">
-                            <label class="form-check-label" for="ch_fr">
+                            <input class="form-check-input" type="checkbox" value="on" id="face" name="face">
+                            <label class="form-check-label" for="face">
                                 Face Recognition
                             </label>
                         </div>
@@ -121,8 +119,8 @@
 
                         <!-- Check Speech Recognition -->
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="ch_sr">
-                            <label class="form-check-label" for="ch_sr">
+                            <input class="form-check-input" type="checkbox" value="on" id="speech" name="speech">
+                            <label class="form-check-label" for="speech">
                                 Speech Recognition
                             </label>
                         </div>
@@ -130,8 +128,8 @@
 
                         <!-- Check Chat Analysis -->
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="ch_ca">
-                            <label class="form-check-label" for="ch_ca">
+                            <input class="form-check-input" type="checkbox" value="on" id="chat" name="chat" checked>
+                            <label class="form-check-label" for="chat">
                                 Chat Analysis
                             </label>
                         </div>
@@ -141,8 +139,8 @@
                     <!-- Youtube Post -->
                     <div class="col-sm-3" id="upload">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="defaultCheck2">
-                            <label class="form-check-label" for="defaultCheck2">
+                            <input class="form-check-input" type="checkbox" value="on" id="youtube" name="youtube">
+                            <label class="form-check-label" for="youtube">
                                 Want to post in YouTube
                             </label>
                         </div>
@@ -150,31 +148,19 @@
 
 
                     <!-- Run -->
-                    {% comment %} <div class="col-sm-3" id="run">
-                        <div class="form-check">
-                            <a type="submit" class="page-scroll btn btn-xl">Get Highlight!</a>
-                        </div>
-                    </div> {% endcomment %}
-                    <div>
-                    <form action="/mypage/upload/" method="post" class="form-group">
-                        {% csrf_token %}
-                        <div class="row">
-                            <div class="col-xs-3"></div>
-                            {% comment %} <div class="col-xs-6">
-                                <input id="url" class="fieldWrapper form-control mx-sm-3" type="text" name="url"
-                                       placeholder="Enter your Twitch URL"><br/><br/>
-                            </div> {% endcomment %}
-                            <div class="col-xs-3">
-                                <input id="sender" value="{{ request.session.email }}" hidden >
-                            </div>
-                        </div>
-                        <button type="submit" class="page-scroll btn btn-xl">Get Highlight!</button>
-                    </form>
-                     </div>
 
+                    <input name="sender" value="{{ request.user.email }}" hidden>
+
+
+
+                    <div class="col-sm-3" id="run">
+                        <div class="form-check">
+                            <button type="submit" class="page-scroll btn btn-xl">Get Highlight!</button>
+                        </div>
+                    </div>
 
                 </div>
-            </div>
+            </form>
         </article>
 
 
@@ -188,7 +174,7 @@
 
     <!-- Logo -->
     <a href="/home/"><img src="{% static 'images/logo2.png' %}" width="200" height="40"
-                                                           alt="logo"></a>
+                          alt="logo"></a>
 
     <!-- Nav -->
     <nav id="nav">
@@ -237,5 +223,4 @@
 <script src="{% static 'mypage/js/main.js' %}"></script>
 
 </body>
-{% endif %}
 </html>
