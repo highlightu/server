@@ -3,6 +3,7 @@ from django.http import *
 from django.contrib import auth
 from django.shortcuts import redirect
 from .models import User
+from copy import deepcopy
 # 썸네일 이미지를 얻기 위해 추가
 import requests
 import json
@@ -23,11 +24,18 @@ def index(request):
                 break
         if(token is False):
             new_user = User(user_name=request.user.username)
+            # new_instance = deepcopy(new_user)
+            # new_instance.id = None
+            # getUserInstance(new_instance)
+
             new_user.save()
             print("new user")
 
     # User.objects.new.create(user_name=request.user.username)
     return render(request, 'home/index.html')
+
+# def getUserInstance(new_instance):
+#     return new_instance
 
 
 def goHome(request):
