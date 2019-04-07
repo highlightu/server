@@ -11,6 +11,8 @@ from main.models import User
 import requests
 import re
 
+import subprocess
+
 thSize = {'width': '1168', 'height': '657'}
 
 
@@ -31,6 +33,11 @@ def dashboard(request):
             user_instance = User.objects.filter(user_name=senderlist[0]).get()
             print(type(user_instance))
             print(user_instance)
+
+            # 이부분에서 getTwitchChat 호출 후 DB에 등록
+            # chat 다운로드가 오래걸리기 때문에
+            # 쓰래드로 처리를 시키고 랜더링을 시켜주는게 더 좋을 것이라고생각됨.
+            # chatPath = getTwitchChat(vid, "Path") // Path는chat이 저장될 위치
 
             new_video = Video.objects.create(
                 owner=user_instance, Video_Number=vid)
@@ -83,3 +90,52 @@ def getThumb(videoId):
     size = thSize
 
     return thumb_template_url.format(**size)
+
+
+def getTwitchChat(videoID, savePath):
+    # getTwitchChat("406987059","/home/moyak/") 이런식으로 사용
+    #
+    #tcd 를 사용하기 위해 셋팅이 필요
+    #
+    #python 3.7 이상으로 tcd를 설치(이전 버전에서는 동작하지 않음)
+    # git clone https://github.com/PetterKraabol/Twitch-Chat-Downloader
+    # cd Twtich-Chat-Downloader
+    # python3 setup.py build
+    # sudo python3 setup.py install
+    #
+    #chat log를 원하는 포멧으로 저장하기 위해 설정 수정
+    #
+    # ~/.config/tcd/setting.json
+    # 파일에서 
+    #"capstone": {
+    #    "comments": {
+    #       "format": "{timestamp[relative]} {message[body]}",
+    #       "ignore_new_messages": false,
+    #       "timestamp": {
+    #           "relative": "%X"
+    #        }
+    #   },
+    #   "output": {
+    #       "format": "{id}.txt",
+    #       "timestamp": {
+    #           "absolute": "%x"
+    #       }
+    #   }
+    #},
+    # 
+    # 추가.
+
+    proc = ["tcd",
+            "-v", videoID,
+            "--output", savePath,
+            "--format", "capstone",
+            ]
+
+    subprocess.run(proc)
+
+    print("twitch chat download finish!")
+    print("this file downloaded in ",savePath)
+    
+    chatLogPath = savePath + videoID + ".txt"
+
+    return chatLogPath
