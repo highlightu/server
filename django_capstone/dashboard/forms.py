@@ -1,8 +1,8 @@
 from django import forms
+from .models import Video
 
 
 class RequestForm(forms.Form):
-
     class Meta:
         fields = ('url', 'sender')
 
@@ -10,26 +10,28 @@ class RequestForm(forms.Form):
     sender = forms.EmailField()
 
 
-class UploadOptionForm(forms.Form):
-
+class VideoForm(forms.ModelForm):
     class Meta:
-        fields = ('delay',
-                  'face',
-                  'speech',
-                  'chat',
-                  'youtube',
-                  'sender')
+        model = Video
+        fields = (
+            'owner',
+            'videoNumber',
+            'delay',
+            'face',
+            'speech',
+            'chat',
+            'youtube',
+            'date',
+            'videoFileURL',
+        )
 
-    delay = forms.IntegerField()
-    face = forms.BooleanField()
-    speech = forms.BooleanField()
-    chat = forms.BooleanField()
-    youtube = forms.BooleanField()
-    sender = forms.EmailField()
-
-
-# class VideoForm(forms.Form):
-#     class Meta:
-#         fields = ('owner', 'Video_ID')
-#     owner = forms.CharField()
-#     Video_ID = forms.IntegerField()
+        widgets = {
+            'owner': forms.HiddenInput(),
+            'videoNumber': forms.HiddenInput(),
+            'delay': forms.HiddenInput(),
+            'face': forms.HiddenInput(),
+            'speech': forms.HiddenInput(),
+            'chat': forms.HiddenInput(),
+            'date': forms.HiddenInput(),
+            'videoFileURL': forms.HiddenInput(),
+        }

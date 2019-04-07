@@ -5,20 +5,19 @@ from main.models import User
 
 
 class Video(models.Model):
-    owner = models.ForeignKey(
-        User, on_delete=models.CASCADE)
-    Video_Number = models.IntegerField()
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    videoNumber = models.IntegerField()
+    delay = models.IntegerField()
+    face = models.BooleanField(default=False)
+    speech = models.BooleanField(default=False)
+    chat = models.BooleanField(default=False)
+    youtube = models.BooleanField(default=False)
+    date = models.CharField(max_length=50)
+    videoFileURL = models.CharField(max_length=200)
+
 
     def __str__(self):
         return self.owner
 
     class Meta:
         ordering = ('owner',)
-
-
-class UploadOptionModel(models.Model):
-    delay = models.IntegerField()
-    face = models.BooleanField(default=False)
-    speech = models.BooleanField(default=False)
-    chat = models.BooleanField(default=False)
-    youtube = models.BooleanField(default=False)

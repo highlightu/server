@@ -32,7 +32,7 @@
                 if they get too long. You can also remove the <p> entirely if you don't
                 need a subtitle.
             -->
-            <h2><a href="">2019.04.01 - New Highlight</a></h2>
+            <h2><a href="">{{ request.session.today }} - New Highlight</a></h2>
 
             <div class="info">
                 <!--
@@ -43,7 +43,7 @@
                     the entire "date" element.
 
                 -->
-                <span class="date"><span class="month">Apr<span>y</span></span> <span class="day">1</span><span
+                <span class="date"><span class="month">{{ request.session.month }}<span>y</span></span> <span class="day">{{ request.session.day }}</span><span
                         class="year"></span></span>
                 <!--
                     Note: You can change the number of list items in "stats" to whatever you want.
@@ -54,21 +54,28 @@
                 </ul>
             </div>
             <div>
-                <p>Delay : {{ delay }}</p>
-                <p>Face Recognition : {{ face }}</p>
-                <p>Speech Recognition : {{ speech }}</p>
-                <p>Chat Analysis : {{ chat }}</p>
-                <p>YouTube Upload : {{ youtube }}</p>
+                <p>Delay : {{ request.session.delay }}</p>
+                <p>Face Recognition : {{ request.session.face }}</p>
+                <p>Speech Recognition : {{ request.session.speech }}</p>
+                <p>Chat Analysis : {{ request.session.chat }}</p>
+                <p>YouTube Upload : {{ request.session.youtube }}</p>
             </div>
-            <br/><br/><br/><br/><br/><br/><br/>
-            <form action="/mypage/loading/" method="post" class="form-group" enctype="multipart/form-data" novalidate>
-                {% csrf_token %}
-                <div class="row">
-                    <input name="sender" value="{{ request.user.email }}" hidden>
 
-                </div>
+            <form action="/mypage/upload/uploading/" method="post" class="form-group" enctype="multipart/form-data" novalidate>
+                {% csrf_token %}
+                {{ form.as_p }}
+                <br/><br/><br/><br/>
                 <button type="submit" class="page-scroll btn btn-xl">Upload(temp)</button>
             </form>
+
+            {% comment %}
+            <br><br>
+            <video width='400' controls>
+                <source src='{{ file }}' type='video/mp4'>
+                Your browser does not support the video tag.
+            </video>
+            <br><br>
+{% endcomment %}
         </article>
 
 

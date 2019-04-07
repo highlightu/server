@@ -1,6 +1,8 @@
 from django.db import models
 
+
+
 # Create your models here.
-class UploadVideoModel(models.Model):
-    title = models.TextField(default="")
-    uploadedVideo = models.FileField(null=True)
+class VideoUploadModel(models.Model):
+    title = models.CharField(max_length=200, default="new video")
+    videoFile = models.FileField()

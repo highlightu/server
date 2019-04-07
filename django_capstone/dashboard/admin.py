@@ -1,7 +1,6 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import UploadOptionModel, Video
+from .models import Video
 
-admin.site.register(UploadOptionModel)
 admin.site.register(Video)

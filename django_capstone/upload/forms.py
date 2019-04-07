@@ -1,12 +1,11 @@
 from django import forms
-from .models import UploadVideoModel
-
+from .models import VideoUploadModel
 # Create your models here.
-class UploadVideoForm(forms.ModelForm):
+class VideoUploadForm(forms.ModelForm):
     class Meta:
-        model = UploadVideoModel
-        fields = ('title','uploadedVideo')
+        model = VideoUploadModel
+        fields = ('title', 'videoFile')
 
     def __init__(self, *args, **kwargs):
-        super(UploadVideoForm, self).__init__(*args, **kwargs)
-        self.fields['file'].required = False
+        super(VideoUploadForm, self).__init__(*args, **kwargs)
+        self.fields['videoFile'].required = False
