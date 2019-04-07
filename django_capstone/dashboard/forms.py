@@ -1,9 +1,10 @@
 from django import forms
 
+
 class RequestForm(forms.Form):
 
     class Meta:
-        fields=('url','sender')
+        fields = ('url', 'sender')
 
     url = forms.CharField()
     sender = forms.EmailField()
@@ -12,12 +13,12 @@ class RequestForm(forms.Form):
 class UploadOptionForm(forms.Form):
 
     class Meta:
-        fields=('delay',
-                'face',
-                'speech',
-                'chat',
-                'youtube',
-                'sender')
+        fields = ('delay',
+                  'face',
+                  'speech',
+                  'chat',
+                  'youtube',
+                  'sender')
 
     delay = forms.IntegerField()
     face = forms.BooleanField()
@@ -25,3 +26,10 @@ class UploadOptionForm(forms.Form):
     chat = forms.BooleanField()
     youtube = forms.BooleanField()
     sender = forms.EmailField()
+
+
+# class VideoForm(forms.Form):
+#     class Meta:
+#         fields = ('owner', 'Video_ID')
+#     owner = forms.CharField()
+#     Video_ID = forms.IntegerField()

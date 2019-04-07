@@ -1,5 +1,4 @@
 from django.db import models
-from django.urls import reverse
 # Create your models here.
 
 
@@ -11,7 +10,7 @@ from django.urls import reverse
 
 
 class User(models.Model):
-    user_name = models.CharField(max_length=200)
+    user_name = models.CharField(max_length=50, primary_key=True)
 
     # Methods
     # def get_absolute_url(self):

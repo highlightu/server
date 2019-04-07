@@ -1,9 +1,13 @@
 from django.shortcuts import render
 from django.http import *
 from django.shortcuts import redirect
-from .forms import RequestForm
-from .models import Video
+from django.db.models import F
+from django.contrib import auth
+
+from .forms import RequestForm  # , VideoForm
+from dashboard.models import Video
 from main.models import User
+
 import requests
 import re
 
@@ -15,20 +19,34 @@ def dashboard(request):
         form = RequestForm(request.POST)  # bind it to the request form
         if form.is_valid():  # if it has all attributes
             fullURL = form.cleaned_data['url']
+            sender = form.cleaned_data['sender']
+            senderlist = sender.split('@')
+
             vid = re.split("[/]", fullURL)[-1]
             url = "https://player.twitch.tv/?autoplay=false&video=v" + vid
 
             # Add video object
-            new_video = Video(owner=request.user,
-                              Video_ID=vid)
-            new_video.save()
-            print("new video")
+            print("in dashboard")
 
-            print(Video.objects.values('owner', 'Video_ID'))
+            user_instance = User.objects.filter(user_name=senderlist[0]).get()
+            print(type(user_instance))
+            print(user_instance)
+
+            new_video = Video.objects.create(
+                owner=user_instance, Video_Number=vid)
+
+            print(new_video.owner, new_video.Video_Number)
+            print("new video")
 
             # Redirect after POST
             return render(request, 'mypage/dashboard.html', {'url': url, 'thumb': getThumb(vid)})
     return render(request, 'mypage/alert.html', {'msg': "잘못된 접근입니다"})
+
+
+# def findUserInstance(user_name):
+#     user_intance = User.objects.filter(user_name=F(user_name))
+#     print('in FUI ' + user_intance)
+#     return user_intance
 
 
 def history(request):
