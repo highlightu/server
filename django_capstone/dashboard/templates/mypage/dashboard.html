@@ -17,7 +17,19 @@
     <!-- Custom styles for this template -->
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'mypage/css/main.css' %}"/>
+    <script>
+    window.addEventListener('mouseup', (e) => {
+  // Let's pick a random color between #000000 and #FFFFFF
+  const color = Math.round(Math.random() * 0xFFFFFF)
 
+  // Let's format the color to fit CSS requirements
+  const fill = '#' + color.toString(16).padStart(6,'0')
+
+  // Let's apply our color in the
+  // element we actually clicked on
+  e.target.style.fill = fill
+  </script>
+})
 </head>
 <body class="is-preload">
 <!-- Content -->
@@ -32,7 +44,7 @@
                 if they get too long. You can also remove the <p> entirely if you don't
                 need a subtitle.
             -->
-            <h2><a href="">{{ request.session.today }} - New Highlight</a></h2>
+            <h2><a href="">2019.04.01 - New Highlight</a></h2>
 
             <div class="info">
                 <!--
@@ -43,7 +55,7 @@
                     the entire "date" element.
 
                 -->
-                <span class="date"><span class="month">{{ request.session.month }}<span>y</span></span> <span class="day">{{ request.session.day }}</span><span
+                <span class="date"><span class="month">Apr<span>y</span></span> <span class="day">1</span><span
                         class="year"></span></span>
                 <!--
                     Note: You can change the number of list items in "stats" to whatever you want.
@@ -56,10 +68,36 @@
             <a href="#" class="image featured"><img src="images/pic01.jpg" alt=""/></a>
             <!--<iframe src="https://player.twitch.tv/?autoplay=false&video=v402913218" frameborder="0"-->
             <!--allowfullscreen="true" scrolling="no" height="657" width="1168"></iframe>-->
-            <iframe src="{{ thumb }}" frameborder="0"
-                    allowfullscreen="true" scrolling="no" height="657" width="1168"></iframe>
+            
+            <!-- Frame resizing-->
+            <div>
+                <div style="position:absolute;">
+                    <div style="position:relative;top:200px;left:200px;"> 
+                        <?xml version="1.0"?>
+    <svg xmlns="http://www.w3.org/2000/svg" width="500px" height="400px" version="1.1">
+        <!-- 
+        rect : 사각형
+            x : 가로 길이
+            y : 세로 길이
+            rx, ry : 모서리 라운드
+            fill : 배경색
+            fill-opacity : 투명도
+            stroke : 선색
+            stroke-width : 선두께
+            stroke-opacity : 선투명도
+         --> 
+        <rect x="200" y="150" rx="10" ry="10"
+              width="500" height="300"
+              style="fill:#ff0000; fill-opacity:0.5; stroke:#000; stroke-width:3;" />
+              
+    </svg>
+                    </div>
+                </div>
+                <iframe src="{{ thumb }}" frameborder="0"
+                     allowfullscreen="true" scrolling="no" height="657" width="1168"></iframe>
+            </div>
 
-
+	
             <form action="/mypage/upload/" method="POST" class="container form-group" id="option-box">
                 {% csrf_token %}
                 <div class="row">
