@@ -17,18 +17,6 @@
     <!-- Custom styles for this template -->
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'mypage/css/main.css' %}"/>
-    <script>
-    window.addEventListener('mouseup', (e) => {
-  // Let's pick a random color between #000000 and #FFFFFF
-  const color = Math.round(Math.random() * 0xFFFFFF)
-
-  // Let's format the color to fit CSS requirements
-  const fill = '#' + color.toString(16).padStart(6,'0')
-
-  // Let's apply our color in the
-  // element we actually clicked on
-  e.target.style.fill = fill
-  </script>
 })
 </head>
 <body class="is-preload">
@@ -74,7 +62,7 @@
                 <div style="position:absolute;">
                     <div style="position:relative;top:200px;left:200px;"> 
                         <?xml version="1.0"?>
-    <svg xmlns="http://www.w3.org/2000/svg" width="500px" height="400px" version="1.1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="500px" height="400px" version="1.1">
         <!-- 
         rect : 사각형
             x : 가로 길이
@@ -86,11 +74,11 @@
             stroke-width : 선두께
             stroke-opacity : 선투명도
          --> 
-        <rect x="200" y="150" rx="10" ry="10"
-              width="500" height="300"
-              style="fill:#ff0000; fill-opacity:0.5; stroke:#000; stroke-width:3;" />
+                            <rect x="200" y="150" rx="10" ry="10"
+                              width="500" height="300"
+                              style="fill:#ff0000; fill-opacity:0.5; stroke:#000; stroke-width:3;" />
               
-    </svg>
+                        </svg>
                     </div>
                 </div>
                 <iframe src="{{ thumb }}" frameborder="0"
