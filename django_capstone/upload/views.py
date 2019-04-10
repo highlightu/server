@@ -7,10 +7,9 @@ import re
 from django.conf import settings
 
 
-
 def upload(request):
     keys = list(request.session.keys())
-    if 'owner' not in keys  and 'videoNumber' not in keys  and  'today' not in keys:
+    if 'owner' not in keys and 'videoNumber' not in keys and 'today' not in keys:
         return render(request, 'mypage/alert.html', {'msg': "잘못된 접근입니다"})
 
     if request.method == 'POST':  # if form is send by POST...
@@ -19,6 +18,10 @@ def upload(request):
         request.session['speech'] = request.POST.get('speech', '') == 'on'
         request.session['chat'] = request.POST.get('chat', '') == 'on'
         request.session['youtube'] = request.POST.get('youtube', '') == 'on'
+        request.session['rect_x'] = request.POST.get('rect_x', '')
+        request.session['rect_y'] = request.POST.get('rect_y', '')
+        request.session['rect_width'] = request.POST.get('rect_width', '')
+        request.session['rect_height'] = request.POST.get('rect_height', '')
 
     # Redirect after POST
     return render(request, 'mypage/upload.html', {'form': VideoUploadForm()})
@@ -30,9 +33,8 @@ def loading(request):
 
 def uploadVideo(request):
     keys = list(request.session.keys())
-    if 'owner' not in keys  and 'videoNumber' not in keys  and  'today' not in keys:
+    if 'owner' not in keys and 'videoNumber' not in keys and 'today' not in keys:
         return render(request, 'mypage/alert.html', {'msg': "잘못된 접근입니다"})
-
 
     user_name = request.session['owner']
     vid = request.session['videoNumber']
@@ -62,8 +64,9 @@ def uploadVideo(request):
                 videoFileURL=request.session['videoFileURL']
             )
             print('new video object created.')
-            settings.MEDIA_ROOT = temp
+
             form.save()
+            settings.MEDIA_ROOT = temp
 
     for key in keys:
         del request.session[key]

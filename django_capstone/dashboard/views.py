@@ -25,7 +25,13 @@ dateDict = {
 
 
 def dashboard(request):
-    if request.method == 'POST':  # if form is send by POST...
+    keys = list(request.session.keys())
+    if 'owner' in keys and 'videoNumber' in keys and 'today' in keys:
+        return render(request, 'mypage/dashboard.html', {
+            'thumb': getThumb(str(request.session['videoNumber'])),
+        })
+
+    elif request.method == 'POST':  # if form is send by POST...
         form = RequestForm(request.POST)  # bind it to the request form
         if form.is_valid():  # if it has all attributes
             fullURL = form.cleaned_data['url']
@@ -53,10 +59,14 @@ def dashboard(request):
 
             # Redirect after POST
             return render(request, 'mypage/dashboard.html', {
-                'url': url,
                 'thumb': getThumb(vid),
             })
+        else:
+            return render(request, 'mypage/alert.html', {'msg': "Invalid Form was sent."})
+
+    # no session data nor valid post data
     return render(request, 'mypage/alert.html', {'msg': "잘못된 접근입니다"})
+
 
 
 # def findUserInstance(user_name):
