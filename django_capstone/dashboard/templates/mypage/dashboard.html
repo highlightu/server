@@ -17,7 +17,7 @@
     <!-- Custom styles for this template -->
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'mypage/css/main.css' %}"/>
-
+    })
 </head>
 <body class="is-preload">
 <!-- Content -->
@@ -35,6 +35,7 @@
             -->
             <h2><a href="">{{ request.session.today }} - New Highlight</a></h2>
 
+
             <div class="info">
                 <!--
                     Note: The date should be formatted exactly as it's shown below. In particular, the
@@ -44,9 +45,9 @@
                     the entire "date" element.
 
                 -->
+
                 <span class="date"><span class="month">{{ request.session.month }}<span>y</span></span> <span
-                        class="day">{{ request.session.day }}</span><span
-                        class="year"></span></span>
+                        class="day">{{ request.session.day }}</span></span>
                 <!--
                     Note: You can change the number of list items in "stats" to whatever you want.
                 -->
@@ -103,6 +104,7 @@
             <a href="#" class="image featured"><img src="images/pic01.jpg" alt=""/></a>
             <!--<iframe src="https://player.twitch.tv/?autoplay=false&video=v402913218" frameborder="0"-->
             <!--allowfullscreen="true" scrolling="no" height="657" width="1168"></iframe>-->
+
             <iframe src="{{ thumb }}" frameborder="0"
                     allowfullscreen="true" scrolling="no" height="657" width="1168"></iframe>
 
