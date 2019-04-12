@@ -1,0 +1,10 @@
+canvas {
+  cursor: crosshair;
+  border: 2px solid red;
+  color: lightyellow;
+  z-index: 1;
+}
+
+#backThumb {
+  z-index: 2;
+}

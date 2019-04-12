@@ -13,11 +13,12 @@
 
     <!-- Bootstrap core CSS -->
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
     <!-- Custom styles for this template -->
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'mypage/css/main.css' %}"/>
-    })
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'mypage/css/frame.css' %}"/>
 </head>
 <body class="is-preload">
 <!-- Content -->
@@ -67,35 +68,19 @@
                             <!-- Frame resizing-->
                             <div class="frameResizing">
                                 <div style="position:absolute;">
-                                    <div style="position:relative;top:200px;left:200px;">
-                                        <?xml version="1.0"?>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="500px" height="400px"
-                                             version="1.1">
-                                            <!--
-                                            rect : 사각형
-                                                x : 가로 길이
-                                                y : 세로 길이
-                                                rx, ry : 모서리 라운드
-                                                fill : 배경색
-                                                fill-opacity : 투명도
-                                                stroke : 선색
-                                                stroke-width : 선두께
-                                                stroke-opacity : 선투명도
-                                             -->
-                                            <rect x="200" y="150" rx="10" ry="10"
-                                                  width="500" height="300"
-                                                  style="fill:#ff0000; fill-opacity:0.5; stroke:#000; stroke-width:3;"/>
-
-                                        </svg>
+                                    <div style="position:relative;top:0px;left:0px;">
+                                    {% comment %} thSize = {'width': '1168', 'height': '657'} {% endcomment %}
+                                        <canvas id="canvas" width="1168" height="657"></canvas>
+                                            <div id="output"></div>
                                     </div>
                                 </div>
-                                <iframe src="{{ thumb }}" frameborder="0"
-                                        allowfullscreen="true" scrolling="no" height="657" width="1168"></iframe>
-
-                            </div>
+                                <iframe id='backThumb' src="{{ thumb }}" frameborder="0"
+                                        allowfullscreen="false" scrolling="no" height="657" width="1168"></iframe>
                             <div class="btn-r">
                                 <a href="#" class="btn-layerClose">Close</a>
                             </div>
+                            </div>
+                            
                             <!--// content-->
                         </div>
                     </div>
@@ -274,6 +259,7 @@
 <script src="{% static 'mypage/js/util.js' %}"></script>
 <script src="{% static 'mypage/js/main.js' %}"></script>
 <script type="text/javascript" src="{% static 'mypage/js/layerPopup.js' %}"></script>
+<script type="text/javascript" src="{% static 'mypage/js/frameresizing.js' %}"></script>
 
 </body>
 </html>
