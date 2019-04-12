@@ -63,7 +63,12 @@ SECRET_KEY = '8sisfla$nu#t!!8(^ti6vowf7og3sd-e5bxadjgds&zyeq#pg3'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'moyak.kr',
+    '0.0.0.0',
+    'localhost',
+]
+
 
 
 # Application definition

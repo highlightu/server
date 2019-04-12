@@ -3,10 +3,10 @@ $(".btn-example").change(function() {
     var $href = $(this).attr("href");
     layer_popup($href);
   } else {
-    sessionStorage.removeItem("x0");
-    sessionStorage.removeItem("x1");
-    sessionStorage.removeItem("y0");
-    sessionStorage.removeItem("y1");
+        $('input[name="rect_x"]').val(0);
+        $('input[name="rect_y"]').val(0);
+        $('input[name="rect_width"]').val(0);
+        $('input[name="rect_height"]').val(0);
   }
 });
 function layer_popup(el) {
@@ -31,8 +31,12 @@ function layer_popup(el) {
   }
 
   $el.find("a.btn-layerClose").click(function() {
-    isDim ? $(".dim-layer").fadeOut() : $el.fadeOut(); // 닫기 버튼을 클릭하면 레이어가 닫힌다.
-    return false;
+    if($('input[name="rect_width"]').val() == 0 || $('input[name="rect_height"]').val() == 0){
+        alert("Drag again...");
+    }else{
+        isDim ? $('.dim-layer').fadeOut() : $el.fadeOut(); // 닫기 버튼을 클릭하면 레이어가 닫힌다.
+        return false;
+    }
   });
 
   $(".layer .dimBg").click(function() {

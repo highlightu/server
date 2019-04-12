@@ -15,8 +15,12 @@ class Video(models.Model):
     date = models.CharField(max_length=50)
     videoFileURL = models.CharField(max_length=200)
     #thSize = {'width': '1168', 'height': '657'}
-    resizing_start = models.IntegerField(default=1168)
-    resizing_end = models.IntegerField(default=657)
+    title = models.CharField(max_length=100)
+    rect_x = models.IntegerField(default=0)
+    rect_y = models.IntegerField(default=0)
+    rect_width = models.IntegerField(default=0)
+    rect_height = models.IntegerField(default=0)
+
 
     def __str__(self):
         return self.owner

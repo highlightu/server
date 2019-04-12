@@ -5,7 +5,7 @@ from main.models import User
 from .forms import VideoUploadForm
 import re
 from django.conf import settings
-
+import subprocess
 
 def upload(request):
     keys = list(request.session.keys())
@@ -61,13 +61,71 @@ def uploadVideo(request):
                 chat=request.session['chat'],
                 youtube=request.session['youtube'],
                 date=date,
-                videoFileURL=request.session['videoFileURL']
+                videoFileURL=request.session['videoFileURL'],
+                title=form.cleaned_data['title'],
+                rect_x=request.session['rect_x'],
+                rect_y=request.session['rect_y'],
+                rect_width=request.session['rect_width'],
+                rect_height=request.session['rect_height'],
             )
             print('new video object created.')
 
             form.save()
             settings.MEDIA_ROOT = temp
 
-    for key in keys:
-        del request.session[key]
-    return redirect("/home/")
+            for key in keys:
+                if "auth" in key:
+                    continue
+                del request.session[key]
+            return render(request, 'mypage/alert.html', {'msg': "Upload was successfully finished. We will let you know if rendering is finished!"})
+        return render(request, 'mypage/alert.html', {'msg': "Invalid Form for Video object"})
+    return render(request, 'mypage/alert.html', {'msg': "잘못된 접근입니다"})
+
+
+def getTwitchChat(videoID, savePath):
+    # getTwitchChat("406987059","/home/moyak/") 이런식으로 사용
+    #
+    # tcd 를 사용하기 위해 셋팅이 필요
+    #
+    # python 3.7 이상으로 tcd를 설치(이전 버전에서는 동작하지 않음)
+    # git clone https://github.com/PetterKraabol/Twitch-Chat-Downloader
+    # cd Twtich-Chat-Downloader
+    # python3 setup.py build
+    # sudo python3 setup.py install
+    #
+    # chat log를 원하는 포멧으로 저장하기 위해 설정 수정
+    #
+    # ~/.config/tcd/setting.json
+    # 파일에서
+    # "capstone": {
+    #    "comments": {
+    #       "format": "{timestamp[relative]} {message[body]}",
+    #       "ignore_new_messages": false,
+    #       "timestamp": {
+    #           "relative": "%X"
+    #        }
+    #   },
+    #   "output": {
+    #       "format": "{id}.txt",
+    #       "timestamp": {
+    #           "absolute": "%x"
+    #       }
+    #   }
+    # },
+    #
+    # 추가.
+
+    proc = ["tcd",
+            "-v", videoID,
+            "--output", savePath,
+            "--format", "capstone",
+            ]
+
+    subprocess.run(proc)
+
+    print("twitch chat download finish!")
+    print("this file downloaded in ", savePath)
+
+    chatLogPath = savePath + videoID + ".txt"
+
+    return chatLogPath

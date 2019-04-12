@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import *
-import subprocess
+
 from .forms import RequestForm  # , VideoForm
 from django.utils import timezone
 
@@ -38,6 +38,7 @@ def dashboard(request):
             owner = form.cleaned_data['sender'].split('@')[0]
 
             vid = re.split("[/]", fullURL)[-1]
+            print("Working VideoNumber is : " + vid)
             url = "https://player.twitch.tv/?autoplay=false&video=v" + vid
 
             request.session['videoNumber'] = int(vid)
@@ -109,51 +110,3 @@ def getThumb(videoId):
 
     return thumb_template_url.format(**size)
 
-
-def getTwitchChat(videoID, savePath):
-    # getTwitchChat("406987059","/home/moyak/") 이런식으로 사용
-    #
-    # tcd 를 사용하기 위해 셋팅이 필요
-    #
-    # python 3.7 이상으로 tcd를 설치(이전 버전에서는 동작하지 않음)
-    # git clone https://github.com/PetterKraabol/Twitch-Chat-Downloader
-    # cd Twtich-Chat-Downloader
-    # python3 setup.py build
-    # sudo python3 setup.py install
-    #
-    # chat log를 원하는 포멧으로 저장하기 위해 설정 수정
-    #
-    # ~/.config/tcd/setting.json
-    # 파일에서
-    # "capstone": {
-    #    "comments": {
-    #       "format": "{timestamp[relative]} {message[body]}",
-    #       "ignore_new_messages": false,
-    #       "timestamp": {
-    #           "relative": "%X"
-    #        }
-    #   },
-    #   "output": {
-    #       "format": "{id}.txt",
-    #       "timestamp": {
-    #           "absolute": "%x"
-    #       }
-    #   }
-    # },
-    #
-    # 추가.
-
-    proc = ["tcd",
-            "-v", videoID,
-            "--output", savePath,
-            "--format", "capstone",
-            ]
-
-    subprocess.run(proc)
-
-    print("twitch chat download finish!")
-    print("this file downloaded in ", savePath)
-
-    chatLogPath = savePath + videoID + ".txt"
-
-    return chatLogPath
