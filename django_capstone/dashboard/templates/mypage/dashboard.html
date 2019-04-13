@@ -64,23 +64,20 @@
                 <div id="layer2" class="pop-layer">
                     <div class="pop-container">
                         <div class="pop-conts">
-
+                            
                             <!-- Frame resizing-->
-                            <div class="frameResizing">
                                 <div style="position:absolute;">
                                     <div style="position:relative;top:0px;left:0px;">
                                     {% comment %} thSize = {'width': '1168', 'height': '657'} {% endcomment %}
                                         <canvas id="canvas" width="1168" height="657"></canvas>
-                                            <div id="output"></div>
+                                            <div id=output></div>
                                     </div>
                                 </div>
                                 <iframe id='backThumb' src="{{ thumb }}" frameborder="0"
-                                        allowfullscreen="false" scrolling="no" height="657" width="1168"></iframe>
-                            <div class="btn-r">
+                                        allowfullscreen="false" scrolling="no" width="1168" height="657" ></iframe>
+                                <div class="btn-r">
                                 <a href="#" class="btn-layerClose">Close</a>
-                            </div>
-                            </div>
-                            
+                                </div>
                             <!--// content-->
                         </div>
                     </div>

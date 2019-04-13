@@ -8,3 +8,14 @@ canvas {
 #backThumb {
   z-index: 2;
 }
+
+/* 
+canvas {
+ 
+}
+iframe {
+  position: relative;
+  top: -400px;
+  width: 600px;
+  height: 400px;
+} */

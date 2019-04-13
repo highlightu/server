@@ -1,12 +1,13 @@
 $(".btn-example").change(function() {
   if ($('input:checkbox[id="face"]').is(":checked") == true) {
     var $href = $(this).attr("href");
+
     layer_popup($href);
   } else {
-        $('input[name="rect_x"]').val(0);
-        $('input[name="rect_y"]').val(0);
-        $('input[name="rect_width"]').val(0);
-        $('input[name="rect_height"]').val(0);
+    $('input[name="rect_x"]').val(0);
+    $('input[name="rect_y"]').val(0);
+    $('input[name="rect_width"]').val(0);
+    $('input[name="rect_height"]').val(0);
   }
 });
 function layer_popup(el) {
@@ -31,11 +32,14 @@ function layer_popup(el) {
   }
 
   $el.find("a.btn-layerClose").click(function() {
-    if($('input[name="rect_width"]').val() == 0 || $('input[name="rect_height"]').val() == 0){
-        alert("Drag again...");
-    }else{
-        isDim ? $('.dim-layer').fadeOut() : $el.fadeOut(); // 닫기 버튼을 클릭하면 레이어가 닫힌다.
-        return false;
+    if (
+      $('input[name="rect_width"]').val() == 0 ||
+      $('input[name="rect_height"]').val() == 0
+    ) {
+      alert("Drag again...");
+    } else {
+      isDim ? $(".dim-layer").fadeOut() : $el.fadeOut(); // 닫기 버튼을 클릭하면 레이어가 닫힌다.
+      return false;
     }
   });
 
@@ -43,71 +47,88 @@ function layer_popup(el) {
     $(".dim-layer").fadeOut();
     return false;
   });
+
+  //Canvas
+  var canvas = document.getElementById("canvas");
+  var ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#FFF";
+  ctx.strokeStyle = "red";
+  //Variables
+  //   var canvasx = $(canvas).offset().left;
+  //   var canvasy = $(canvas).offset().top;
+  var canvasx = 0;
+  var canvasy = 0;
+  var last_mousex = (last_mousey = 0);
+  var mousex = (mousey = 0);
+  var mousedown = false;
+  var width_save = 0;
+  var height_save = 0;
+  //$(".frameResizing")
+  $(canvas)
+    .on("mousedown", function(e) {
+      // last_mousex = parseInt(e.clientX - canvasx);
+      // last_mousey = parseInt(e.clientY - canvasy);
+      last_mousex = parseInt(e.offsetX - canvasx);
+      last_mousey = parseInt(e.offsetY - canvasy);
+      //console.log("mouse donw..");
+      // x0 = last_mousex;
+      // y0 = last_mousey;
+      mousedown = true;
+    })
+    .on("mousemove", function(e) {
+      mousex = parseInt(e.offsetX - canvasx);
+      mousey = parseInt(e.offsetY - canvasy);
+
+      // x0 = mousex;
+      // y0 = mousey;
+      if (mousedown) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height); //clear canvas
+        ctx.beginPath();
+        var width = mousex - last_mousex;
+        var height = mousey - last_mousey;
+        ctx.rect(last_mousex, last_mousey, width, height);
+        if (width < 0) {
+          width = -width;
+        }
+        if (height < 0) {
+          height = -height;
+        }
+
+        width_save = width;
+        height_save = height;
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 10;
+        ctx.stroke();
+      }
+      //Output
+      $("#output").html(
+        "current: " +
+          mousex +
+          ", " +
+          mousey +
+          "|| last: " +
+          last_mousex +
+          ", " +
+          last_mousey +
+          "|| mousedown: " +
+          mousedown +
+          "|| width: " +
+          width +
+          ", " +
+          "height: " +
+          height
+      );
+    })
+    .on("mouseup", function(e) {
+      //        sessionStorage.setItem( 'x0', x0 );
+      //        sessionStorage.setItem( 'y0', y0 );
+      //        sessionStorage.setItem( 'x1', x1 );
+      //        sessionStorage.setItem( 'y1', y1 );
+      mousedown = false;
+      $('input[name="rect_x"]').val(last_mousex);
+      $('input[name="rect_y"]').val(last_mousey);
+      $('input[name="rect_width"]').val(width_save);
+      $('input[name="rect_height"]').val(height_save);
+      alert("resize postion saved");
+    });
 }
-
-var x0 = 0,
-  y0 = 0,
-  y1 = 0,
-  x1 = 0;
-
-//Canvas
-var canvas = document.getElementById("canvas");
-var ctx = canvas.getContext("2d");
-ctx.fillStyle = "#FFF";
-ctx.strokeStyle = "red";
-//Variables
-var canvasx = $(canvas).offset().left;
-var canvasy = $(canvas).offset().top;
-var last_mousex = (last_mousey = 0);
-var mousex = (mousey = 0);
-var mousedown = false;
-
-$(".frameResizing")
-  .ctx.on("mousedown", function(e) {
-    last_mousex = parseInt(e.clientX - canvasx);
-    last_mousey = parseInt(e.clientY - canvasy);
-    x0 = last_mousex;
-    y0 = last_mousey;
-    mousedown = true;
-  })
-  .ctx.on("mousemove", function(e) {
-    mousex = parseInt(e.clientX - canvasx);
-    mousey = parseInt(e.clientY - canvasy);
-    x0 = mousex;
-    y0 = mousey;
-    if (mousedown) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height); //clear canvas
-      ctx.beginPath();
-      var width = mousex - last_mousex;
-      var height = mousey - last_mousey;
-      ctx.rect(last_mousex, last_mousey, width, height);
-      ctx.strokeStyle = "red";
-      ctx.lineWidth = 10;
-      ctx.stroke();
-    }
-    //Output
-    $("#output").html(
-      "current: " +
-        mousex +
-        ", " +
-        mousey +
-        "|| last: " +
-        last_mousex +
-        ", " +
-        last_mousey +
-        "|| mousedown: " +
-        mousedown
-    );
-  })
-  .ctx.on("mouseup", function(e) {
-    //        sessionStorage.setItem( 'x0', x0 );
-    //        sessionStorage.setItem( 'y0', y0 );
-    //        sessionStorage.setItem( 'x1', x1 );
-    //        sessionStorage.setItem( 'y1', y1 );
-    mousedown = false;
-    $('input[name="rect_x"]').val(x0);
-    $('input[name="rect_y"]').val(y0);
-    $('input[name="rect_width"]').val(x1);
-    $('input[name="rect_height"]').val(y1);
-    alert("resize postion saved");
-  });

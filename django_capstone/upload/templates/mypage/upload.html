@@ -53,10 +53,22 @@
                     <li><a href="#" class="icon fa-comment">0</a></li>
                 </ul>
             </div>
+            {% comment %} <br/>
+            <div style="position:static;">
+            <iframe id="backThumb" src="{{ thumb }}" 
+             marginwidth ="-{{request.session.rect_x}}px"
+             marginheight = "-{{request.session.rect_y}}px"
+             width="{{request.session.rect_width}}" 
+             height="{{request.session.rect_height}}" scrolling="no" frameborder="0"></iframe>
+              </div>
+            <br/><br/> {% endcomment %}
             <div>
                 <p>Delay : {{ request.session.delay }}</p>
+                
                 <p>Face Recognition : {{ request.session.face }}</p>
+                
                 <ul>
+                
                     <li>rect_x: {{ request.session.rect_x }}</li>
                     <li>rect_y: {{ request.session.rect_y }}</li>
                     <li>width: {{ request.session.rect_width }}</li>
