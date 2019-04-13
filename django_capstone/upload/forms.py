@@ -4,4 +4,8 @@ from .models import VideoUploadModel
 class VideoUploadForm(forms.ModelForm):
     class Meta:
         model = VideoUploadModel
-        fields = ('title', 'videoFile')
+        fields = ('title', 'path', 'videoFile')
+
+        widgets = {
+            'path': forms.HiddenInput(),
+        }
