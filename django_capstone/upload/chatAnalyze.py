@@ -4,6 +4,7 @@ from nltk.corpus import stopwords
 from collections import Counter
 import re
 
+
 '''
 1. Load chatlog and words for scoring
 2. Do preprocessing by reading one line at one time
@@ -20,6 +21,10 @@ import re
     chatanlyze = ChatAnalyze(f, labeldwords)
     score = chatanlyze.Preprocessing()
     result = chatanlyze.Scoring(score)
+    cand = chatanlyze.makeCandidateList(histogram=result,
+                                    numOfMaximumHighlight=10,
+                                    delay=1000,
+                                    videoLen=19000)
 '''
 
 
@@ -32,11 +37,18 @@ class ChatAnalyze:
     # Final_Result = dict()
 
     def __init__(self, chatlog, labeledwords):
+
+        # server setting
+        import nltk
+        nltk.download('stopwords')
+        nltk.download('punkt')
+
         self.chatlog = chatlog
         self.labeledwords = labeledwords
         self.table_time = list()
         self.table_data = list()
         self.Final_Result = dict()
+
 
     def Preprocessing(self):
         # Line by Line seperating
@@ -116,3 +128,55 @@ class ChatAnalyze:
             index += iteration
 
         return self.Final_Result
+
+
+
+    # string to seconds
+    def second(self, str):
+        arr = re.split("[:]",str)
+        if len(arr) != 3:
+            print("check time string :"+str)
+        return int(arr[0])*3600 + int(arr[1])*60 + int(arr[2])
+
+
+
+    # make candidate list
+    def makeCandidateList(self, histogram, numOfMaximumHighlight, delay, videoLen):
+        # make raw candidate list
+        sorted_list = sorted(histogram.items(), key=lambda t: t[1], reverse=True)[:numOfMaximumHighlight]
+        sorted_list = [self.second(i[0]) for i in sorted_list]
+        candidates = sorted(sorted_list)
+
+        # if picked points are too close
+        deleteList = []
+        for i in range(len(candidates) - 1):
+            if candidates[i+1] - candidates[i] < delay:
+                deleteList.append(i+1)
+        for i in deleteList:
+            del candidates[i]
+
+        candidates = [[i-delay, i+delay] for i in candidates]
+
+        # post-processing
+        for i in range(len(candidates)):
+            if candidates[i][0] < 0:
+                candidates[i][0]=0
+            if candidates[i][1] > videoLen:
+                candidates[i][1] = videoLen
+
+        return candidates
+
+
+# How to use this class
+if __name__ == '__main__':
+    labeldwords = ['pog', 'poggers', 'pogchamp', 'holy', 'shit', 'wow', 'ez', 'clip', 'nice', 'omg', 'wut', 'gee', 'god', 'dirty', 'way', 'moly', 'wtf', 'fuck', 'crazy', 'omfg']
+    f = open("test.txt", 'rt', encoding='UTF8')
+    chatanlyze = ChatAnalyze(f, labeldwords)
+    score = chatanlyze.Preprocessing()
+    result = chatanlyze.Scoring(score)
+    cand = chatanlyze.makeCandidateList(histogram=result,
+                                        numOfMaximumHighlight=10,
+                                        delay=1000,
+                                        videoLen=19000)
+
+    print(cand)

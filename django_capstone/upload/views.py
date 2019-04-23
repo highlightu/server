@@ -78,15 +78,27 @@ def getTwitchChat(videoID, savePath):
     #
     # 추가.
 
-    if savePath[-1] != '/':
-        savePath = savePath + '/'
+    ############################# for Windows #############################
+    if savePath[-1] != '\\':
+        savePath = savePath + '\\'
 
-    proc = ["sudo","tcd",
+    proc = ["tcd",
             "-v", videoID,
             "--output", savePath,
             "--format", "capstone",
             ]
+    ############################# for Windows #############################
 
+
+    ############################# for Linux #############################
+    # if savePath[-1] != '/':
+    #     savePath = savePath + '/'
+    # proc = ["sudo", "tcd",
+    #         "-v", videoID,
+    #         "--output", savePath,
+    #         "--format", "capstone",
+    #         ]
+    ############################# for Linux #############################
     subprocess.run(proc)
 
     print("twitch chat download finish!")
