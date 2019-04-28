@@ -24,6 +24,10 @@ def split_video(video_path, split_times):
         print("writing... to ", write_path)
         sub_clip.write_videofile(write_path)
          
+def get_video_length(clip):
+    # clip =  VideoFileClip(video_path)
+    # type(clip.duration) == float
+    return clip.duration
 
 if __name__ == "__main__":
     # 비디어 합치기
