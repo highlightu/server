@@ -1,7 +1,8 @@
 from nltk.stem import PorterStemmer
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.corpus import stopwords
-from collections import Counter
+from collections import Counter, OrderedDict
+from repeatReplacer import RepeatReplacer
 import re
 
 
@@ -21,7 +22,8 @@ import re
     chatanlyze = ChatAnalyze(f, labeldwords)
     score = chatanlyze.Preprocessing()
     result = chatanlyze.Scoring(score)
-    cand = chatanlyze.makeCandidateList(histogram=result,
+    sectined_result = ca.Sectioned_Scoring(result, 5)
+    cand = chatanlyze.makeCandidateList(histogram=sectined_result,
                                     numOfMaximumHighlight=10,
                                     delay=1000,
                                     videoLen=19000)
@@ -42,13 +44,14 @@ class ChatAnalyze:
         import nltk
         nltk.download('stopwords')
         nltk.download('punkt')
+        nltk.download('wordnet')
 
         self.chatlog = chatlog
         self.labeledwords = labeledwords
         self.table_time = list()
         self.table_data = list()
         self.Final_Result = dict()
-
+        self.Sectioned_Result = dict()
 
     def Preprocessing(self):
         # Line by Line seperating
@@ -62,16 +65,17 @@ class ChatAnalyze:
             self.table_time.append(timeline)
             self.table_data.append(data)
 
-    # Stemming
         score = [0]*len(self.table_time)
 
         return score
 
     def Scoring(self, score):
         ps = PorterStemmer()
+        iteration = 0
 
-        # Stopwords
+        # Stopwords and Replacer
         stopWords = set(stopwords.words('english'))
+        replacer = RepeatReplacer()
 
         # Append most common top 10 Term freqency to labeled words
         filtered_sentence = []
@@ -80,22 +84,33 @@ class ChatAnalyze:
             words = word_tokenize(eachData)
             output = []
             for check in words:
-                check = check.replace("[", "").replace("]", "").replace("_", "").replace("-", "").replace("@", "").replace("'", "").replace(",", "").replace(".", "").replace("(", "").replace(")", "").replace(
-                    "<", "").replace(">", "").replace("|", "").replace("-", "").replace("?", "").replace("!", "").replace(":", "").replace("/", "").replace("\"", "").replace(" ", "").lower()
+                # repeat word delete
+                check = replacer.replace(check)
+                check = re.sub(r'[^\w]', '', check)
                 output.append(check)
-                # pattern = re.compile(r'\s+')
-                # sentence = re.sub(pattern, '', check)
-                # output.append(sentence)
-            # print(output)
+
             for w in output:
                 if w not in stopWords and not w.isdigit():
                     filtered_sentence.append(w)
 
+        # Delete "" [Exception Handling]
         counts = Counter(filtered_sentence)
+        del counts[""]
 
-        # Apeend
-        for i in range(10):
-            self.labeledwords.append(list(counts.keys())[i+1])
+        # Sort by counts.value ( most freqent words )
+        counts = OrderedDict(counts.most_common())
+        i = 0
+
+        # Check if the most freqent word is in labelwords
+        # if yes, skip and check next one 
+        # if no, append it 
+        while iteration < 10:
+            if list(counts.keys())[i] not in self.labeledwords:
+                self.labeledwords.append(list(counts.keys())[i])
+                i += 1
+                iteration += 1
+            else:
+                i += 1
 
         print(self.labeledwords)
 
@@ -129,21 +144,46 @@ class ChatAnalyze:
 
         return self.Final_Result
 
+    # finalresult = dict(), section = int (how many sector you want in timeline)
+    def Sectioned_Scoring(self, finalresult, section):
 
+        result = list()
+        
+        # Finalresult (dict) to result (list)
+        for key, value in finalresult.items():
+            temp = [key, value]
+            result.append(temp)
+
+
+        for eachResult in result:
+            sum = 0
+            
+            # Check if section is over or not.
+            if (result.index(eachResult) + section) <= len(result):
+                startindex = result.index(eachResult)
+                sumList = result[startindex: startindex + section]
+                
+                for eachsumList in sumList:
+                    sum += eachsumList[1]
+
+                self.Sectioned_Result[eachResult[0]] = sum
+            else:
+                return self.Sectioned_Result
 
     # string to seconds
+
     def second(self, str):
-        arr = re.split("[:]",str)
+        arr = re.split("[:]", str)
         if len(arr) != 3:
             print("check time string :"+str)
         return int(arr[0])*3600 + int(arr[1])*60 + int(arr[2])
 
-
-
     # make candidate list
+
     def makeCandidateList(self, histogram, numOfMaximumHighlight, delay, videoLen):
         # make raw candidate list
-        sorted_list = sorted(histogram.items(), key=lambda t: t[1], reverse=True)[:numOfMaximumHighlight]
+        sorted_list = sorted(histogram.items(), key=lambda t: t[1], reverse=True)[
+            :numOfMaximumHighlight]
         sorted_list = [self.second(i[0]) for i in sorted_list]
         candidates = sorted(sorted_list)
 
@@ -160,7 +200,7 @@ class ChatAnalyze:
         # post-processing
         for i in range(len(candidates)):
             if candidates[i][0] < 0:
-                candidates[i][0]=0
+                candidates[i][0] = 0
             if candidates[i][1] > videoLen:
                 candidates[i][1] = videoLen
 
@@ -169,7 +209,8 @@ class ChatAnalyze:
 
 # How to use this class
 if __name__ == '__main__':
-    labeldwords = ['pog', 'poggers', 'pogchamp', 'holy', 'shit', 'wow', 'ez', 'clip', 'nice', 'omg', 'wut', 'gee', 'god', 'dirty', 'way', 'moly', 'wtf', 'fuck', 'crazy', 'omfg']
+    labeldwords = ['pog', 'poggers', 'pogchamp', 'holy', 'shit', 'wow', 'ez', 'clip', 'nice',
+                   'omg', 'wut', 'gee', 'god', 'dirty', 'way', 'moly', 'wtf', 'fuck', 'crazy', 'omfg']
     f = open("test.txt", 'rt', encoding='UTF8')
     chatanlyze = ChatAnalyze(f, labeldwords)
     score = chatanlyze.Preprocessing()
