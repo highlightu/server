@@ -10,6 +10,7 @@ $(".btn-example").change(function() {
     $('input[name="rect_height"]').val(0);
   }
 });
+
 function layer_popup(el) {
   var $el = $(el); //레이어의 id를 $el 변수에 저장
   var isDim = $el.prev().hasClass("dimBg"); //dimmed 레이어를 감지하기 위한 boolean 변수
@@ -63,6 +64,11 @@ function layer_popup(el) {
   var mousedown = false;
   var width_save = 0;
   var height_save = 0;
+
+  //jsA start point
+  var start_x = 0;
+  var start_y = 0;
+
   //$(".frameResizing")
   $(canvas)
     .on("mousedown", function(e) {
@@ -70,6 +76,15 @@ function layer_popup(el) {
       // last_mousey = parseInt(e.clientY - canvasy);
       last_mousex = parseInt(e.offsetX - canvasx);
       last_mousey = parseInt(e.offsetY - canvasy);
+
+      if (last_mousex < 0){
+	      last_mousex = 0;
+      }
+
+      if (last_mousey < 0){
+	      last_mousey = 0;
+      }
+
       //console.log("mouse donw..");
       // x0 = last_mousex;
       // y0 = last_mousey;
@@ -87,9 +102,29 @@ function layer_popup(el) {
         var width = mousex - last_mousex;
         var height = mousey - last_mousey;
         ctx.rect(last_mousex, last_mousey, width, height);
+	
+      	if (width < 0) {
+	        if (height < 0) {
+			start_x = mousex;
+			start_y = mousey;
+		}else{
+			start_x = mousex;
+			start_y = last_mousey;
+	        }
+        }else{
+	        if (height < 0) {
+	      		start_x = last_mousex;
+			start_y = last_mousey;
+		}else{
+			start_x = last_mousex;
+			start_y = mousey;
+	        }
+	}
+
         if (width < 0) {
-          width = -width;
-        }
+	  width = -width;
+	}
+	      
         if (height < 0) {
           height = -height;
         }
@@ -106,10 +141,10 @@ function layer_popup(el) {
           mousex +
           ", " +
           mousey +
-          "|| last: " +
-          last_mousex +
+          "|| box_start: " +
+          start_x +
           ", " +
-          last_mousey +
+          start_y +
           "|| mousedown: " +
           mousedown +
           "|| width: " +
@@ -125,8 +160,8 @@ function layer_popup(el) {
       //        sessionStorage.setItem( 'x1', x1 );
       //        sessionStorage.setItem( 'y1', y1 );
       mousedown = false;
-      $('input[name="rect_x"]').val(last_mousex);
-      $('input[name="rect_y"]').val(last_mousey);
+      $('input[name="rect_x"]').val(start_x);
+      $('input[name="rect_y"]').val(start_y);
       $('input[name="rect_width"]').val(width_save);
       $('input[name="rect_height"]').val(height_save);
       alert("resize postion saved");
