@@ -195,8 +195,9 @@ def uploadVideo(request):
             # settings.MEDIA_ROOT = temp
 
             print(request.session['videoNumber'],request.session['path'])
+            chat_save_path = os.path.join(settings.MEDIA_ROOT,request.session['path'])
             #chat download!!!
-            chat_download_thread = threading.Thread(target=getTwitchChat, args=(str(request.session['videoNumber']),str(request.session['path'])))
+            chat_download_thread = threading.Thread(target=getTwitchChat, args=(str(request.session['videoNumber']),chat_save_path))
             chat_download_thread.start()
 
 
