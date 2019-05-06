@@ -103,20 +103,20 @@ function layer_popup(el) {
         var height = mousey - last_mousey;
         ctx.rect(last_mousex, last_mousey, width, height);
 	
-      	if (width < 0) {
-	        if (height < 0) {
-			start_x = mousex;
-			start_y = mousey;
-		}else{
-			start_x = mousex;
-			start_y = last_mousey;
-	        }
-        }else{
-	        if (height < 0) {
-	      		start_x = last_mousex;
-			start_y = last_mousey;
+      	if (width > 0) {
+	        if (height > 0) {
+			start_x = last_mousex
+			start_y = last_mousey
 		}else{
 			start_x = last_mousex;
+			start_y = mousey;
+	        }
+        }else{
+	        if (height > 0) {
+      			start_x = mousex;
+			start_y = last_mousey;
+		}else{
+			start_x = mousex;
 			start_y = mousey;
 	        }
 	}
