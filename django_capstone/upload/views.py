@@ -30,7 +30,7 @@ def upload(request):
         user_name = request.session['owner']
         vid = request.session['videoNumber']
         date = re.sub('[.]', '', request.session['today'])
-        request.session['path'] = os.path.join(settings.MEDIA_ROOT,str(user_name),str(date),str(vid))
+        request.session['path'] = os.path.join(str(user_name),str(date),str(vid))
         if not os.path.exists(request.session['path']):
             os.makedirs(request.session['path'])
         print(request.session['path'])
@@ -151,7 +151,46 @@ def uploadVideo(request):
                 rect_width=request.session['rect_width'],
                 rect_height=request.session['rect_height'],
             )
+            ############ test code #############
+            from dashboard.models import MergedVideo
+            from django.core.files import File
+            with open('C:\\Capstone-Project-2019\\django_capstone\\media\\Wildlife.wmv', 'rb') as f:
 
+                # After algorithm
+                a = MergedVideo.objects.create(
+                    owner=user_instance,
+                    videoNumber=409803829,
+                    date="20190424",
+                    path=request.session['path'],
+                    video=None,
+                )
+                b = MergedVideo.objects.create(
+                    owner=user_instance,
+                    videoNumber=40980383243,
+                    date="20190427",
+                    path=request.session['path'],
+                    video=None,
+                )
+                c = MergedVideo.objects.create(
+                    owner=user_instance,
+                    videoNumber=409803829,
+                    date="20190502",
+                    path=request.session['path'],
+                    video=None,
+                )
+
+                a.video.save(new_request.title + "1.mp4", File(f))
+                # a.path = os.path.join(settings.MEDIA_ROOT,a.video.url)
+                # a.save()
+
+                b.video.save(new_request.title + "2.mp4", File(f))
+                # b.path = os.path.join(settings.MEDIA_ROOT, b.video.url)
+                # b.save()
+
+                c.video.save(new_request.title + "3.mp4", File(f))
+                # c.path = os.path.join(settings.MEDIA_ROOT, c.video.url)
+                # c.save()
+                ############# test code #############
             print('new video object created.')
             # settings.MEDIA_ROOT = temp
 

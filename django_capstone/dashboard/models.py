@@ -1,8 +1,10 @@
 from django.db import models
 from main.models import User
+import os
 
 # Create your models here.
-
+def content_file_name(instance, filename):
+    return os.path.join(instance.path,filename)
 
 class Video(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -27,3 +29,18 @@ class Video(models.Model):
 
     class Meta:
         ordering = ('owner',)
+
+
+class MergedVideo(models.Model):
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    videoNumber = models.IntegerField()
+    date = models.CharField(max_length=50)
+    path = models.CharField(max_length=200, default="path")
+    video = models.FileField(upload_to=content_file_name,max_length=500)
+    # videoFileURL = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.owner
+
+    class Meta:
+        ordering = ('owner','date',)

@@ -20,6 +20,8 @@ from main.views import *  # 1st app : main homepage
 from dashboard.views import *  # 2nd app : dashboard
 from upload.views import *  # 3rd app : upload
 from django.conf.urls.static import static
+from django.conf.urls import url
+from django.conf import settings
 
 
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
@@ -55,7 +57,10 @@ urlpatterns = [
     # loading
     path('mypage/loading/', loading, name='loading'),
 
-]
+
+    path('download/<int:id>/', download, name='download'),
+
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # if settings.DEBUG:
 #     urlpatterns += static(settings.MEDIA_URL,
