@@ -154,43 +154,68 @@ def uploadVideo(request):
             ############ test code #############
             from dashboard.models import MergedVideo
             from django.core.files import File
-            with open('C:\\Capstone-Project-2019\\django_capstone\\media\\Wildlife.wmv', 'rb') as f:
+            from .video_util import cropVideo
 
-                # After algorithm
-                a = MergedVideo.objects.create(
-                    owner=user_instance,
-                    videoNumber=409803829,
-                    date="20190424",
-                    path=request.session['path'],
-                    video=None,
-                )
-                b = MergedVideo.objects.create(
-                    owner=user_instance,
-                    videoNumber=40980383243,
-                    date="20190427",
-                    path=request.session['path'],
-                    video=None,
-                )
-                c = MergedVideo.objects.create(
-                    owner=user_instance,
-                    videoNumber=409803829,
-                    date="20190502",
-                    path=request.session['path'],
-                    video=None,
-                )
+            # Algorithms go here
+            filepath1 = cropVideo(
+                inputFile=new_request.videoFile.path,
+                outputFile=os.path.join(new_request.path,new_request.title + "1.mp4"),
+                x=0,
+                y=0
+            )
+            filepath2 = cropVideo(
+                inputFile=new_request.videoFile.path,
+                outputFile=os.path.join(new_request.path,new_request.title + "2.mp4"),
+                x=0,
+                y=0,
+                w=100,
+                h=100
+            )
+            filepath3 = cropVideo(
+                inputFile=new_request.videoFile.path,
+                outputFile=os.path.join(new_request.path,new_request.title + "3.mp4"),
+                x=100,
+                y=100
+            )
 
-                a.video.save(new_request.title + "1.mp4", File(f))
-                # a.path = os.path.join(settings.MEDIA_ROOT,a.video.url)
-                # a.save()
 
-                b.video.save(new_request.title + "2.mp4", File(f))
-                # b.path = os.path.join(settings.MEDIA_ROOT, b.video.url)
-                # b.save()
+            # After algorithm
 
-                c.video.save(new_request.title + "3.mp4", File(f))
-                # c.path = os.path.join(settings.MEDIA_ROOT, c.video.url)
-                # c.save()
-                ############# test code #############
+            # Open result files
+            f1 = open(filepath1,'rb')
+            f2 = open(filepath2, 'rb')
+            f3 = open(filepath3, 'rb')
+
+            # Register them on DB
+            a = MergedVideo.objects.create(
+                owner=user_instance,
+                videoNumber=409803829,
+                date="20190424",
+                path=request.session['path'],
+                video=None,
+            )
+            b = MergedVideo.objects.create(
+                owner=user_instance,
+                videoNumber=40980383243,
+                date="20190427",
+                path=request.session['path'],
+                video=None,
+            )
+            c = MergedVideo.objects.create(
+                owner=user_instance,
+                videoNumber=409803829,
+                date="20190502",
+                path=request.session['path'],
+                video=None,
+            )
+
+            # Link DB and files
+            a.video.save(new_request.title + "1.mp4", File(f1))
+            b.video.save(new_request.title + "2.mp4", File(f2))
+            c.video.save(new_request.title + "3.mp4", File(f3))
+
+
+            ############# test code #############
             print('new video object created.')
             # settings.MEDIA_ROOT = temp
 

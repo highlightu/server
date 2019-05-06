@@ -29,6 +29,46 @@ def get_video_length(clip):
     # type(clip.duration) == float
     return clip.duration
 
+
+import cv2
+
+
+def cropVideo(inputFile, outputFile, x=0, y=0, w=640, h=480):
+
+    # Read video
+    video = cv2.VideoCapture(inputFile)
+    fps = video.get(cv2.CAP_PROP_FPS)
+
+    # Define the codec and create VideoWriter object
+    #In Fedora: DIVX, XVID, MJPG, X264, WMV1, WMV2.(XVID is more preferable. MJPG results in high size video. X264 gives very small size video)
+    # In Windows: DIVX(More to be tested and added)
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v') # for mp4
+    out = cv2.VideoWriter(outputFile, fourcc, fps, (w, h))
+
+
+    while(video.isOpened()):
+        ret, frame = video.read()
+        if ret == True:
+            frame = frame[y:y+h, x:x+w]
+            cv2.imshow("",frame)
+            out.write(frame)
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+        else:
+            break
+
+    video.release()
+    out.release()
+    cv2.destroyAllWindows()
+    return outputFile
+
+# if __name__ == "__main__":
+#     cropVideo(inputFile='Wildlife.wmv',
+#               outputFile='result.mp4',
+#               x=400,
+#               y=100,
+#               )
+
 if __name__ == "__main__":
     # 비디어 합치기
     # concatenate_video(videos_path, processed_file_name)

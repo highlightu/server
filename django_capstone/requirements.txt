@@ -1,4 +1,5 @@
 social-auth-app-django
+opencv-python
 >>> import nltk
 .>>> nltk.download("stopwords")
 .>>> nltk.download("punkt")
