@@ -85,6 +85,14 @@ function layer_popup(el) {
 	      last_mousey = 0;
       }
 
+      if (last_mousex > 1168){
+	      last_mousex = 1168;
+      }
+
+      if (last_mousey > 657){
+	      last_mousey = 657;
+      }
+
       //console.log("mouse donw..");
       // x0 = last_mousex;
       // y0 = last_mousey;
@@ -93,6 +101,22 @@ function layer_popup(el) {
     .on("mousemove", function(e) {
       mousex = parseInt(e.offsetX - canvasx);
       mousey = parseInt(e.offsetY - canvasy);
+
+      if (mousex < 0){
+	      mousex = 0;
+      }
+
+      if (mousey < 0){
+	      mousey = 0;
+      }
+
+      if (mousex > 1168){
+	      mousex = 1168;
+      }
+
+      if (last_mousey > 657){
+	      mousey = 657;
+      }
 
       // x0 = mousex;
       // y0 = mousey;
@@ -160,6 +184,13 @@ function layer_popup(el) {
       //        sessionStorage.setItem( 'x1', x1 );
       //        sessionStorage.setItem( 'y1', y1 );
       mousedown = false;
+	
+	//비율 맞춤
+	start_x = (start_x * 1920)/1168;
+	start_y = (start_y * 1080)/657;
+	width_save = (width_save * 1920)/1168;
+	height_save = (height_save * 1080)/657;
+
       $('input[name="rect_x"]').val(start_x);
       $('input[name="rect_y"]').val(start_y);
       $('input[name="rect_width"]').val(width_save);
