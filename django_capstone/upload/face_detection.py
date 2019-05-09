@@ -1,5 +1,6 @@
 import face_recognition
 import cv2
+import time
 
 '''
 Usage : 
@@ -11,14 +12,15 @@ Expected Outputs :
 '''
 
 
-def face_detection(self, video_file):
+def face_detection(video_file):
     # Open the input movie file
     input_video = cv2.VideoCapture(video_file)
     length = int(input_video.get(cv2.CAP_PROP_FRAME_COUNT))
 
     # Initialize some variables
-    face_locations = []
+    face_locations = list()
     frame_number = 0
+    fps = input_video.get(cv2.CAP_PROP_FPS)
     Output_Dict = dict()
 
     while input_video.isOpened():
@@ -26,10 +28,10 @@ def face_detection(self, video_file):
         ret, frame = input_video.read()
         frame_number += 1
 
-        time = input_video.get(cv2.CAP_PROP_POS_MSEC)
+        #time = input_video.get(cv2.CAP_PROP_POS_MSEC)
         index = input_video.get(cv2.CAP_PROP_POS_FRAMES)
 
-        # print('frames: %d   ---   times: %f' % (index, time/1000))
+        #print('frames: %d   ---   times: %f' % (index, time/1000))
 
         if frame is None:
             break
@@ -38,7 +40,7 @@ def face_detection(self, video_file):
         if not ret:
             break
 
-        # TODO Need to test
+        # TODO Check if this one is necessary
         # Resize frame of video to 1/4 size for faster face detection processing
         small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
 
@@ -60,8 +62,10 @@ def face_detection(self, video_file):
                 top, right, bottom, left = face_location
                 location = [top, left, right-left, bottom-top ]
 
-            Output_Dict[time] = location
-
+            if index % 30 == 0:
+                timestamp = time.strftime('%H:%M:%S', time.gmtime(index/30))
+                Output_Dict[timestamp] = location
+ 
         # No face is detected at the frame
         else:
             continue
