@@ -5,11 +5,9 @@ from main.models import User
 from .models import VideoUploadModel
 from .forms import VideoUploadForm
 import re, os
-from django.conf import settings
-import subprocess
 from dashboard.views import getThumb
 import threading
-
+from .highlightAlgo import makeHighlight
 
 def upload(request):
     keys = list(request.session.keys())
@@ -45,68 +43,7 @@ def upload(request):
 def loading(request):
     return render(request, 'mypage/loading.html')
 
-def getTwitchChat(videoID, savePath):
-    # getTwitchChat("406987059","/home/moyak/") 이런식으로 사용
-    #
-    # tcd 를 사용하기 위해 셋팅이 필요
-    #
-    # python 3.7 이상으로 tcd를 설치(이전 버전에서는 동작하지 않음)
-    # git clone https://github.com/PetterKraabol/Twitch-Chat-Downloader
-    # cd Twtich-Chat-Downloader
-    # python3 setup.py build
-    # sudo python3 setup.py install
-    #
-    # chat log를 원하는 포멧으로 저장하기 위해 설정 수정
-    #
-    # ~/.config/tcd/setting.json
-    # 파일에서
-    # "capstone": {
-    #    "comments": {
-    #       "format": "{timestamp[relative]} {message[body]}",
-    #       "ignore_new_messages": false,
-    #       "timestamp": {
-    #           "relative": "%X"
-    #        }
-    #   },
-    #   "output": {
-    #       "format": "{id}.txt",
-    #       "timestamp": {
-    #           "absolute": "%x"
-    #       }
-    #   }
-    # },
-    #
-    # 추가.
 
-    ############################# for Windows #############################
-    if savePath[-1] != '\\':
-        savePath = savePath + '\\'
-
-    proc = ["tcd",
-            "-v", videoID,
-            "--output", savePath,
-            "--format", "capstone",
-            ]
-    ############################# for Windows #############################
-
-
-    ############################# for Linux #############################
-    # if savePath[-1] != '/':
-    #     savePath = savePath + '/'
-    # proc = ["sudo", "tcd",
-    #         "-v", videoID,
-    #         "--output", savePath,
-    #         "--format", "capstone",
-    #         ]
-    ############################# for Linux #############################
-    subprocess.run(proc)
-
-    print("twitch chat download finish!")
-    print("this file downloaded in ", savePath)
-
-    chatLogPath = savePath + videoID + ".txt"
-
-    return chatLogPath
 
 def uploadVideo(request):
     global delimiter
@@ -152,78 +89,36 @@ def uploadVideo(request):
                 rect_height=request.session['rect_height'],
             )
             ############ test code #############
-            from dashboard.models import MergedVideo
-            from django.core.files import File
-            from .video_util import cropVideo
+            if request.session['face'] == True:
+                algorithm_thread = threading.Thread(target=makeHighlight,
+                                                        args=(
+                                                            new_request,
+                                                            user_instance,
+                                                            request.session['videoNumber'],
+                                                            request.session['path'],
+                                                            int(new_video.rect_x),
+                                                            int(new_video.rect_y),
+                                                            int(new_video.rect_width),
+                                                            int(new_video.rect_height),
+                                                        ))
+                algorithm_thread.start()
 
-            # Algorithms go here
-            filepath1 = cropVideo(
-                inputFile=new_request.videoFile.path,
-                outputFile=os.path.join(new_request.path,new_request.title + "1.mp4"),
-                x=0,
-                y=0
-            )
-            filepath2 = cropVideo(
-                inputFile=new_request.videoFile.path,
-                outputFile=os.path.join(new_request.path,new_request.title + "2.mp4"),
-                x=0,
-                y=0,
-                w=100,
-                h=100
-            )
-            filepath3 = cropVideo(
-                inputFile=new_request.videoFile.path,
-                outputFile=os.path.join(new_request.path,new_request.title + "3.mp4"),
-                x=100,
-                y=100
-            )
-
-
-            # After algorithm
-
-            # Open result files
-            f1 = open(filepath1,'rb')
-            f2 = open(filepath2, 'rb')
-            f3 = open(filepath3, 'rb')
-
-            # Register them on DB
-            a = MergedVideo.objects.create(
-                owner=user_instance,
-                videoNumber=409803829,
-                date="20190424",
-                path=request.session['path'],
-                video=None,
-            )
-            b = MergedVideo.objects.create(
-                owner=user_instance,
-                videoNumber=40980383243,
-                date="20190427",
-                path=request.session['path'],
-                video=None,
-            )
-            c = MergedVideo.objects.create(
-                owner=user_instance,
-                videoNumber=409803829,
-                date="20190502",
-                path=request.session['path'],
-                video=None,
-            )
-
-            # Link DB and files
-            a.video.save(new_request.title + "1.mp4", File(f1))
-            b.video.save(new_request.title + "2.mp4", File(f2))
-            c.video.save(new_request.title + "3.mp4", File(f3))
+            else:
+                algorithm_thread = threading.Thread(target=makeHighlight,
+                                                    args=(
+                                                        new_request,
+                                                        user_instance,
+                                                        request.session['videoNumber'],
+                                                        request.session['path'],
+                                                    ))
+                algorithm_thread.start()
 
 
             ############# test code #############
             print('new video object created.')
             # settings.MEDIA_ROOT = temp
 
-            print(request.session['videoNumber'],request.session['path'])
-            chat_save_path = os.path.join(settings.MEDIA_ROOT,request.session['path'])
-            #chat download!!!
-            chat_download_thread = threading.Thread(target=getTwitchChat, args=(str(request.session['videoNumber']),chat_save_path))
-            chat_download_thread.start()
+
 
 
             for key in keys:

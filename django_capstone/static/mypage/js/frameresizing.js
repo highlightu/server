@@ -186,10 +186,10 @@ function layer_popup(el) {
       mousedown = false;
 	
 	//비율 맞춤
-	start_x = (start_x * 1920)/1168;
-	start_y = (start_y * 1080)/657;
-	width_save = (width_save * 1920)/1168;
-	height_save = (height_save * 1080)/657;
+	start_x = parseInt((start_x * 1920)/1168);
+	start_y = parseInt((start_y * 1080)/657);
+	width_save = parseInt((width_save * 1920)/1168);
+	height_save = parseInt((height_save * 1080)/657);
 
       $('input[name="rect_x"]').val(start_x);
       $('input[name="rect_y"]').val(start_y);

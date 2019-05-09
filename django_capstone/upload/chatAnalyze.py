@@ -2,7 +2,7 @@ from nltk.stem import PorterStemmer
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.corpus import stopwords
 from collections import Counter, OrderedDict
-from repeatReplacer import RepeatReplacer
+from .repeatReplacer import RepeatReplacer
 import re
 
 
