@@ -5,9 +5,24 @@ from .chatAnalyze import ChatAnalyze
 from .video_util import *
 from django.conf import settings
 import subprocess
-import threading
+import re
+
+class Error(Exception):
+    pass
+
+class AlgorithmError(Error):
+
+    def __init__(self, expression, message):
+        self.expression = expression
+        self.message = message
 
 def getTwitchChat(videoID, savePath):
+
+    chatLogPath = os.path.join(savePath ,videoID + ".txt")
+    if os.path.isfile(chatLogPath):
+        print("Chatlog already exists ! ")
+        return chatLogPath
+
     # getTwitchChat("406987059","/home/moyak/") 이런식으로 사용
     #
     # tcd 를 사용하기 위해 셋팅이 필요
@@ -61,132 +76,146 @@ def getTwitchChat(videoID, savePath):
     #         "--format", "capstone",
     #         ]
     ############################# for Linux #############################
-    subprocess.run(proc)
-
-    print("twitch chat download finish!")
-    print("this file downloaded in ", savePath)
-
-    chatLogPath = savePath + videoID + ".txt"
-
-    return chatLogPath
+    try:
+        subprocess.check_call(proc)
+        print("twitch chat download finish!")
+        print("this file downloaded in ", savePath)
 
 
-def makeHighlight(highlight_request, user_instance, videoid, savepath, rect_x=0, rect_y=0, rect_width=0, rect_height=0):
+        return chatLogPath
 
-    # Chat Download
-    chat_save_path = os.path.join(settings.MEDIA_ROOT, savepath)
-    print("The downloaded chat will be stored at --> " + chat_save_path)
-    # chat download!!!
-    chat_download_thread = threading.Thread(target=getTwitchChat,
-                                            args=(str(videoid), chat_save_path))
-    chat_download_thread.start()
+    except subprocess.CalledProcessError as e:
+        print("Twitch chat download failed: ",e)
+        return None
 
-    # No Face Detection
-    if rect_width == 0 or rect_height == 0:
-        labeldwords = ['pog', 'poggers', 'pogchamp', 'holy', 'shit', 'wow', 'ez', 'clip', 'nice',
-                       'omg', 'wut', 'gee', 'god', 'dirty', 'way', 'moly', 'wtf', 'fuck', 'crazy', 'omfg']
-        f = open("test.txt", 'rt', encoding='UTF8')
+    return None
 
-        # Download nltk
-        chatanlyze = ChatAnalyze(f, labeldwords)
 
-        score = chatanlyze.Preprocessing()
-        result = chatanlyze.Scoring(score)
-        sectioned_result = chatanlyze.Sectioned_Scoring(result, 5)
-        cand = chatanlyze.makeCandidateList(histogram=sectioned_result,
-                                            numOfMaximumHighlight=10,
-                                            delay=1000,
-                                            videoLen=19000)
 
-        print(cand)
-        # video_path = 'demo_video.mp4'
-        video_path = highlight_request.videoFile.path
-        # split_times = [[0, 3], [10, 13], [20, 30]]
-        split_times = cand
-        split_video(video_path, split_times)
+def makeCandidatesByChatlog(chatlog, numOfHighlights):
 
-    # Face Detection On
+    cummulative_sec = 5
+
+    labeldwords = ['pog', 'poggers', 'pogchamp', 'holy', 'shit', 'wow', 'ez', 'clip', 'nice',
+                   'omg', 'wut', 'gee', 'god', 'dirty', 'way', 'moly', 'wtf', 'fuck', 'crazy', 'omfg']
+
+    f = open(chatlog, 'rt', encoding='UTF8')
+
+    # Download nltk
+    chat_analyzer = ChatAnalyze(f, labeldwords)
+    score = chat_analyzer.Preprocessing()
+    result = chat_analyzer.Scoring(score)
+    sectioned_result = chat_analyzer.Sectioned_Scoring(result, cummulative_sec)
+    sorted_list = sorted(sectioned_result.items(), key=lambda t: t[1], reverse=True)[:numOfHighlights]
+    print(sorted_list)
+    sorted_list = dict(sorted([ (second(t),v) for t,v in sorted_list ]))
+    print(sorted_list)
+
+    return sorted_list
+
+def makeCandidatesByEmotion(original_candidate, numOfHighlights):
+    cand = original_candidate
+    return cand
+
+
+def second(timestamp):
+    arr = re.split("[:]", timestamp)
+    if len(arr) != 3:
+        print("check time string :"+timestamp)
     else:
-        ########################################################################################
-        # Algorithms go here
-        filepath1 = cropVideo(
-            inputFile=highlight_request.videoFile.path,
-            outputFile="face_detected.mp4",
-            x=rect_x,
-            y=rect_y,
-            w=rect_width,
-            h=rect_height
-        )
+        return int(arr[0])*3600 + int(arr[1])*60 + int(arr[2])
+    return -1
 
-        # Result file
-        f1 = open(filepath1, 'rb')
 
-        # Register them on DB
-        a = MergedVideo.objects.create(
-            owner=user_instance,
-            videoNumber=409803829,
-            date="20190424",
-            path=savepath,
-            video=None,
-        )
+def getTimeSection(candidates, videoLen, delay):
+    # make raw candidate list (must be sorted by key)
+    candidates = list(candidates.keys())
 
-        # Link DB and files
-        a.video.save(highlight_request.title + ".mp4", File(f1))
-        f1.close()
-        ########################################################################################
+    # if picked points are too close
+    deleteList = []
+    for i in range(len(candidates) - 1):
+        if i in deleteList:
+            continue
+        else:
+            j=1
+            while i+j<len(candidates) and candidates[i+j] - candidates[i] < delay:
+                deleteList.append(i + j)
+                j+=1
 
-        # ########################################################################################
-        # # Algorithms go here
-        # filepath2 = cropVideo(
-        #     inputFile=highlight_request.videoFile.path,
-        #     outputFile="face_detected.mp4",
-        #     x=0,
-        #     y=0,
-        #     w=100,
-        #     h=100
-        # )
-        #
-        # # Result file
-        # f2 = open(filepath2, 'rb')
-        #
-        # # Register them on DB
-        # b = MergedVideo.objects.create(
-        #     owner=user_instance,
-        #     videoNumber=40980383243,
-        #     date="20190427",
-        #     path=savepath,
-        #     video=None,
-        # )
-        # # Link DB and files
-        # b.video.save(highlight_request.title + "2.mp4", File(f2))
-        # f2.close()
-        # ########################################################################################
-        #
-        # ########################################################################################
-        # # Algorithms go here
-        # filepath3 = cropVideo(
-        #     inputFile=highlight_request.videoFile.path,
-        #     outputFile="face_detected.mp4",
-        #     x=100,
-        #     y=100
-        # )
-        #
-        # # Result file
-        # f3 = open(filepath3, 'rb')
-        #
-        # # Register them on DB
-        # c = MergedVideo.objects.create(
-        #     owner=user_instance,
-        #     videoNumber=409803829,
-        #     date="20190502",
-        #     path=savepath,
-        #     video=None,
-        # )
-        #
-        # # Link DB and files
-        # c.video.save(highlight_request.title + "3.mp4", File(f3))
-        # f3.close()
-        # ########################################################################################
 
-        # After algorithm runs
-        os.remove("face_detected.mp4")
+
+    print(deleteList)
+    print(candidates)
+
+    for i in deleteList:
+        candidates[i] = -1
+
+    candidates = [[i-delay, i+delay] for i in candidates if i != -1]
+
+    # post-processing
+    for i in range(len(candidates)):
+        if candidates[i][0] < 0:
+            candidates[i][0] = 0
+        if candidates[i][1] > videoLen:
+            candidates[i][1] = videoLen
+
+    return candidates
+
+def makeHighlight(highlight_request, user_instance, video_object):
+
+    numOfHighlights = 10
+
+    #
+    # Chat Download
+    #
+    chat_save_path = os.path.join(settings.MEDIA_ROOT, highlight_request.path)
+    print("The downloaded chat will be stored at --> " + chat_save_path)
+    chatlog = getTwitchChat(str(video_object.videoNumber), chat_save_path)
+
+    # If TCD fails, there will be no highlight
+    if chatlog is None:
+        print("Fail to create chatlog !!!")
+        raise AlgorithmError
+
+
+
+    #
+    # Make Highlights
+    #
+    if video_object.face ==True:
+
+        temp_cand = makeCandidatesByChatlog(chatlog=chatlog, numOfHighlights=40)
+
+        cand = makeCandidatesByEmotion(original_candidate=temp_cand, numOfHighlights=10 )
+
+    else:
+
+        cand = makeCandidatesByChatlog(chatlog=chatlog, numOfHighlights=10)
+
+    video_length = get_video_length(highlight_request.videoFile.path)
+
+    sections = getTimeSection(candidates=cand, videoLen=video_length, delay=int(video_object.delay))
+
+    print(sections)
+
+    # highlights = split_video(highlight_request.videoFile.path, sections)
+    #
+    #
+    # #
+    # # Register them on DB
+    # #
+    # for highlight in highlights:
+    #     file = open(highlight, 'rb')
+    #
+    #     highlight_obj = MergedVideo.objects.create(
+    #         owner=user_instance,
+    #         videoNumber=video_object.videoNumber,
+    #         date=video_object.date,
+    #         path=highlight_request.path,
+    #         video=None,
+    #     )
+    #
+    #     # Link DB and files
+    #     highlight_obj.video.save(highlight_request.title + ".mp4", File(file))
+    #     file.close()
+    #

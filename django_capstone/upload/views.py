@@ -15,22 +15,20 @@ def upload(request):
         return render(request, 'mypage/alert.html', {'msg': "잘못된 접근입니다"})
 
     if request.method == 'POST':  # if form is send by POST...
-        request.session['delay'] = request.POST.get('delay', '')
+        request.session['delay'] = int(request.POST.get('delay', ''))
         request.session['face'] = request.POST.get('face', '') == 'on'
         request.session['speech'] = request.POST.get('speech', '') == 'on'
         request.session['chat'] = request.POST.get('chat', '') == 'on'
         request.session['youtube'] = request.POST.get('youtube', '') == 'on'
-        request.session['rect_x'] = request.POST.get('rect_x', '')
-        request.session['rect_y'] = request.POST.get('rect_y', '')
-        request.session['rect_width'] = request.POST.get('rect_width', '')
-        request.session['rect_height'] = request.POST.get('rect_height', '')
+        request.session['rect_x'] = int(request.POST.get('rect_x', ''))
+        request.session['rect_y'] = int(request.POST.get('rect_y', ''))
+        request.session['rect_width'] = int(request.POST.get('rect_width', ''))
+        request.session['rect_height'] = int(request.POST.get('rect_height', ''))
 
         user_name = request.session['owner']
         vid = request.session['videoNumber']
         date = re.sub('[.]', '', request.session['today'])
         request.session['path'] = os.path.join(str(user_name),str(date),str(vid))
-        if not os.path.exists(request.session['path']):
-            os.makedirs(request.session['path'])
         print(request.session['path'])
 
     # Redirect after POST
@@ -89,30 +87,14 @@ def uploadVideo(request):
                 rect_height=request.session['rect_height'],
             )
             ############ test code #############
-            if request.session['face'] == True:
-                algorithm_thread = threading.Thread(target=makeHighlight,
-                                                        args=(
-                                                            new_request,
-                                                            user_instance,
-                                                            request.session['videoNumber'],
-                                                            request.session['path'],
-                                                            int(new_video.rect_x),
-                                                            int(new_video.rect_y),
-                                                            int(new_video.rect_width),
-                                                            int(new_video.rect_height),
-                                                        ))
-                algorithm_thread.start()
 
-            else:
-                algorithm_thread = threading.Thread(target=makeHighlight,
+            algorithm_thread = threading.Thread(target=makeHighlight,
                                                     args=(
                                                         new_request,
                                                         user_instance,
-                                                        request.session['videoNumber'],
-                                                        request.session['path'],
+                                                        new_video,
                                                     ))
-                algorithm_thread.start()
-
+            algorithm_thread.start()
 
             ############# test code #############
             print('new video object created.')

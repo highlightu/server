@@ -172,39 +172,6 @@ class ChatAnalyze:
 
     # string to seconds
 
-    def second(self, str):
-        arr = re.split("[:]", str)
-        if len(arr) != 3:
-            print("check time string :"+str)
-        return int(arr[0])*3600 + int(arr[1])*60 + int(arr[2])
-
-    # make candidate list
-
-    def makeCandidateList(self, histogram, numOfMaximumHighlight, delay, videoLen):
-        # make raw candidate list
-        sorted_list = sorted(histogram.items(), key=lambda t: t[1], reverse=True)[
-            :numOfMaximumHighlight]
-        sorted_list = [self.second(i[0]) for i in sorted_list]
-        candidates = sorted(sorted_list)
-
-        # if picked points are too close
-        deleteList = []
-        for i in range(len(candidates) - 1):
-            if candidates[i+1] - candidates[i] < delay:
-                deleteList.append(i+1)
-        for i in deleteList:
-            del candidates[i]
-
-        candidates = [[i-delay, i+delay] for i in candidates]
-
-        # post-processing
-        for i in range(len(candidates)):
-            if candidates[i][0] < 0:
-                candidates[i][0] = 0
-            if candidates[i][1] > videoLen:
-                candidates[i][1] = videoLen
-
-        return candidates
 
 
 # How to use this class

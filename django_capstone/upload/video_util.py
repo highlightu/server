@@ -1,4 +1,5 @@
 from moviepy.editor import VideoFileClip, concatenate_videoclips
+import cv2
 
 # videos_path = ["demo_video.mp4", "demo_video.mp4"]
 # processed_file_name = "demodemo.mp4"
@@ -25,12 +26,11 @@ def split_video(video_path, split_times):
         sub_clip.write_videofile(write_path)
          
 def get_video_length(clip):
-    # clip =  VideoFileClip(video_path)
-    # type(clip.duration) == float
-    return clip.duration
+    v = cv2.VideoCapture(clip)
+    fps = v.get(cv2.CAP_PROP_FPS)
+    total = v.get(cv2.CAP_PROP_FRAME_COUNT)
+    return int(total/fps)
 
-
-import cv2
 
 
 def cropVideo(inputFile, outputFile, x=0, y=0, w=640, h=480):
