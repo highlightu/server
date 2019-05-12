@@ -97,7 +97,8 @@ def makeCandidatesByChatlog(chatlog, numOfHighlights):
     cummulative_sec = 5
 
     labeldwords = ['pog', 'poggers', 'pogchamp', 'holy', 'shit', 'wow', 'ez', 'clip', 'nice',
-                   'omg', 'wut', 'gee', 'god', 'dirty', 'way', 'moly', 'wtf', 'fuck', 'crazy', 'omfg']
+               'omg', 'wut', 'gee', 'god', 'dirty', 'way', 'moly', 'wtf', 'fuck', 'crazy', 'omfg', 'kappa', 'trihard', '4head', 'cmonbruh', 'lul', 'haha', 'sourpls', 'feelsbadman', 'feelsgoodman', 'gachigasm',  'monkas', 'pepehands', 'destructroid', 'jebaited'
+               ]
 
     f = open(chatlog, 'rt', encoding='UTF8')
 
@@ -114,8 +115,9 @@ def makeCandidatesByChatlog(chatlog, numOfHighlights):
     return sorted_list
 
 def makeCandidatesByEmotion(original_candidate, numOfHighlights):
-    cand = original_candidate
-    return cand
+    pass
+    #cand = face detection ( path, original_candidate, [x,y,w,h])
+    #return cand
 
 
 def second(timestamp):

@@ -12,7 +12,7 @@ Expected Outputs :
 '''
 
 
-def face_detection(video_file):
+def face_detection(video_file,x=0, y=0, w=640, h=480):
     # Open the input movie file
     input_video = cv2.VideoCapture(video_file)
     length = int(input_video.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -42,6 +42,7 @@ def face_detection(video_file):
 
         # TODO Check if this one is necessary
         # Resize frame of video to 1/4 size for faster face detection processing
+        frame = frame[y:y+h, x:x+w]
         small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
 
         ''' If we need face recognition '''

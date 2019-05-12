@@ -3,6 +3,7 @@ from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.corpus import stopwords
 from collections import Counter, OrderedDict
 from .repeatReplacer import RepeatReplacer
+from sklearn.preprocessing import normalize
 import re
 
 
@@ -102,8 +103,8 @@ class ChatAnalyze:
         i = 0
 
         # Check if the most freqent word is in labelwords
-        # if yes, skip and check next one 
-        # if no, append it 
+        # if yes, skip and check next one
+        # if no, append it
         while iteration < 10:
             if list(counts.keys())[i] not in self.labeledwords:
                 self.labeledwords.append(list(counts.keys())[i])
@@ -139,7 +140,8 @@ class ChatAnalyze:
             sum = 0
             for i in range(iteration):
                 sum += score[i+index]
-                self.Final_Result[eachResult[0]] = sum
+
+            self.Final_Result[eachResult[0]] = sum
             index += iteration
 
         return self.Final_Result
@@ -148,30 +150,39 @@ class ChatAnalyze:
     def Sectioned_Scoring(self, finalresult, section):
 
         result = list()
-        
+
         # Finalresult (dict) to result (list)
         for key, value in finalresult.items():
             temp = [key, value]
             result.append(temp)
 
-
         for eachResult in result:
             sum = 0
-            
+
             # Check if section is over or not.
             if (result.index(eachResult) + section) <= len(result):
                 startindex = result.index(eachResult)
                 sumList = result[startindex: startindex + section]
-                
+
                 for eachsumList in sumList:
                     sum += eachsumList[1]
 
                 self.Sectioned_Result[eachResult[0]] = sum
             else:
-                return self.Sectioned_Result
+                return normalizing(self.Sectioned_Result)
+
+def normalizing(Sectioned_Result):
+    # Normalization
+    max_sum = max(Sectioned_Result.items(),
+                  key=operator.itemgetter(1))[1]
+    print('max sum is ', max_sum)
+    for key, value in Sectioned_Result.items():
+        Sectioned_Result[key] = value / max_sum
+
+    return Sectioned_Result
+
 
     # string to seconds
-
 
 
 # How to use this class
