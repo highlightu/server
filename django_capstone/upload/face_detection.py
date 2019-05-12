@@ -69,23 +69,33 @@ def face_detection(video_file, original_candidate, x, y, w, h):
             for face_location in face_locations:
                 top, right, bottom, left = face_location
                 location = [top, left, right-left, bottom-top]
-                # TODO mememoji <== location and make the image as 48x48
-                # Get scores
 
-            for eachlist in list(Checklist_withchat.values()):
-                if (index/fps) in eachlist:
-                    Checklist_withchat[(index/fps)
-                                       ] = mememoji_scoring(location)
+            for key, value in Checklist_withchat.items():
+
+                if (index/fps) in value:
+
+                    idx = value.index((index/fps))
+
+                    # Add score value calculated by mememoji
+                    # TODO mememoji <== location and make the image as 48x48
+                    # Get scores
+                    
+                    Checklist_withchat[key][idx] = 5
                     #timestamp = time.strftime('%H:%M:%S', time.gmtime(index/fps))
                     #Output_Dict[small_frame] = location
+
         else:
             continue
-
+    print(Checklist_withchat)
     # Sum up
-    for key in Checklist_withchat.keys():
-        Output_Dict[key] = sum(Checklist_withchat[key]) / \
-            section  # normalizing
-
+    for key , value in Checklist_withchat.items():
+        print(key)
+        sumValue = 0
+        for eachValue in value:
+           sumValue += eachValue
+        Output_Dict[key] = sumValue / section # normalizing
+    
+    print(Output_Dict)
     # All done!
     input_video.release()
     cv2.destroyAllWindows()
@@ -97,12 +107,13 @@ def Change_timeunit(time_list, section):
     output = dict()
     for eachtime in time_list:
         sectioned_list = list()
+        int_timelist = eachtime.split(":")
         for frame in range(section):
-            int_timelist = eachtime.split(":")
             temp_result = (int(int_timelist[0]) * 3600) + \
                 (int(int_timelist[1]) * 60) + \
                 (int(int_timelist[2]))
             sectioned_list.append(temp_result)
+            int_timelist[2] = int(int_timelist[2]) + 1
         output[sectioned_list[0]] = sectioned_list
 
     return output
