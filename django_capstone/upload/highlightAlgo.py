@@ -1,14 +1,17 @@
 from dashboard.models import MergedVideo
 from django.core.files import File
-import os
+from .face_detection import face_detection
 from .chatAnalyze import ChatAnalyze
 from .video_util import *
 from django.conf import settings
 import subprocess
+import os
 import re
+
 
 class Error(Exception):
     pass
+
 
 class AlgorithmError(Error):
 
@@ -16,9 +19,10 @@ class AlgorithmError(Error):
         self.expression = expression
         self.message = message
 
+
 def getTwitchChat(videoID, savePath):
 
-    chatLogPath = os.path.join(savePath ,videoID + ".txt")
+    chatLogPath = os.path.join(savePath, videoID + ".txt")
     if os.path.isfile(chatLogPath):
         print("Chatlog already exists ! ")
         return chatLogPath
@@ -66,7 +70,6 @@ def getTwitchChat(videoID, savePath):
             ]
     ############################# for Windows #############################
 
-
     ############################# for Linux #############################
     # if savePath[-1] != '/':
     #     savePath = savePath + '/'
@@ -81,15 +84,13 @@ def getTwitchChat(videoID, savePath):
         print("twitch chat download finish!")
         print("this file downloaded in ", savePath)
 
-
         return chatLogPath
 
     except subprocess.CalledProcessError as e:
-        print("Twitch chat download failed: ",e)
+        print("Twitch chat download failed: ", e)
         return None
 
     return None
-
 
 
 def makeCandidatesByChatlog(chatlog, numOfHighlights):
@@ -97,8 +98,8 @@ def makeCandidatesByChatlog(chatlog, numOfHighlights):
     cummulative_sec = 5
 
     labeldwords = ['pog', 'poggers', 'pogchamp', 'holy', 'shit', 'wow', 'ez', 'clip', 'nice',
-               'omg', 'wut', 'gee', 'god', 'dirty', 'way', 'moly', 'wtf', 'fuck', 'crazy', 'omfg', 'kappa', 'trihard', '4head', 'cmonbruh', 'lul', 'haha', 'sourpls', 'feelsbadman', 'feelsgoodman', 'gachigasm',  'monkas', 'pepehands', 'destructroid', 'jebaited'
-               ]
+                   'omg', 'wut', 'gee', 'god', 'dirty', 'way', 'moly', 'wtf', 'fuck', 'crazy', 'omfg', 'kappa', 'trihard', '4head', 'cmonbruh', 'lul', 'haha', 'sourpls', 'feelsbadman', 'feelsgoodman', 'gachigasm',  'monkas', 'pepehands', 'destructroid', 'jebaited'
+                   ]
 
     f = open(chatlog, 'rt', encoding='UTF8')
 
@@ -107,17 +108,18 @@ def makeCandidatesByChatlog(chatlog, numOfHighlights):
     score = chat_analyzer.Preprocessing()
     result = chat_analyzer.Scoring(score)
     sectioned_result = chat_analyzer.Sectioned_Scoring(result, cummulative_sec)
-    sorted_list = sorted(sectioned_result.items(), key=lambda t: t[1], reverse=True)[:numOfHighlights]
+    sorted_list = sorted(sectioned_result.items(),
+                         key=lambda t: t[1], reverse=True)[:numOfHighlights]
     print(sorted_list)
-    sorted_list = dict(sorted([ (second(t),v) for t,v in sorted_list ]))
+    sorted_list = dict(sorted([(second(t), v) for t, v in sorted_list]))
     print(sorted_list)
 
     return sorted_list
 
-def makeCandidatesByEmotion(original_candidate, numOfHighlights):
-    pass
-    #cand = face detection ( path, original_candidate, [x,y,w,h])
-    #return cand
+
+def makeCandidatesByEmotion(videopath, original_candidate, x, y, w, h, numOfHighlights):
+    cand = face_detection(videopath, original_candidate, x, y, w, h)
+    return cand
 
 
 def second(timestamp):
@@ -139,12 +141,10 @@ def getTimeSection(candidates, videoLen, delay):
         if i in deleteList:
             continue
         else:
-            j=1
-            while i+j<len(candidates) and candidates[i+j] - candidates[i] < delay:
+            j = 1
+            while i+j < len(candidates) and candidates[i+j] - candidates[i] < delay:
                 deleteList.append(i + j)
-                j+=1
-
-
+                j += 1
 
     print(deleteList)
     print(candidates)
@@ -163,6 +163,7 @@ def getTimeSection(candidates, videoLen, delay):
 
     return candidates
 
+
 def makeHighlight(highlight_request, user_instance, video_object):
 
     numOfHighlights = 10
@@ -179,16 +180,24 @@ def makeHighlight(highlight_request, user_instance, video_object):
         print("Fail to create chatlog !!!")
         raise AlgorithmError
 
-
-
     #
     # Make Highlights
     #
-    if video_object.face ==True:
+    if video_object.face == True:
 
-        temp_cand = makeCandidatesByChatlog(chatlog=chatlog, numOfHighlights=40)
+        temp_cand = makeCandidatesByChatlog(
+            chatlog=chatlog, numOfHighlights=40)
 
-        cand = makeCandidatesByEmotion(original_candidate=temp_cand, numOfHighlights=10 )
+        # Get video path and resized frame info
+        videopath = video_object.videoFileURL
+        x = video_object.rect_x
+        y = video_object.rect_y
+        width = video_object.rect_width
+        height = video_object.rect_.height
+
+        # TODO videopath should be input
+        cand = makeCandidatesByEmotion(
+            videopath=videopath, original_candidate=temp_cand, x=x, y=y, w=width, h=height, numOfHighlights=10)
 
     else:
 
@@ -196,7 +205,8 @@ def makeHighlight(highlight_request, user_instance, video_object):
 
     video_length = get_video_length(highlight_request.videoFile.path)
 
-    sections = getTimeSection(candidates=cand, videoLen=video_length, delay=int(video_object.delay))
+    sections = getTimeSection(
+        candidates=cand, videoLen=video_length, delay=int(video_object.delay))
 
     print(sections)
 

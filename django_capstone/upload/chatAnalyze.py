@@ -4,6 +4,7 @@ from nltk.corpus import stopwords
 from collections import Counter, OrderedDict
 from .repeatReplacer import RepeatReplacer
 from sklearn.preprocessing import normalize
+import operator
 import re
 
 
@@ -171,6 +172,7 @@ class ChatAnalyze:
             else:
                 return normalizing(self.Sectioned_Result)
 
+
 def normalizing(Sectioned_Result):
     # Normalization
     max_sum = max(Sectioned_Result.items(),
@@ -181,11 +183,7 @@ def normalizing(Sectioned_Result):
 
     return Sectioned_Result
 
-
-    # string to seconds
-
-
-# How to use this class
+    # How to use this class
 if __name__ == '__main__':
     labeldwords = ['pog', 'poggers', 'pogchamp', 'holy', 'shit', 'wow', 'ez', 'clip', 'nice',
                    'omg', 'wut', 'gee', 'god', 'dirty', 'way', 'moly', 'wtf', 'fuck', 'crazy', 'omfg']
