@@ -7,6 +7,7 @@ from django.conf import settings
 import subprocess
 import os
 import re
+from .video_util import cropVideo
 
 
 class Error(Exception):
@@ -60,24 +61,25 @@ def getTwitchChat(videoID, savePath):
     # 추가.
 
     ############################# for Windows #############################
-    if savePath[-1] != '\\':
-        savePath = savePath + '\\'
+    #if savePath[-1] != '\\':
+    #    savePath = savePath + '\\'
+    #
+    #proc = ["tcd",
+    #        "-v", videoID,
+    #        "--output", savePath,
+    #        "--format", "capstone",
+    #        ]
+    ############################# for Windows #############################
 
-    proc = ["tcd",
+
+    ############################# for Linux #############################
+    if savePath[-1] != '/':
+        savePath = savePath + '/'
+    proc = ["sudo", "tcd",
             "-v", videoID,
             "--output", savePath,
             "--format", "capstone",
             ]
-    ############################# for Windows #############################
-
-    ############################# for Linux #############################
-    # if savePath[-1] != '/':
-    #     savePath = savePath + '/'
-    # proc = ["sudo", "tcd",
-    #         "-v", videoID,
-    #         "--output", savePath,
-    #         "--format", "capstone",
-    #         ]
     ############################# for Linux #############################
     try:
         subprocess.check_call(proc)
@@ -232,5 +234,3 @@ def makeHighlight(highlight_request, user_instance, video_object):
 
             # Link DB and files
             highlight_obj.video.save(highlight_request.title + ".mp4", File(file))
-
-

@@ -8,7 +8,9 @@ import re, os
 from dashboard.views import getThumb
 import threading
 from .highlightAlgo import makeHighlight
+from django.views.decorators.csrf import csrf_exempt
 
+@csrf_exempt
 def upload(request):
     keys = list(request.session.keys())
     if 'owner' not in keys and 'videoNumber' not in keys and 'today' not in keys:

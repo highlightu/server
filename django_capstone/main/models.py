@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import datetime, timedelta
 # Create your models here.
 
 
@@ -11,6 +12,7 @@ from django.db import models
 
 class User(models.Model):
     user_name = models.CharField(max_length=50, primary_key=True)
+    expire_date = models.DateTimeField(auto_now_add=True)
 
     # Methods
     # def get_absolute_url(self):
@@ -20,3 +22,10 @@ class User(models.Model):
     def __str__(self):
         """String for representing the MyModelName object (in Admin site etc.)."""
         return self.user_name
+    
+    
+    def update_expire_date(self, add_expire_date):
+        d = timedelta(days = add_expire_date)
+        expire_date = datetime.now() + d
+
+

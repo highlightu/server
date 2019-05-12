@@ -56,7 +56,7 @@ def cropVideo(inputFile, outputFile, x=0, y=0, w=640, h=480):
         ret, frame = video.read()
         if ret == True:
             frame = frame[y:y+h, x:x+w]
-            cv2.imshow("",frame)
+           # cv2.imshow("",frame)
             out.write(frame)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
