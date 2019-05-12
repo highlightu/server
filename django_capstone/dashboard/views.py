@@ -99,7 +99,7 @@ def history(request):
     return render(request, 'mypage/history.html',{
         'merged_videos': myMergedVideoSet,
         'page':page,
-        # "url": video_url,
+        "MEDIA_URL": settings.MEDIA_URL
     })
 
 def download(request, id):

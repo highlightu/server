@@ -13,17 +13,23 @@ def concatenate_video(videos_path, processed_file_name):
     final_clip.write_videofile(processed_file_name)
    
 
-def split_video(video_path, split_times):
+def split_video(video_path, save_path, video_id, split_times):
 
     clip = VideoFileClip(video_path)
+    video_list = []
 
     for split_time in split_times:
-
+        title = save_path + str(video_id) + '_' + str(split_time[0]) + '_' + str(split_time[1]) + '.mp4'
         sub_clip = clip.subclip(split_time[0],split_time[1])
-        write_path = str(split_time[0]) + '_' + str(split_time[1]) + '.mp4'
 
-        print("writing... to ", write_path)
-        sub_clip.write_videofile(write_path)
+        print("writing... to ", title)
+        sub_clip.write_videofile(title)
+        video_list.append(title)
+
+    return video_list
+
+
+
          
 def get_video_length(clip):
     v = cv2.VideoCapture(clip)

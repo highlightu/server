@@ -164,7 +164,7 @@ def getTimeSection(candidates, videoLen, delay):
 def makeHighlight(highlight_request, user_instance, video_object):
 
     numOfHighlights = 10
-
+    multiplier = 4
     #
     # Chat Download
     #
@@ -184,38 +184,40 @@ def makeHighlight(highlight_request, user_instance, video_object):
     #
     if video_object.face ==True:
 
-        temp_cand = makeCandidatesByChatlog(chatlog=chatlog, numOfHighlights=40)
+        temp_cand = makeCandidatesByChatlog(chatlog=chatlog, numOfHighlights=numOfHighlights*multiplier)
 
-        cand = makeCandidatesByEmotion(original_candidate=temp_cand, numOfHighlights=10 )
+        cand = makeCandidatesByEmotion(original_candidate=temp_cand, numOfHighlights=numOfHighlights )
 
     else:
 
-        cand = makeCandidatesByChatlog(chatlog=chatlog, numOfHighlights=10)
+        cand = makeCandidatesByChatlog(chatlog=chatlog, numOfHighlights=numOfHighlights)
 
-    video_length = get_video_length(highlight_request.videoFile.path)
+    video_length = get_video_length(clip=highlight_request.videoFile.path)
 
     sections = getTimeSection(candidates=cand, videoLen=video_length, delay=int(video_object.delay))
 
     print(sections)
 
-    # highlights = split_video(highlight_request.videoFile.path, sections)
+    highlights = split_video(video_path=highlight_request.videoFile.path,
+                             save_path=highlight_request.path,
+                             video_id=video_object.videoNumber,
+                             split_times=sections)
+
+
     #
+    # Register them on DB
     #
-    # #
-    # # Register them on DB
-    # #
-    # for highlight in highlights:
-    #     file = open(highlight, 'rb')
-    #
-    #     highlight_obj = MergedVideo.objects.create(
-    #         owner=user_instance,
-    #         videoNumber=video_object.videoNumber,
-    #         date=video_object.date,
-    #         path=highlight_request.path,
-    #         video=None,
-    #     )
-    #
-    #     # Link DB and files
-    #     highlight_obj.video.save(highlight_request.title + ".mp4", File(file))
-    #     file.close()
-    #
+    for highlight in highlights:
+        with open(highlight, 'rb') as file:
+            highlight_obj = MergedVideo.objects.create(
+                owner=user_instance,
+                videoNumber=video_object.videoNumber,
+                date=video_object.date,
+                path=highlight_request.path,
+                video=None,
+            )
+
+            # Link DB and files
+            highlight_obj.video.save(highlight_request.title + ".mp4", File(file))
+
+
