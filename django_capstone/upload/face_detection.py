@@ -2,8 +2,7 @@ import face_recognition
 import cv2
 import numpy as np
 import time
-import tflearn
-
+from deep import build_net
 from collections import deque
 from tflearn.data_preprocessing import ImagePreprocessing
 
@@ -19,33 +18,38 @@ Expected Outputs :
 '''
 
 
-def face_detection(video_file, original_candidate, x, y, w, h):
+def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, height):
     # Open the input movie file
     input_video = cv2.VideoCapture(video_file)
     length = int(input_video.get(cv2.CAP_PROP_FRAME_COUNT))
 
     # Initialize some variables
     face_locations = list()
+    check_timelist = list()
     fps = round(input_video.get(cv2.CAP_PROP_FPS))
     section = 5
     Checklist_withchat = Change_timeunit(
         list(original_candidate.keys()), section)
     Output_Dict = dict()
+
     face_cascade = cv2.CascadeClassifier(
         'haarcascade_frontalface_default.xml')
-    model_emo = tflearn.DNN
+    model_emo = build_net()
     emotions = ["Fear", "Happy", "Sad", "Surprise", "Neutral"]
 
     gy_offset = 0
     gx_offset = 0
 
+    for eachValue in Checklist_withchat.values():
+        for eachElement in eachValue:
+            check_timelist.append(eachElement)
+
     while input_video.isOpened():
         # Grab a single frame of video
         ret, frame = input_video.read()
-        # time = input_video.get(cv2.CAP_PROP_POS_MSEC)
+        #time = input_video.get(cv2.CAP_PROP_POS_MSEC)
         index = input_video.get(cv2.CAP_PROP_POS_FRAMES)
-
-        # print('frames: %d   ---   times: %f' % (index, time/1000))
+        #print('frames: %d   ---   times: %f' % (index, time/1000))
 
         if frame is None:
             break
@@ -55,24 +59,27 @@ def face_detection(video_file, original_candidate, x, y, w, h):
             break
 
         # Check each sec if it is in the Checklist
-        if (index/fps) not in set(Checklist_withchat):
+        if (index/fps) not in set(check_timelist):
             continue
-
+        
         # TODO Check if this one is necessary
         # Resize frame of video to 1/4 size for faster face detection processing
-        frame = frame[y:y+h, x:x+w]
+        frame = frame[pixel_y:pixel_y+height, pixel_x:pixel_x+width]
         small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
 
         # Find all the faces in the frame
         #face_locations = face_recognition.face_locations(small_frame)
         grayed = cv2.cvtColor(small_frame, cv2.COLOR_BGR2GRAY)
         face_locations = face_cascade.detectMultiScale(grayed, 1.3, 5)
+        
+        print(face_locations)
 
-        if face_locations:
-
+        if face_locations[0][0] > 0:
             ''' Face Detection '''
             # We assume there is only one face in the image
             # Execute only face is detected
+
+            print("Face is detected")
             for (x, y, w, h) in face_locations:
 
                 y_offset = y
@@ -80,27 +87,25 @@ def face_detection(video_file, original_candidate, x, y, w, h):
 
                 gy_offset = y_offset
                 gx_offset = x_offset
-                '''
-                if grayed.shape[0] < y_offset :
-                    pass
-                '''
+
                 roi_gray = grayed[y:y + h, x:x + w]
 
                 image_scaled = np.array(cv2.resize(
                     roi_gray, (48, 48)), dtype=float)
                 image_processed = image_scaled.flatten()
                 processedimage = image_processed.reshape([-1, 48, 48, 1])
-                # print("predict image")
+                print("predict image")
+                
                 prediction = model_emo.predict(processedimage)
-
-                # print("gender prediction! : " + str(list(prediction_gender)))
                 emotion_probability, emotion_index = max(
                     (val, idx) for (idx, val) in enumerate(prediction[0]))
                 emotion = emotions[emotion_index]
 
-                # for face_location in face_locations:
-                #     top, right, bottom, left = face_location
-                #     location = [top, left, right-left, bottom-top]
+                print(emotion_probability)
+                print(emotion)
+
+                if emotion == 'Neutral':
+                    emotion_probability = 0
 
             for key, value in Checklist_withchat.items():
 
@@ -108,26 +113,24 @@ def face_detection(video_file, original_candidate, x, y, w, h):
 
                     idx = value.index((index/fps))
 
-                    # Add score value calculated by mememoji
-                    # TODO mememoji <== location and make the image as 48x48
-                    # Get scores
-
                     Checklist_withchat[key][idx] = emotion_probability
-                    #timestamp = time.strftime('%H:%M:%S', time.gmtime(index/fps))
-                    #Output_Dict[small_frame] = location
 
         else:
             continue
+
+    print("checklist withchat")
     print(Checklist_withchat)
+
     # Sum up
     for key, value in Checklist_withchat.items():
-        print(key)
         sumValue = 0
         for eachValue in value:
             sumValue += eachValue
         Output_Dict[key] = sumValue / section  # normalizing
 
+    print("output dict")
     print(Output_Dict)
+
     # All done!
     input_video.release()
     cv2.destroyAllWindows()
