@@ -61,7 +61,7 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
         # Check each sec if it is in the Checklist
         if (index/fps) not in set(check_timelist):
             continue
-        
+
         # TODO Check if this one is necessary
         # Resize frame of video to 1/4 size for faster face detection processing
         frame = frame[pixel_y:pixel_y+height, pixel_x:pixel_x+width]
@@ -71,7 +71,7 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
         #face_locations = face_recognition.face_locations(small_frame)
         grayed = cv2.cvtColor(small_frame, cv2.COLOR_BGR2GRAY)
         face_locations = face_cascade.detectMultiScale(grayed, 1.3, 5)
-        
+
         print(face_locations)
 
         if face_locations[0][0] > 0:
@@ -95,7 +95,7 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
                 image_processed = image_scaled.flatten()
                 processedimage = image_processed.reshape([-1, 48, 48, 1])
                 print("predict image")
-                
+
                 prediction = model_emo.predict(processedimage)
                 emotion_probability, emotion_index = max(
                     (val, idx) for (idx, val) in enumerate(prediction[0]))
@@ -124,9 +124,13 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
     # Sum up
     for key, value in Checklist_withchat.items():
         sumValue = 0
+        timesection = section
         for eachValue in value:
+            if eachValue == 0:
+                timesection -= 1
             sumValue += eachValue
-        Output_Dict[key] = sumValue / section  # normalizing
+        Output_Dict[key] = (sumValue / timesection) * \
+            original_candidate[key]  # normalizing
 
     print("output dict")
     print(Output_Dict)

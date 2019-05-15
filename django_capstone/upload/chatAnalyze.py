@@ -192,9 +192,5 @@ if __name__ == '__main__':
     score = chatanlyze.Preprocessing()
     result = chatanlyze.Scoring(score)
     sectined_result = chatanlyze.Sectioned_Scoring(result, 5)
-    cand = chatanlyze.makeCandidateList(histogram=sectined_result,
-                                        numOfMaximumHighlight=10,
-                                        delay=1000,
-                                        videoLen=19000)
 
     print(cand)
