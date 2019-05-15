@@ -56,6 +56,9 @@
                     <a href="#page-top"></a>
                 </li>
                 <li>
+                    <a class="page-scroll" href="/mypage/archive?page=1">Mypage</a>
+                </li>
+                <li>
                     <a class="page-scroll" href="#about">About</a>
                 </li>
                 <li>
@@ -98,7 +101,7 @@
                 <a href="/social/" class="page-scroll btn btn-xl">Sign In!</a>
                 {% else %}
                 <div>
-                    <form action="/mypage/dashboard/" method="post" class="form-group">
+                    <form action="/upload/dashboard/" method="post" class="form-group">
                         {% csrf_token %}
                         <div class="row">
                             <div class="col-xs-3"></div>

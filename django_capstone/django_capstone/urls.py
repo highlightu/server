@@ -17,7 +17,7 @@ from django.conf.urls import include  # url뿐 아니라 include를 import해야
 from django.contrib import admin
 from django.urls import path
 from main.views import *  # 1st app : main homepage
-from dashboard.views import *  # 2nd app : dashboard
+from mypage.views import *  # 2nd app : dashboard
 from upload.views import *  # 3rd app : upload
 from django.conf.urls.static import static
 from django.conf.urls import url
@@ -45,19 +45,13 @@ urlpatterns = [
     # logout
     path('logout/', logout, name='logout'),
 
-    # dashboard
-    path('mypage/dashboard/', include('dashboard.urls'), name='dashboard'),
-
-    # history
-    path('mypage/history/', history, name='history'),
+    # mypage
+    path('mypage/', include('mypage.urls'), name='mypage'),
 
     # upload
-    path('mypage/upload/', include('upload.urls'), name='upload'),
+    path('upload/', include('upload.urls'), name='upload'),
 
-    # loading
-    path('mypage/loading/', loading, name='loading'),
-
-
+    # download
     path('download/<int:id>/', download, name='download'),
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

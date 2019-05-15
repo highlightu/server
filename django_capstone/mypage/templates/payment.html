@@ -64,20 +64,20 @@
                 <div id="layer2" class="pop-layer">
                     <div class="pop-container">
                         <div class="pop-conts">
-                            
+
                             <!-- Frame resizing-->
-                                <div style="position:absolute;">
-                                    <div style="position:relative;top:0px;left:0px;">
+                            <div style="position:absolute;">
+                                <div style="position:relative;top:0px;left:0px;">
                                     {% comment %} thSize = {'width': '1168', 'height': '657'} {% endcomment %}
-                                        <canvas id="canvas" width="1168" height="657"></canvas>
-					<div id=output></div>
-                                    </div>
+                                    <canvas id="canvas" width="1168" height="657"></canvas>
+                                    <div id=output></div>
                                 </div>
-                                <iframe id='backThumb' src="{{ thumb }}" frameborder="0"
-                                        allowfullscreen="false" scrolling="no" width="1168" height="657" ></iframe>
-                                <div class="btn-r">
+                            </div>
+                            <iframe id='backThumb' src="{{ thumb }}" frameborder="0"
+                                    allowfullscreen="false" scrolling="no" width="1168" height="657"></iframe>
+                            <div class="btn-r">
                                 <a href="#" class="btn-layerClose">Close</a>
-                                </div>
+                            </div>
                             <!--// content-->
                         </div>
                     </div>
@@ -213,9 +213,9 @@
     <!-- Nav -->
     <nav id="nav">
         <ul>
-            <li class="current"><a href="/mypage/dashboard/">Dashboard</a></li>
+            <li><a href="/mypage/archive?page=1">Archive</a></li>
 
-            <li><a href="/mypage/history/">Archives</a></li>
+            <li class="current"><a href="/mypage/payment/">Payment</a></li>
 
         </ul>
     </nav>

@@ -149,10 +149,3 @@ def Change_timeunit(time_list, section):
         output[sectioned_list[0]] = sectioned_list
 
     return output
-
-# location = [top, left, right-left, bottom-top]
-# Mememoji will return a score
-
-
-def mememoji_scoring(location):
-    pass

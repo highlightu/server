@@ -1,6 +1,6 @@
-from dashboard.models import MergedVideo
+from mypage.models import MergedVideo
 from django.core.files import File
-from .face_detection import face_detection
+# from .face_detection import face_detection
 from .chatAnalyze import ChatAnalyze
 from .video_util import *
 from django.conf import settings
@@ -61,25 +61,25 @@ def getTwitchChat(videoID, savePath):
     # 추가.
 
     ############################# for Windows #############################
-    #if savePath[-1] != '\\':
-    #    savePath = savePath + '\\'
-    #
-    #proc = ["tcd",
-    #        "-v", videoID,
-    #        "--output", savePath,
-    #        "--format", "capstone",
-    #        ]
+    if savePath[-1] != '\\':
+       savePath = savePath + '\\'
+
+    proc = ["tcd",
+           "-v", videoID,
+           "--output", savePath,
+           "--format", "capstone",
+           ]
     ############################# for Windows #############################
 
 
     ############################# for Linux #############################
-    if savePath[-1] != '/':
-        savePath = savePath + '/'
-    proc = ["sudo", "tcd",
-            "-v", videoID,
-            "--output", savePath,
-            "--format", "capstone",
-            ]
+    # if savePath[-1] != '/':
+    #     savePath = savePath + '/'
+    # proc = ["sudo", "tcd",
+    #         "-v", videoID,
+    #         "--output", savePath,
+    #         "--format", "capstone",
+    #         ]
     ############################# for Linux #############################
     try:
         subprocess.check_call(proc)
@@ -100,8 +100,10 @@ def makeCandidatesByChatlog(chatlog, numOfHighlights):
     cummulative_sec = 5
 
     labeldwords = ['pog', 'poggers', 'pogchamp', 'holy', 'shit', 'wow', 'ez', 'clip', 'nice',
-                   'omg', 'wut', 'gee', 'god', 'dirty', 'way', 'moly', 'wtf', 'fuck', 'crazy', 'omfg', 'kappa', 'trihard', '4head', 'cmonbruh', 'lul', 'haha', 'sourpls', 'feelsbadman', 'feelsgoodman', 'gachigasm',  'monkas', 'pepehands', 'destructroid', 'jebaited'
-                   ]
+                   'omg', 'wut', 'gee', 'god', 'dirty', 'way', 'moly', 'wtf', 'fuck', 'crazy',
+                   'omfg', 'kappa', 'trihard', '4head', 'cmonbruh', 'lul', 'haha', 'sourpls',
+                   'feelsbadman', 'feelsgoodman', 'gachigasm',  'monkas', 'pepehands',
+                   'destructroid', 'jebaited' ]
 
     f = open(chatlog, 'rt', encoding='UTF8')
 
@@ -119,8 +121,11 @@ def makeCandidatesByChatlog(chatlog, numOfHighlights):
     return sorted_list
 
 
-def makeCandidatesByEmotion(videopath, original_candidate, x, y, w, h, numOfHighlights):
-    cand = face_detection(videopath, original_candidate, x, y, w, h)
+# def makeCandidatesByEmotion(videopath, original_candidate, x, y, w, h, numOfHighlights):
+#     cand = face_detection(videopath, original_candidate, x, y, w, h)
+#     return cand
+def makeCandidatesByEmotion(original_candidate, numOfHighlights):
+    cand = original_candidate
     return cand
 
 

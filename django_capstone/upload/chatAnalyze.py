@@ -3,7 +3,7 @@ from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.corpus import stopwords
 from collections import Counter, OrderedDict
 from .repeatReplacer import RepeatReplacer
-from sklearn.preprocessing import normalize
+# from sklearn.preprocessing import normalize
 import operator
 import re
 
