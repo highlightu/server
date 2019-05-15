@@ -7,6 +7,7 @@ from django.conf import settings
 import subprocess
 import os
 import re
+import platform
 from .video_util import cropVideo
 
 
@@ -28,6 +29,27 @@ def getTwitchChat(videoID, savePath):
         print("Chatlog already exists ! ")
         return chatLogPath
 
+    system = platform.system()
+    if system == "Linux":
+        if savePath[-1] != '/':
+            savePath = savePath + '/'
+        proc = ["sudo", "tcd",
+                "-v", videoID,
+                "--output", savePath,
+                "--format", "capstone",
+                ]
+    elif system == "Windows":
+        if savePath[-1] != '\\':
+            savePath = savePath + '\\'
+
+        proc = ["tcd",
+                "-v", videoID,
+                "--output", savePath,
+                "--format", "capstone",
+                ]
+    else:
+        print("Cannot detect operating system...")
+        return None
     # getTwitchChat("406987059","/home/moyak/") 이런식으로 사용
     #
     # tcd 를 사용하기 위해 셋팅이 필요
@@ -60,27 +82,8 @@ def getTwitchChat(videoID, savePath):
     #
     # 추가.
 
-    ############################# for Windows #############################
-    if savePath[-1] != '\\':
-       savePath = savePath + '\\'
-
-    proc = ["tcd",
-           "-v", videoID,
-           "--output", savePath,
-           "--format", "capstone",
-           ]
-    ############################# for Windows #############################
 
 
-    ############################# for Linux #############################
-    # if savePath[-1] != '/':
-    #     savePath = savePath + '/'
-    # proc = ["sudo", "tcd",
-    #         "-v", videoID,
-    #         "--output", savePath,
-    #         "--format", "capstone",
-    #         ]
-    ############################# for Linux #############################
     try:
         subprocess.check_call(proc)
         print("twitch chat download finish!")
@@ -91,8 +94,6 @@ def getTwitchChat(videoID, savePath):
     except subprocess.CalledProcessError as e:
         print("Twitch chat download failed: ", e)
         return None
-
-    return None
 
 
 def makeCandidatesByChatlog(chatlog, numOfHighlights):
