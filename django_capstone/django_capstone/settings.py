@@ -86,7 +86,7 @@ INSTALLED_APPS = [
 
     # my apps
     'main',
-    'dashboard',
+    'mypage',
     'upload',
 ]
 

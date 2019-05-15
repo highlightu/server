@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.upload),
-    path('uploading/',views.uploadVideo),
+    path('dashboard/',views.dashboard),
+    path('uploading/',views.upload),
+    path('sendRequest/',views.uploadVideo),
 ]

@@ -17,11 +17,9 @@
     <!-- Custom styles for this template -->
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'mypage/css/main.css' %}"/>
-    <script src="{% static 'mypage/js/jquery.min.js' %}"></script>
-    <script src="{% static 'mypage/js/browser.min.js' %}"></script>
-    <script src="{% static 'mypage/js/breakpoints.min.js' %}"></script>
-    <script src="{% static 'mypage/js/util.js' %}"></script>
-    <script src="{% static 'mypage/js/main.js' %}"></script>
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'mypage/css/frame.css' %}"/>
+
 </head>
 <body class="is-preload">
 <!-- Content -->
@@ -47,9 +45,9 @@
                     the entire "date" element.
 
                 -->
-                <span class="date"><span class="month">{{ request.session.month }}<span>y</span></span> <span
-                        class="day">{{ request.session.day }}</span><span
-                        class="year"></span></span>
+                <span class="date"><span
+                        class="month">{{ request.session.month }}<span>{{ request.session.year }}</span></span> <span
+                        class="day">{{ request.session.day }}</span></span>
                 <!--
                     Note: You can change the number of list items in "stats" to whatever you want.
                 -->
@@ -60,20 +58,20 @@
             </div>
             {% comment %} <br/>
             <div style="position:static;">
-            <iframe id="backThumb" src="{{ thumb }}" 
-             marginwidth ="-{{request.session.rect_x}}px"
-             marginheight = "-{{request.session.rect_y}}px"
-             width="{{request.session.rect_width}}" 
-             height="{{request.session.rect_height}}" scrolling="no" frameborder="0"></iframe>
-              </div>
+                <iframe id="backThumb" src="{{ thumb }}"
+                        marginwidth="-{{request.session.rect_x}}px"
+                        marginheight="-{{request.session.rect_y}}px"
+                        width="{{request.session.rect_width}}"
+                        height="{{request.session.rect_height}}" scrolling="no" frameborder="0"></iframe>
+            </div>
             <br/><br/> {% endcomment %}
             <div>
                 <p>Delay : {{ request.session.delay }}</p>
-                
+
                 <p>Face Recognition : {{ request.session.face }}</p>
-                
+
                 <ul>
-                
+
                     <li>rect_x: {{ request.session.rect_x }}</li>
                     <li>rect_y: {{ request.session.rect_y }}</li>
                     <li>width: {{ request.session.rect_width }}</li>
@@ -84,7 +82,7 @@
                 <p>YouTube Upload : {{ request.session.youtube }}</p>
             </div>
 
-            <form action="/mypage/upload/uploading/" method="post" class="form-group" enctype="multipart/form-data"
+            <form action="/upload/sendRequest/" method="post" class="form-group" enctype="multipart/form-data"
                   novalidate>
                 {% csrf_token %}
                 {{ form.as_p }}
@@ -118,9 +116,9 @@
     <!-- Nav -->
     <nav id="nav">
         <ul>
-            <li class="current"><a href="/mypage/dashboard/">Dashboard</a></li>
+            <li><a href="/upload/dashboard/">Dashboard</a></li>
 
-            <li><a href="/mypage/history/">Archives</a></li>
+            <li class="current"><a href="/upload/uploading/">Video Upload</a></li>
 
         </ul>
     </nav>
@@ -155,7 +153,11 @@
 </div>
 
 <!-- Scripts -->
-
+<script src="{% static 'mypage/js/jquery.min.js' %}"></script>
+<script src="{% static 'mypage/js/browser.min.js' %}"></script>
+<script src="{% static 'mypage/js/breakpoints.min.js' %}"></script>
+<script src="{% static 'mypage/js/util.js' %}"></script>
+<script src="{% static 'mypage/js/main.js' %}"></script>
 
 </body>
 </html>

@@ -17,6 +17,8 @@
     <!-- Custom styles for this template -->
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'mypage/css/main.css' %}"/>
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'mypage/css/frame.css' %}"/>
     <script src="{% static 'mypage/js/jquery.min.js' %}"></script>
     <script src="{% static 'mypage/js/browser.min.js' %}"></script>
     <script src="{% static 'mypage/js/breakpoints.min.js' %}"></script>
@@ -29,6 +31,7 @@
 <script>
     alert("Login First");
     window.location.href = '/home/';
+
 
 </script>
 {% else %}
@@ -57,8 +60,9 @@
                     the entire "date" element.
 
                 -->
-                <span class="date"><span class="month">Apr<span>y</span></span> <span class="day">1</span><span
-                        class="year"></span></span>
+                <span class="date"><span
+                        class="month">{{ request.session.month }}<span>{{ request.session.year }}</span></span> <span
+                        class="day">{{ request.session.day }}</span></span>
                 <!--
                     Note: You can change the number of list items in "stats" to whatever you want.
                 -->
@@ -101,8 +105,8 @@
 
 
 
+
             </script>
-            <a href="#" class="button next">Next Page</a>
         </div>
 
     </div>
@@ -117,9 +121,9 @@
     <!-- Nav -->
     <nav id="nav">
         <ul>
-            <li><a href="/mypage/dashboard/">Dashboard</a></li>
+            <li class="current"><a href="/mypage/archive/">Archive</a></li>
 
-            <li class="current"><a href="/mypage/history/">Archives</a></li>
+            <li><a href="/mypage/payment/">Payment</a></li>
 
         </ul>
     </nav>

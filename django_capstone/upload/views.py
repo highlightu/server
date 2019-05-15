@@ -1,20 +1,115 @@
 from django.shortcuts import render, redirect
 from django.http import *
-from dashboard.models import Video
+from mypage.models import Video
 from main.models import User
 from .models import VideoUploadModel
 from .forms import VideoUploadForm
 import re, os
-from dashboard.views import getThumb
 import threading
 from .highlightAlgo import makeHighlight
 from django.views.decorators.csrf import csrf_exempt
+from .forms import RequestForm
+from django.utils import timezone
+import requests
+import re
+
+thSize = {'width': '1168', 'height': '657'}
+dateDict = {
+    '01': 'Jan',
+    '02': 'Feb',
+    '03': 'Mar',
+    '04': 'Apr',
+    '05': 'May',
+    '06': 'Jun',
+    '07': 'Jul',
+    '08': 'Aug',
+    '09': 'Sep',
+    '10': 'Oct',
+    '11': 'Nov',
+    '12': 'Dec',
+}
+
+
+def dashboard(request):
+    keys = list(request.session.keys())
+    if request.method == 'POST':  # if form is send by POST...
+        form = RequestForm(request.POST)  # bind it to the request form
+        if form.is_valid():  # if it has all attributes
+            fullURL = form.cleaned_data['url']
+            owner = form.cleaned_data['sender'].split('@')[0]
+
+            vid = re.split("[/]", fullURL)[-1]
+            print("Working VideoNumber is : " + vid)
+            url = "https://player.twitch.tv/?autoplay=false&video=v" + vid
+
+            request.session['videoNumber'] = int(vid)
+            request.session['owner'] = owner
+
+            # date
+            date = str(timezone.localtime())
+            date = re.split('[ ]', date)[0]
+            date = re.sub('[-]', '.', date)
+            request.session['today'] = date
+
+            date = re.split("[.]",date)
+            year = date[0]
+            month = dateDict[date[1]]
+            day = date[2]
+
+            request.session['year'] = year
+            request.session['month'] = month
+            request.session['day'] = day
+
+            # Redirect after POST
+            return render(request, 'dashboard.html', {
+                'thumb': getThumb(vid),
+            })
+        else:
+            return render(request, 'alert.html', {'msg': "Invalid Form was sent."})
+
+    elif 'owner' in keys and 'videoNumber' in keys and 'today' in keys:
+        return render(request, 'dashboard.html', {
+            'thumb': getThumb(str(request.session['videoNumber'])),
+        })
+    # no session data nor valid post data
+    return render(request, 'alert.html', {'msg': "잘못된 접근입니다"})
+
+def getVideoId(url):
+    VideoId = url.split("/")[-1]
+    return VideoId
+
+
+def getThumb(videoId):
+    # API요청을 보내기 위한 헤더
+    TWITCH_CLIENT_ID = "37v97169hnj8kaoq8fs3hzz8v6jezdj"
+    TWITCH_CLIENT_ID_HEADER = "Client-ID"
+    TWITCH_V5_ACCEPT = "application/vnd.twitchtv.v5+json"
+    TWITCH_V5_ACCEPT_HEADER = "Accept"
+    TWITCH_AUTHORIZATION_HEADER = "Authorization"
+
+    VIDEO_URL = "https://api.twitch.tv/kraken/videos/" + videoId
+
+    headers = {TWITCH_CLIENT_ID_HEADER: TWITCH_CLIENT_ID,
+               TWITCH_V5_ACCEPT_HEADER: TWITCH_V5_ACCEPT}
+
+    # API 요청을 보낸다.
+    video_request = requests.get(VIDEO_URL, headers=headers)
+    video_request_json = video_request.json()
+
+    # 썸네일 템플릿 url 획득
+    thumb_template_url = str(video_request_json['preview']['template'])
+
+    # 1920x1080크기의 썸네일 이미지를 얻는다.
+    size = thSize
+
+    return thumb_template_url.format(**size)
+
 
 @csrf_exempt
 def upload(request):
     keys = list(request.session.keys())
     if 'owner' not in keys and 'videoNumber' not in keys and 'today' not in keys:
-        return render(request, 'mypage/alert.html', {'msg': "잘못된 접근입니다"})
+        return render(request, 'alert.html', {'msg': "잘못된 접근입니다"})
 
     if request.method == 'POST':  # if form is send by POST...
         request.session['delay'] = int(request.POST.get('delay', ''))
@@ -34,14 +129,16 @@ def upload(request):
         print(request.session['path'])
 
     # Redirect after POST
-    return render(request, 'mypage/upload.html', {
+    return render(request, 'uploading.html', {
         'form': VideoUploadForm(), 
         'thumb': getThumb(str(vid)), 
         })
 
 
 def loading(request):
-    return render(request, 'mypage/loading.html')
+    return render(request, 'loading.html')
+
+
 
 
 
@@ -49,7 +146,7 @@ def uploadVideo(request):
     global delimiter
     keys = list(request.session.keys())
     if 'owner' not in keys and 'videoNumber' not in keys and 'today' not in keys:
-        return render(request, 'mypage/alert.html', {'msg': "잘못된 접근입니다"})
+        return render(request, 'alert.html', {'msg': "잘못된 접근입니다"})
 
 
     if request.method == "POST":
@@ -109,8 +206,8 @@ def uploadVideo(request):
                 if "auth" in key:
                     continue
                 del request.session[key]
-            return render(request, 'mypage/alert.html', {'msg': "Upload was successfully finished. We will let you know if rendering is finished!"})
-        return render(request, 'mypage/alert.html', {'msg': "Invalid Form for Video object"})
-    return render(request, 'mypage/alert.html', {'msg': "잘못된 접근입니다"})
+            return render(request, 'alert.html', {'msg': "Upload was successfully finished. We will let you know if rendering is finished!"})
+        return render(request, 'alert.html', {'msg': "Invalid Form for Video object"})
+    return render(request, 'alert.html', {'msg': "잘못된 접근입니다"})
 
 
