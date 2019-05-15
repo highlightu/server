@@ -1,6 +1,11 @@
 import face_recognition
 import cv2
+import numpy as np
 import time
+import tflearn
+
+from collections import deque
+from tflearn.data_preprocessing import ImagePreprocessing
 
 '''
 Usage :
@@ -26,6 +31,13 @@ def face_detection(video_file, original_candidate, x, y, w, h):
     Checklist_withchat = Change_timeunit(
         list(original_candidate.keys()), section)
     Output_Dict = dict()
+    face_cascade = cv2.CascadeClassifier(
+        'haarcascade_frontalface_default.xml')
+    model_emo = tflearn.DNN
+    emotions = ["Fear", "Happy", "Sad", "Surprise", "Neutral"]
+
+    gy_offset = 0
+    gx_offset = 0
 
     while input_video.isOpened():
         # Grab a single frame of video
@@ -51,24 +63,44 @@ def face_detection(video_file, original_candidate, x, y, w, h):
         frame = frame[y:y+h, x:x+w]
         small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
 
-        ''' If we need face recognition '''
-        # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
-        # rgb_frame = frame[:, :, ::-1]
-
         # Find all the faces in the frame
-        face_locations = face_recognition.face_locations(small_frame)
+        #face_locations = face_recognition.face_locations(small_frame)
+        grayed = cv2.cvtColor(small_frame, cv2.COLOR_BGR2GRAY)
+        face_locations = face_cascade.detectMultiScale(grayed, 1.3, 5)
 
-        ''' If CNN is possible '''
-        # face_locations = face_recognition.face_locations(small_frame, model="cnn")
-
-        # Execute only face is detected
         if face_locations:
 
             ''' Face Detection '''
             # We assume there is only one face in the image
-            for face_location in face_locations:
-                top, right, bottom, left = face_location
-                location = [top, left, right-left, bottom-top]
+            # Execute only face is detected
+            for (x, y, w, h) in face_locations:
+
+                y_offset = y
+                x_offset = x+w
+
+                gy_offset = y_offset
+                gx_offset = x_offset
+                '''
+                if grayed.shape[0] < y_offset :
+                    pass
+                '''
+                roi_gray = grayed[y:y + h, x:x + w]
+
+                image_scaled = np.array(cv2.resize(
+                    roi_gray, (48, 48)), dtype=float)
+                image_processed = image_scaled.flatten()
+                processedimage = image_processed.reshape([-1, 48, 48, 1])
+                # print("predict image")
+                prediction = model_emo.predict(processedimage)
+
+                # print("gender prediction! : " + str(list(prediction_gender)))
+                emotion_probability, emotion_index = max(
+                    (val, idx) for (idx, val) in enumerate(prediction[0]))
+                emotion = emotions[emotion_index]
+
+                # for face_location in face_locations:
+                #     top, right, bottom, left = face_location
+                #     location = [top, left, right-left, bottom-top]
 
             for key, value in Checklist_withchat.items():
 
@@ -79,8 +111,8 @@ def face_detection(video_file, original_candidate, x, y, w, h):
                     # Add score value calculated by mememoji
                     # TODO mememoji <== location and make the image as 48x48
                     # Get scores
-                    
-                    Checklist_withchat[key][idx] = 5
+
+                    Checklist_withchat[key][idx] = emotion_probability
                     #timestamp = time.strftime('%H:%M:%S', time.gmtime(index/fps))
                     #Output_Dict[small_frame] = location
 
@@ -88,13 +120,13 @@ def face_detection(video_file, original_candidate, x, y, w, h):
             continue
     print(Checklist_withchat)
     # Sum up
-    for key , value in Checklist_withchat.items():
+    for key, value in Checklist_withchat.items():
         print(key)
         sumValue = 0
         for eachValue in value:
-           sumValue += eachValue
-        Output_Dict[key] = sumValue / section # normalizing
-    
+            sumValue += eachValue
+        Output_Dict[key] = sumValue / section  # normalizing
+
     print(Output_Dict)
     # All done!
     input_video.release()
