@@ -1,6 +1,6 @@
 from mypage.models import MergedVideo
 from django.core.files import File
-# from .face_detection import face_detection
+from .face_detection import face_detection
 from .chatAnalyze import ChatAnalyze
 from .video_util import *
 from django.conf import settings
@@ -82,8 +82,27 @@ def getTwitchChat(videoID, savePath):
     #
     # 추가.
 
+    ############################# for Windows #############################
+    if savePath[-1] != '\\':
+       savePath = savePath + '\\'
+
+    proc = ["sudo","tcd",
+           "-v", videoID,
+           "--output", savePath,
+           "--format", "capstone",
+           ]
+    ############################# for Windows #############################
 
 
+    ############################# for Linux #############################
+    # if savePath[-1] != '/':
+    #     savePath = savePath + '/'
+    # proc = ["sudo", "tcd",
+    #         "-v", videoID,
+    #         "--output", savePath,
+    #         "--format", "capstone",
+    #         ]
+    ############################# for Linux #############################
     try:
         subprocess.check_call(proc)
         print("twitch chat download finish!")
@@ -125,8 +144,8 @@ def makeCandidatesByChatlog(chatlog, numOfHighlights):
 # def makeCandidatesByEmotion(videopath, original_candidate, x, y, w, h, numOfHighlights):
 #     cand = face_detection(videopath, original_candidate, x, y, w, h)
 #     return cand
-def makeCandidatesByEmotion(original_candidate, numOfHighlights):
-    cand = original_candidate
+def makeCandidatesByEmotion(original_candidate, numOfHighlights,x,y,width, height, videopath)):
+    cand = face_detection(videopath, original_candidate, x, y, width, height) 
     return cand
 
 
@@ -197,15 +216,15 @@ def makeHighlight(highlight_request, user_instance, video_object):
 
         temp_cand = makeCandidatesByChatlog(chatlog=chatlog, numOfHighlights=numOfHighlights*multiplier)
         # TODO videopath should be input
-        cand = makeCandidatesByEmotion(original_candidate=temp_cand, numOfHighlights=numOfHighlights )
 
         # Get video path and resized frame info
         videopath = video_object.videoFileURL
         x = video_object.rect_x
         y = video_object.rect_y
         width = video_object.rect_width
-        height = video_object.rect_.height
+        height = video_object.rect_height
 
+        cand = makeCandidatesByEmotion(original_candidate=temp_cand, numOfHighlights=numOfHighlights,x,y,width, height, videopath)
 
 
     else:
@@ -220,7 +239,7 @@ def makeHighlight(highlight_request, user_instance, video_object):
     print(sections)
 
     highlights = split_video(video_path=highlight_request.videoFile.path,
-                             save_path=highlight_request.path,
+                             save_path=chat_save_path,
                              video_id=video_object.videoNumber,
                              split_times=sections)
 
