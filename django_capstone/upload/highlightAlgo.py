@@ -9,6 +9,7 @@ import os
 import re
 import platform
 from .video_util import cropVideo
+from mypage.views import send_mail
 
 
 class Error(Exception):
@@ -81,28 +82,6 @@ def getTwitchChat(videoID, savePath):
     # },
     #
     # 추가.
-
-    ############################# for Windows #############################
-    if savePath[-1] != '\\':
-       savePath = savePath + '\\'
-
-    proc = ["sudo","tcd",
-           "-v", videoID,
-           "--output", savePath,
-           "--format", "capstone",
-           ]
-    ############################# for Windows #############################
-
-
-    ############################# for Linux #############################
-    # if savePath[-1] != '/':
-    #     savePath = savePath + '/'
-    # proc = ["sudo", "tcd",
-    #         "-v", videoID,
-    #         "--output", savePath,
-    #         "--format", "capstone",
-    #         ]
-    ############################# for Linux #############################
     try:
         subprocess.check_call(proc)
         print("twitch chat download finish!")
@@ -140,13 +119,6 @@ def makeCandidatesByChatlog(chatlog, numOfHighlights):
 
     return sorted_list
 
-
-# def makeCandidatesByEmotion(videopath, original_candidate, x, y, w, h, numOfHighlights):
-#     cand = face_detection(videopath, original_candidate, x, y, w, h)
-#     return cand
-def makeCandidatesByEmotion(original_candidate, numOfHighlights,x,y,width, height, videopath)):
-    cand = face_detection(videopath, original_candidate, x, y, width, height) 
-    return cand
 
 
 def second(timestamp):
@@ -224,8 +196,7 @@ def makeHighlight(highlight_request, user_instance, video_object):
         width = video_object.rect_width
         height = video_object.rect_height
 
-        cand = makeCandidatesByEmotion(original_candidate=temp_cand, numOfHighlights=numOfHighlights,x,y,width, height, videopath)
-
+        cand = face_detection(videopath, temp_cand, x, y, width, height)
 
     else:
 
@@ -237,6 +208,8 @@ def makeHighlight(highlight_request, user_instance, video_object):
         candidates=cand, videoLen=video_length, delay=int(video_object.delay))
 
     print(sections)
+
+
 
     highlights = split_video(video_path=highlight_request.videoFile.path,
                              save_path=chat_save_path,
@@ -259,3 +232,7 @@ def makeHighlight(highlight_request, user_instance, video_object):
 
             # Link DB and files
             highlight_obj.video.save(highlight_request.title + ".mp4", File(file))
+
+    mail_address = user_instance.user_name+'@gmail.com'
+
+    send_mail(to=mail_address)

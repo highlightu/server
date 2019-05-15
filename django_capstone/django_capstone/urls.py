@@ -17,7 +17,7 @@ from django.conf.urls import include  # url뿐 아니라 include를 import해야
 from django.contrib import admin
 from django.urls import path
 from main.views import *  # 1st app : main homepage
-from mypage.views import *  # 2nd app : dashboard
+from mypage.views import *  # 2nd app : mypage
 from upload.views import *  # 3rd app : upload
 from django.conf.urls.static import static
 from django.conf.urls import url
