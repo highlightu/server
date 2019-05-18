@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 import time
-from deep import build_net
+from .deep import build_net
 from collections import deque
 from tflearn.data_preprocessing import ImagePreprocessing
 
@@ -32,7 +32,7 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
     Output_Dict = dict()
 
     face_cascade = cv2.CascadeClassifier(
-        'haarcascade_frontalface_default.xml')
+        'upload/haarcascade_frontalface_default.xml')
     model_emo = build_net()
     emotions = ["Fear", "Happy", "Sad", "Surprise", "Neutral"]
 
@@ -81,7 +81,8 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
         for (x, y, w, h) in face_locations:
             
             #test
-            cv2.imshow(frame)
+            print(type(frame))
+            cv2.imshow('frame',frame)
             
             y_offset = y
             x_offset = x+w
@@ -126,8 +127,7 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
 
                     Checklist_withchat[key][idx] = emotion_probability
 
-    print("checklist withchat")
-    print(Checklist_withchat)
+            print(Checklist_withchat)  
 
     # Replace unchanged values with 0 in Checklist_withchat
     for key, value in Checklist_withchat.items():
@@ -141,6 +141,8 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
         for eachValue in value:
             if eachValue == 0:
                 timesection -= 1
+            elif eachValue > 1:
+                eachValue = 0
             sumValue += eachValue
         Output_Dict[key] = (sumValue / timesection) * \
             original_candidate[key]  # normalizing

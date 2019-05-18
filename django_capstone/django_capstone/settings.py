@@ -67,6 +67,7 @@ ALLOWED_HOSTS = [
     'moyak.kr',
     '0.0.0.0',
     'localhost',
+    'www.baidu.com',
 ]
 
 

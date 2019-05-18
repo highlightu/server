@@ -114,7 +114,7 @@ def makeCandidatesByChatlog(chatlog, numOfHighlights):
     sorted_list = sorted(sectioned_result.items(),
                          key=lambda t: t[1], reverse=True)[:numOfHighlights]
     print(sorted_list)
-    sorted_list = dict(sorted([(second(t), v) for t, v in sorted_list]))
+    sorted_list = dict(sorted([(t, v) for t, v in sorted_list]))
     print(sorted_list)
 
     return sorted_list
@@ -190,7 +190,7 @@ def makeHighlight(highlight_request, user_instance, video_object):
         # TODO videopath should be input
 
         # Get video path and resized frame info
-        videopath = video_object.videoFileURL
+        videopath = video_object.videoFileURL.path
         x = video_object.rect_x
         y = video_object.rect_y
         width = video_object.rect_width
