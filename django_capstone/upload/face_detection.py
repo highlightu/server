@@ -1,4 +1,3 @@
-import face_recognition
 import cv2
 import numpy as np
 import time
@@ -64,49 +63,61 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
 
         # TODO Check if this one is necessary
         # Resize frame of video to 1/4 size for faster face detection processing
+        # x, y , w, h
         frame = frame[pixel_y:pixel_y+height, pixel_x:pixel_x+width]
-        small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
+        #small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
 
         # Find all the faces in the frame
         #face_locations = face_recognition.face_locations(small_frame)
-        grayed = cv2.cvtColor(small_frame, cv2.COLOR_BGR2GRAY)
+        grayed = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         face_locations = face_cascade.detectMultiScale(grayed, 1.3, 5)
 
-        print(face_locations)
+        ''' Face Detection '''
+        # We assume there is only one face in the image
+        # Execute only face is detected
 
-        if face_locations[0][0] > 0:
-            ''' Face Detection '''
-            # We assume there is only one face in the image
-            # Execute only face is detected
+        print("Face is detected at {}".format(face_locations))
 
-            print("Face is detected")
-            for (x, y, w, h) in face_locations:
+        for (x, y, w, h) in face_locations:
+            
+            #test
+            cv2.imshow(frame)
+            
+            y_offset = y
+            x_offset = x+w
 
-                y_offset = y
-                x_offset = x+w
+            gy_offset = y_offset
+            gx_offset = x_offset
 
-                gy_offset = y_offset
-                gx_offset = x_offset
+            roi_gray = grayed[y:y + h, x:x + w]
 
-                roi_gray = grayed[y:y + h, x:x + w]
+            image_scaled = np.array(cv2.resize(
+                roi_gray, (48, 48)), dtype=float)
+            image_processed = image_scaled.flatten()
+            processedimage = image_processed.reshape([-1, 48, 48, 1])
+            print("predict image")
 
-                image_scaled = np.array(cv2.resize(
-                    roi_gray, (48, 48)), dtype=float)
-                image_processed = image_scaled.flatten()
-                processedimage = image_processed.reshape([-1, 48, 48, 1])
-                print("predict image")
+            prediction = model_emo.predict(processedimage)
+            emotion_probability, emotion_index = max(
+                (val, idx) for (idx, val) in enumerate(prediction[0]))
+            emotion = emotions[emotion_index]
 
-                prediction = model_emo.predict(processedimage)
-                emotion_probability, emotion_index = max(
-                    (val, idx) for (idx, val) in enumerate(prediction[0]))
-                emotion = emotions[emotion_index]
+            print(emotion_probability)
+            print(emotion)
 
-                print(emotion_probability)
-                print(emotion)
+            if emotion == 'Neutral':
+                emotion_probability = 0
 
-                if emotion == 'Neutral':
-                    emotion_probability = 0
+            # We will replace the time value with emotion_probability
+            '''
+            Example:
 
+            Checklist_withchat = { time(sec) : [ time(sec), time(sec)+1, ... , time(sec)+4] }
+            
+            if the time(sec) is 70 (1min 10sec),
+                we will look up all value in Checklist_withchat to replace 70 with emotion_probability
+
+            '''
             for key, value in Checklist_withchat.items():
 
                 if (index/fps) in value:
@@ -115,11 +126,13 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
 
                     Checklist_withchat[key][idx] = emotion_probability
 
-        else:
-            continue
-
     print("checklist withchat")
     print(Checklist_withchat)
+
+    # Replace unchanged values with 0 in Checklist_withchat
+    for key, value in Checklist_withchat.items():
+        if value > 1:
+            Checklist_withchat[key] == 0
 
     # Sum up
     for key, value in Checklist_withchat.items():

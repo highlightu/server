@@ -193,4 +193,4 @@ if __name__ == '__main__':
     result = chatanlyze.Scoring(score)
     sectined_result = chatanlyze.Sectioned_Scoring(result, 5)
 
-    print(cand)
+    #print(cand)
