@@ -49,7 +49,7 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
         #time = input_video.get(cv2.CAP_PROP_POS_MSEC)
         index = input_video.get(cv2.CAP_PROP_POS_FRAMES)
         #print('frames: %d   ---   times: %f' % (index, time/1000))
-
+        
         if frame is None:
             break
 
@@ -58,17 +58,18 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
             break
 
         # Check each sec if it is in the Checklist
-        if (index/fps) not in set(check_timelist):
-            continue
+        # if (index/fps) not in set(check_timelist):
+        #     continue
 
         # TODO Check if this one is necessary
         # Resize frame of video to 1/4 size for faster face detection processing
         # x, y , w, h
-        frame = frame[pixel_y:pixel_y+height, pixel_x:pixel_x+width]
-        #small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
 
+        
+        #small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
         # Find all the faces in the frame
         #face_locations = face_recognition.face_locations(small_frame)
+        frame = frame[pixel_y:pixel_y+height, pixel_x:pixel_x+width]
         grayed = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         face_locations = face_cascade.detectMultiScale(grayed, 1.3, 5)
 
@@ -79,10 +80,10 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
         print("Face is detected at {}".format(face_locations))
 
         for (x, y, w, h) in face_locations:
-            
-            #test
-            cv2.imshow(frame)
-            
+
+            if ret == True:
+                cv2.imshow("", frame)
+
             y_offset = y
             x_offset = x+w
 
@@ -125,6 +126,9 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
                     idx = value.index((index/fps))
 
                     Checklist_withchat[key][idx] = emotion_probability
+            
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
 
     print("checklist withchat")
     print(Checklist_withchat)
