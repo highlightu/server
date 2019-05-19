@@ -20,33 +20,50 @@ Expected Outputs :
 def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, height):
     # Open the input movie file
     input_video = cv2.VideoCapture(video_file)
-    length = int(input_video.get(cv2.CAP_PROP_FRAME_COUNT))
+    length = int(input_video.get(cv2.CAP_PROP_FRAME_COUNT)) # the number of total frame of the video
+    fps = round(input_video.get(cv2.CAP_PROP_FPS)) # frame per second of the video
 
     # Initialize some variables
     face_locations = list()
     check_timelist = list()
-    fps = round(input_video.get(cv2.CAP_PROP_FPS))
     section = 5
+    gy_offset = 0
+    gx_offset = 0
+
+    # Special varialbes
+    '''
+    Checklist_withchat = { time(sec) : [time(sec) , time(sec)+1 , .. , time(sec)+4] , ... }
+    Checklist_withframe = [ time(sec), .. ]
+    '''
+
     Checklist_withchat = Change_timeunit(
         list(original_candidate.keys()), section)
+
+    Checklist_withframe = Make_Checklist_withframe(Checklist_withchat)
+
     Output_Dict = dict()
 
+    # Start main function
+    # Load model
     face_cascade = cv2.CascadeClassifier(
         'haarcascade_frontalface_default.xml')
     model_emo = build_net()
     emotions = ["Fear", "Happy", "Sad", "Surprise", "Neutral"]
 
-    gy_offset = 0
-    gx_offset = 0
-
+    # check timelist for scoring
     for eachValue in Checklist_withchat.values():
         for eachElement in eachValue:
             check_timelist.append(eachElement)
 
-    while input_video.isOpened():
+    # Get the specific frame
+    for eachFrame in Checklist_withframe:
+        # eachFrame = time(sec)
+        input_video.set(2, eachFrame * fps / length)
+
         # Grab a single frame of video
         ret, frame = input_video.read()
         #time = input_video.get(cv2.CAP_PROP_POS_MSEC)
+
         index = input_video.get(cv2.CAP_PROP_POS_FRAMES)
         #print('frames: %d   ---   times: %f' % (index, time/1000))
 
@@ -58,8 +75,8 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
             break
 
         # Check each sec if it is in the Checklist
-        if (index/fps) not in set(check_timelist):
-            continue
+        # if (index/fps) not in set(check_timelist):
+        #     continue
 
         # TODO Check if this one is necessary
         # Resize frame of video to 1/4 size for faster face detection processing
@@ -127,7 +144,7 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
 
                     Checklist_withchat[key][idx] = emotion_probability
 
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        if cv2.waitKey() & 0xFF == ord('q'):
             break
 
     print("checklist withchat")
@@ -174,3 +191,15 @@ def Change_timeunit(time_list, section):
         output[sectioned_list[0]] = sectioned_list
 
     return output
+
+
+def Make_Checklist_withframe(Checklist_withchat):
+    # all distinct values in checklist_withchat should be checked
+    frame_list = list()
+
+    for key, value in Checklist_withchat:
+        for eachValue in value:
+            if eachValue not in set(frame_list):
+                frame_list.append(eachValue)
+
+    return frame_list
