@@ -135,8 +135,9 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
 
     # Replace unchanged values with 0 in Checklist_withchat
     for key, value in Checklist_withchat.items():
-        if value > 1:
-            Checklist_withchat[key] == 0
+        for eachValue in value:
+            if eachValue > 1:
+                Checklist_withchat[key] == 0
 
     # Sum up
     for key, value in Checklist_withchat.items():
