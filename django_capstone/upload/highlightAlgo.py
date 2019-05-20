@@ -232,7 +232,7 @@ def makeHighlight(highlight_request, user_instance, video_object):
 
             # Link DB and files
             highlight_obj.video.save(highlight_request.title + ".mp4", File(file))
-
+            os.remove(highlight)
     mail_address = user_instance.user_name+'@gmail.com'
 
     send_mail(to=mail_address)
