@@ -5,6 +5,8 @@ def build_net():
 
     n = 5
 
+    tflearn.config.init_training_mode()
+
     img_prep = ImagePreprocessing()
     img_prep.add_featurewise_zero_center()
     img_prep.add_featurewise_stdnorm()
@@ -32,11 +34,10 @@ def build_net():
     net = tflearn.regression(net, optimizer=mom,
                              loss='categorical_crossentropy')
     print("make model")
-    model = tflearn.DNN(net, checkpoint_path='Resmodels/model_resnet_emotion',
-                        max_checkpoints=10, tensorboard_verbose=0,
-                        clip_gradients=0.)
+    model = tflearn.DNN(net, checkpoint_path='upload/Resmodels/model_resnet_emotion',
+                        max_checkpoints=10, tensorboard_verbose=0, clip_gradients=0.)
     print("load model start")
-    model.load('Resmodels/model_resnet_emotion-10500')
+    model.load('upload/Resmodels/model_resnet_emotion-10500')
     print("load model success")
 
     return model

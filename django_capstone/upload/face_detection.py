@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 import time
-from deep import build_net
+from .deep import build_net
 from collections import deque
 from tflearn.data_preprocessing import ImagePreprocessing
 
@@ -50,7 +50,7 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
     # Start main function
     # Load model
     face_cascade = cv2.CascadeClassifier(
-        'haarcascade_frontalface_default.xml')
+        'upload/haarcascade_frontalface_default.xml')
     model_emo = build_net()
     emotions = ["Fear", "Happy", "Sad", "Surprise", "Neutral"]
 
@@ -197,6 +197,8 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
         for eachValue in value:
             if eachValue == 0:
                 timesection -= 1
+            elif eachValue > 1:
+                eachValue = 0
             sumValue += eachValue
 
         try:
@@ -238,7 +240,7 @@ def Change_inverse_timeunit(time_sec):
     minute = (time_sec % 3600) / 60
     second = (time_sec % 60)
 
-    output = '%02d' % hour + ':' + '%02d' % minute + ':' + '%02d' % second
+    output = '%01d' % hour + ':' + '%02d' % minute + ':' + '%02d' % second
     return output
 
 

@@ -49,7 +49,7 @@
                 if they get too long. You can also remove the <p> entirely if you don't
                 need a subtitle.
             -->
-            <h2><a href>{{o.date|slice:"0:4"}}.{{o.date|slice:"4:6"}}.{{o.date|slice:"6:8"}}</a></h2>
+	    <h2><strong>{{o.date|slice:"0:4"}}.{{o.date|slice:"4:6"}}.{{o.date|slice:"6:8"}}</strong></h2>
 
             <div class="info">
                 <!--
@@ -60,21 +60,19 @@
                     the entire "date" element.
 
                 -->
-                <span class="date"><span
-                        class="month">{{ request.session.month }}<span>{{ request.session.year }}</span></span> <span
-                        class="day">{{ request.session.day }}</span></span>
                 <!--
                     Note: You can change the number of list items in "stats" to whatever you want.
                 -->
+		<span class=date> <span class="month">{{request.session.month}}</span>
+			<span class="day">{{request.session.day}}</span></span>
                 <ul class="stats">
                     <li><a href="#" class="icon fa-heart">0</a></li>
                     <li><a href="#" class="icon fa-comment">0</a></li>
                 </ul>
             </div>
-            <a href="#" class="image featured"><img src="images/pic01.jpg" alt=""/></a>
             <p>
 
-                <video width='1168' height='720' controls poster="thumb.png">
+                <video width='1168' height='720' controls="controls" preload="metadata">
                     <!--                    <source src="{% static 'video/zinuzian/20190424/409803829/Wildlife.wmv' type='video/mp4' %}">-->
                     <source src="{{ o.video.url }}" type="video/mp4">
                     <source src="{{ o.video.url }}" type="video/wmv">
@@ -82,7 +80,7 @@
                     Your browser does not support the video tag.
                 </video>
                 <br/><br/>
-                <a href="{% url 'download' o.id %}">Click here to download</a>
+                <a class="btn btn-xl" href="{% url 'download' o.id %}">Download</a>
 
             </p>
         </article>

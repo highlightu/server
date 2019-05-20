@@ -1,5 +1,6 @@
-#from moviepy.editor import VideoFileClip, concatenate_videoclips
+from moviepy.editor import VideoFileClip, concatenate_videoclips
 import cv2
+import os
 
 # videos_path = ["demo_video.mp4", "demo_video.mp4"]
 # processed_file_name = "demodemo.mp4"
@@ -21,10 +22,8 @@ def split_video(video_path, save_path, video_id, split_times):
     video_list = []
 
     for split_time in split_times:
-        title = save_path + \
-            str(video_id) + '_' + \
-            str(split_time[0]) + '_' + str(split_time[1]) + '.mp4'
-        sub_clip = clip.subclip(split_time[0], split_time[1])
+        title = os.path.join(save_path, str(video_id) + '_' + str(split_time[0]) + '_' + str(split_time[1]) + '.mp4')
+        sub_clip = clip.subclip(split_time[0],split_time[1])
 
         print("writing... to ", title)
         sub_clip.write_videofile(title)
