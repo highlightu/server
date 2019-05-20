@@ -20,46 +20,79 @@ Expected Outputs :
 def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, height):
     # Open the input movie file
     input_video = cv2.VideoCapture(video_file)
+    # the number of total frame of the video
     length = int(input_video.get(cv2.CAP_PROP_FRAME_COUNT))
+    # frame per second of the video
+    fps = round(input_video.get(cv2.CAP_PROP_FPS))
+
+    print('length = {}, fps = {} '.format(length, fps))
 
     # Initialize some variables
     face_locations = list()
     check_timelist = list()
-    fps = round(input_video.get(cv2.CAP_PROP_FPS))
     section = 5
+    gy_offset = 0
+    gx_offset = 0
+
+    # Special varialbes
+    '''
+    Checklist_withchat = { time(sec) : [time(sec) , time(sec)+1 , .. , time(sec)+4] , ... }
+    Checklist_withframe = [ time(sec), .. ]
+    '''
+
     Checklist_withchat = Change_timeunit(
         list(original_candidate.keys()), section)
+
+    Checklist_withframe = Make_Checklist_withframe(Checklist_withchat)
+
     Output_Dict = dict()
 
+    # Start main function
+    # Load model
     face_cascade = cv2.CascadeClassifier(
         'upload/haarcascade_frontalface_default.xml')
     model_emo = build_net()
     emotions = ["Fear", "Happy", "Sad", "Surprise", "Neutral"]
 
-    gy_offset = 0
-    gx_offset = 0
-
+    # check timelist for scoring
     for eachValue in Checklist_withchat.values():
         for eachElement in eachValue:
             check_timelist.append(eachElement)
 
-    while input_video.isOpened():
+    # Get the specific frame
+    iteration = 0
+    print('Checklist_withframe : ', Checklist_withframe)
+    for eachFrame in Checklist_withframe:
+
+        # If YOU WANT TO CHECK VALUES
+        # print('============================')
+        # print('#iteration = ', iteration)
+        # iteration += 1
+        # print('eachtime = ', eachFrame)
+        # print('eachframe = ', eachFrame * fps)
+
+        # Set the frame number where you are heading to
+        input_video.set(1, eachFrame * fps)
+
         # Grab a single frame of video
         ret, frame = input_video.read()
         #time = input_video.get(cv2.CAP_PROP_POS_MSEC)
+
         index = input_video.get(cv2.CAP_PROP_POS_FRAMES)
-        #print('frames: %d   ---   times: %f' % (index, time/1000))
+
+        # print('current frame number is ', ret)
+        # print('current time is ', (index/fps))
 
         if frame is None:
-            break
+            continue
 
         # Quit when the input video file ends
         if not ret:
-            break
+            continue
 
         # Check each sec if it is in the Checklist
-        if (index/fps) not in set(check_timelist):
-            continue
+        # if (index/fps) not in set(check_timelist):
+        #     continue
 
         # TODO Check if this one is necessary
         # Resize frame of video to 1/4 size for faster face detection processing
@@ -79,8 +112,9 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
         for (x, y, w, h) in face_locations:
 
             print("Face is detected at {} at time {} sec".format(
-                face_locations, (index/fps)))
+                face_locations, round((index/fps))))
 
+            # TODO IF YOU WANT TO SEE THE IMAGE THAT HAS DETECTED FACE
             if ret == True:
                 cv2.imshow("", frame)
 
@@ -121,22 +155,26 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
             '''
             for key, value in Checklist_withchat.items():
 
-                if (index/fps) in value:
+                for eachValue in value:
+                    if eachValue == eachFrame:
 
-                    idx = value.index((index/fps))
-
-                    Checklist_withchat[key][idx] = emotion_probability
+                        # Replace the time(sec) value with emotion_probability
+                        Checklist_withchat[key][value.index(
+                            eachValue)] = emotion_probability
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
-            print(Checklist_withchat)  
-
     # Replace unchanged values with 0 in Checklist_withchat
     for key, value in Checklist_withchat.items():
-        if value > 1:
-            Checklist_withchat[key] == 0
+        index = 0
+        for eachValue in value:
+            if eachValue > 1:
+                Checklist_withchat[key][index] = 0
+            index += 1
 
+    print('Outputted Checklist_withchat : ', Checklist_withchat, end='\n')
+    print('Original_candidate : ', original_candidate, end='\n')
     # Sum up
     for key, value in Checklist_withchat.items():
         sumValue = 0
@@ -147,11 +185,16 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
             elif eachValue > 1:
                 eachValue = 0
             sumValue += eachValue
-        Output_Dict[key] = (sumValue / timesection) * \
-            original_candidate[key]  # normalizing
 
-    print("output dict")
-    print(Output_Dict)
+        try:
+            Output_Dict[key] = (sumValue / timesection) * \
+                original_candidate[Change_inverse_timeunit(key)]  # normalizing
+        except ZeroDivisionError:
+            # If there is no face detected in the section, 
+            # We divide chatlog value by 2
+            Output_Dict[key] = original_candidate[Change_inverse_timeunit(key)] / 2
+
+    print("Output Dict : ", Output_Dict, end='\n')
 
     # All done!
     input_video.release()
@@ -174,3 +217,27 @@ def Change_timeunit(time_list, section):
         output[sectioned_list[0]] = sectioned_list
 
     return output
+
+
+def Change_inverse_timeunit(time_sec):
+
+    hour = time_sec / 3600
+    minute = (time_sec % 3600) / 60
+    second = (time_sec % 60)
+
+    output = '%01d' % hour + ':' + '%02d' % minute + ':' + '%02d' % second
+    return output
+
+
+def Make_Checklist_withframe(Checklist_withchat):
+    # all distinct values in checklist_withchat should be checked
+    frame_list = list()
+
+    print('Inputted Checklist_withchat ', Checklist_withchat)
+
+    for key, value in Checklist_withchat.items():
+        for eachValue in value:
+            if eachValue not in set(frame_list):
+                frame_list.append(eachValue)
+
+    return frame_list
