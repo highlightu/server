@@ -195,8 +195,9 @@ def makeHighlight(highlight_request, user_instance, video_object):
         y = video_object.rect_y
         width = video_object.rect_width
         height = video_object.rect_height
+        delay = 10 # add input delay value
 
-        cand = face_detection(videopath, temp_cand, x, y, width, height)
+        cand = face_detection(videopath, temp_cand, x, y, width, height, round(delay/2))
 
     else:
 
