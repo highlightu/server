@@ -31,8 +31,6 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
     face_locations = list()
     check_timelist = list()
     section = inputsection
-    gy_offset = 0
-    gx_offset = 0
 
     # Special varialbes
     '''
@@ -59,22 +57,22 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
         for eachElement in eachValue:
             check_timelist.append(eachElement)
 
-    # Get the specific frame
-    iteration = 0
     print('Checklist_withframe : ', Checklist_withframe)
 
     # Read specific moment (second)
     ''' 1 STEP '''
-    for eachTime in Checklist_withframe:
+    global_iter = 1
 
+    for eachTime in Checklist_withframe:
+        print(' face detecting ... {} % '.format(
+            (round(global_iter/len(Checklist_withframe)* 100, 2))))
+        global_iter += 1
         '''If YOU WANT TO CHECK VALUES'''
         # print('============================')
         # print('#iteration = ', iteration)
-        # iteration += 1
         # print('eachtime = ', eachTime)
         # print('eachframe = ', eachTime * fps)
 
-        
         maxValue = list()
         framelist = check_framelist(eachTime, fps)
 
@@ -84,11 +82,11 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
         # Example, if fps is 30, and the specific moment is 10s,
         # this will check frames from #frame 270~299
 
-        ''' 2 STEP ''' 
+        ''' 2 STEP '''
         for eachFrame in framelist:
-        
+
             # Set the frame number where you are heading to
-            # input_video.set(int propid, doulbe value): 
+            # input_video.set(int propid, doulbe value):
             # int propid = 1 ( cv::CAP_PROP_POS_FRAMES = 1 )
             input_video.set(1, eachFrame)
 
@@ -121,12 +119,12 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
             ''' 3 STEP '''
             for (x, y, w, h) in face_locations:
 
-                print("Face is detected at {} at time {} sec".format(
-                    face_locations, round((index/fps))))
+                # print("Face is detected at {} at time {} sec".format(
+                #     face_locations, round((index/fps))))
 
                 # TODO IF YOU WANT TO SEE THE IMAGE THAT HAS DETECTED FACE
-                if ret == True:
-                    cv2.imshow("", frame)
+                # if ret == True:
+                #     cv2.imshow("", frame)
 
                 y_offset = y
                 x_offset = x+w
@@ -140,7 +138,7 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
                     roi_gray, (48, 48)), dtype=float)
                 image_processed = image_scaled.flatten()
                 processedimage = image_processed.reshape([-1, 48, 48, 1])
-                print("predict image")
+                # print("predict image")
 
                 prediction = model_emo.predict(processedimage)
                 emotion_probability, emotion_index = max(
@@ -150,12 +148,11 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
                 if emotion == 'Neutral':
                     emotion_probability = 0
 
-                print(emotion_probability)
-                print(emotion)
+                # print(emotion_probability)
+                # print(emotion)
 
                 # We will consider only max value among evalutated values in the frames
                 maxValue.append(emotion_probability)
-
                 # We will replace the time value with emotion_probability
                 '''
                 Example:
@@ -173,11 +170,16 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
         for key, value in Checklist_withchat.items():
 
             for eachValue in value:
-                if eachValue == eachFrame:
+                if eachValue == eachTime:
 
-                # Replace the time(sec) value with emotion_probability
-                    Checklist_withchat[key][value.index(
-                    eachValue)] = max(maxValue)
+                    # Replace the time(sec) value with emotion_probability
+                    try:
+                        Checklist_withchat[key][value.index(
+                            eachValue)] = sum(maxValue)/(len(maxValue)-maxValue.count(0))
+                    except:
+                        # If there is no face detected
+                        Checklist_withchat[key][value.index(
+                            eachValue)] = 0
 
     ''' 5 STEP '''
     # Replace unchanged values with 0 in Checklist_withchat
@@ -205,9 +207,10 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
             Output_Dict[key] = (sumValue / timesection) * \
                 original_candidate[Change_inverse_timeunit(key)]  # normalizing
         except ZeroDivisionError:
-            # If there is no face detected in the section, 
+            # If there is no face detected in the section,
             # We divide chatlog value by 2
-            Output_Dict[key] = original_candidate[Change_inverse_timeunit(key)] / 2
+            Output_Dict[key] = original_candidate[Change_inverse_timeunit(
+                key)] / 2
 
     print("Output Dict : ", Output_Dict, end='\n')
 
@@ -250,17 +253,19 @@ def Make_Checklist_withframe(Checklist_withchat):
 
     print('Inputted Checklist_withchat ', Checklist_withchat)
 
-    for key, value in Checklist_withchat.items():
+    for value in Checklist_withchat.values():
         for eachValue in value:
             if eachValue not in set(frame_list):
                 frame_list.append(eachValue)
 
     return frame_list
 
+
 def check_framelist(eachTime, fps):
     output = list()
 
     for i in range(1, fps+1):
+
         output.append((eachTime * fps) - i)
 
-    return output.sort()
+    return sorted(output)
