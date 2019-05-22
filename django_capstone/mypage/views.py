@@ -1,4 +1,4 @@
-# -*- coding:utf-8 -*-
+﻿# -*- coding:utf-8 -*-
 from django.shortcuts import render
 from django.http import *
 from .models import MergedVideo
@@ -10,15 +10,12 @@ import smtplib
 import os
 from email.mime.text import MIMEText
 from email.header import Header
+from django.contrib.auth.decorators import login_required
 
-
+@login_required(login_url='/social/')
 def archive(request):
-    # check if the user is authorized
-    user_instance = User.objects.filter(user_name=request.session['owner']).get()
-    if user_instance is None:
-        return HttpResponse("Unauthorized user")
-
     # Get result video set
+    user_instance = User.objects.filter(user_name=request.user.username).get()
     myMergedVideoSet = MergedVideo.objects.filter(owner=user_instance)
     if myMergedVideoSet is None:
         return HttpResponse("No video found")
@@ -33,12 +30,8 @@ def archive(request):
         "MEDIA_URL": settings.MEDIA_URL
     })
 
-
+@login_required(login_url='/social/')
 def download(request, id):
-    keys = list(request.session.keys())
-    if 'owner' not in keys:
-        return render(request, 'alert.html', {'msg': "잘못된 접근입니다"})
-
     target = MergedVideo.objects.filter(id=id)[0]
     file_path = target.video.path
     print(file_path)
@@ -74,28 +67,23 @@ def download(request, id):
 #
 #     return render(request, "video_template.html", {"url":video_url})
 
-
+@login_required(login_url='/social/')
 def payment(request):
-    # check if the user is authorized
-    user_instance = User.objects.filter(user_name=request.session['owner']).get()
-    if user_instance is None:
-        return HttpResponse("Unauthorized user")
+    user_instance = User.objects.filter(user_name=request.user.username).get()
+    request.session['remaining'] = user_instance.membership_remaining
+    request.session['total_pay'] = user_instance.total_pay
+    return render(request, 'payment.html')
 
-    # Get result video set
-    myMergedVideoSet = MergedVideo.objects.filter(owner=user_instance)
-    if myMergedVideoSet is None:
-        return HttpResponse("No video found")
-    # video_url=myMergedVideoSet[0].video.url
-    # pagination
-    paginator = Paginator(myMergedVideoSet, 2)  # Show 2 video per page
-    page = request.GET.get('page')
-    myMergedVideoSet = paginator.get_page(page)
-    return render(request, 'payment.html', {
-        'merged_videos': myMergedVideoSet,
-        'page': page,
-        "MEDIA_URL": settings.MEDIA_URL
-    })
 
+@login_required(login_url='/social/')
+def withdraw(request):
+    user_instance = User.objects.filter(user_name=request.user.username).get()
+    user_instance.membership_remaining = 0
+    user_instance.save()
+
+    request.session['remaining'] = user_instance.membership_remaining
+    request.session['total_pay'] = user_instance.total_pay
+    return render(request, 'payment.html')
 
 def send_mail(to, reason="finished"):
     # 메시지 내용 작성

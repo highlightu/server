@@ -44,3 +44,12 @@ class MergedVideo(models.Model):
 
     class Meta:
         ordering = ('owner','date',)
+
+
+class Order(models.Model):
+    orderNo= models.CharField(max_length=36, primary_key=True)
+    payToken= models.CharField(max_length=23)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.orderNo + ',' + self.payToken

@@ -55,9 +55,13 @@
                 <li class="hidden">
                     <a href="#page-top"></a>
                 </li>
+                {% if request.session.session_key == None %}
+
+                {% else %}
                 <li>
                     <a class="page-scroll" href="/mypage/archive?page=1">Mypage</a>
                 </li>
+                {% endif %}
                 <li>
                     <a class="page-scroll" href="#about">About</a>
                 </li>

@@ -9,27 +9,13 @@ import threading
 from .highlightAlgo import makeHighlight
 from django.views.decorators.csrf import csrf_exempt
 from .forms import RequestForm
-from django.utils import timezone
+from django.contrib.auth.decorators import login_required
 import requests
 import re
 
 thSize = {'width': '1168', 'height': '657'}
-dateDict = {
-    '01': 'Jan',
-    '02': 'Feb',
-    '03': 'Mar',
-    '04': 'Apr',
-    '05': 'May',
-    '06': 'Jun',
-    '07': 'Jul',
-    '08': 'Aug',
-    '09': 'Sep',
-    '10': 'Oct',
-    '11': 'Nov',
-    '12': 'Dec',
-}
 
-
+@login_required(login_url='/social/')
 def dashboard(request):
     keys = list(request.session.keys())
     if request.method == 'POST':  # if form is send by POST...
@@ -45,21 +31,6 @@ def dashboard(request):
             request.session['videoNumber'] = int(vid)
             request.session['owner'] = owner
 
-            # date
-            date = str(timezone.localtime())
-            date = re.split('[ ]', date)[0]
-            date = re.sub('[-]', '.', date)
-            request.session['today'] = date
-
-            date = re.split("[.]",date)
-            year = date[0]
-            month = dateDict[date[1]]
-            day = date[2]
-
-            request.session['year'] = year
-            request.session['month'] = month
-            request.session['day'] = day
-
             # Redirect after POST
             return render(request, 'dashboard.html', {
                 'thumb': getThumb(vid),
@@ -67,17 +38,17 @@ def dashboard(request):
         else:
             return render(request, 'alert.html', {'msg': "Invalid Form was sent."})
 
-    elif 'owner' in keys and 'videoNumber' in keys and 'today' in keys:
+    elif 'owner' in keys and 'videoNumber' in keys and 'today' in keys:     # kind of redirect or something...
         return render(request, 'dashboard.html', {
             'thumb': getThumb(str(request.session['videoNumber'])),
         })
     # no session data nor valid post data
     return render(request, 'alert.html', {'msg': "잘못된 접근입니다"})
 
+
 def getVideoId(url):
     VideoId = url.split("/")[-1]
     return VideoId
-
 
 def getThumb(videoId):
     # API요청을 보내기 위한 헤더
@@ -106,6 +77,7 @@ def getThumb(videoId):
 
 
 @csrf_exempt
+@login_required(login_url='/social/')
 def upload(request):
     keys = list(request.session.keys())
     if 'owner' not in keys and 'videoNumber' not in keys and 'today' not in keys:
@@ -115,7 +87,7 @@ def upload(request):
         request.session['delay'] = int(request.POST.get('delay', ''))
         request.session['face'] = request.POST.get('face', '') == 'on'
         request.session['speech'] = request.POST.get('speech', '') == 'on'
-        request.session['chat'] = request.POST.get('chat', '') == 'on'
+        request.session['chat'] = True
         request.session['youtube'] = request.POST.get('youtube', '') == 'on'
         request.session['rect_x'] = int(request.POST.get('rect_x', ''))
         request.session['rect_y'] = int(request.POST.get('rect_y', ''))
@@ -134,14 +106,13 @@ def upload(request):
         'thumb': getThumb(str(vid)), 
         })
 
-
+@login_required(login_url='/social/')
 def loading(request):
     return render(request, 'loading.html')
 
 
 
-
-
+@login_required(login_url='/social/')
 def uploadVideo(request):
     global delimiter
     keys = list(request.session.keys())

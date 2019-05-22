@@ -12,7 +12,8 @@ from datetime import datetime, timedelta
 
 class User(models.Model):
     user_name = models.CharField(max_length=50, primary_key=True)
-    expire_date = models.DateTimeField(auto_now_add=True)
+    membership_remaining = models.PositiveIntegerField(default=3)
+    total_pay = models.PositiveIntegerField(default=0)
 
     # Methods
     # def get_absolute_url(self):

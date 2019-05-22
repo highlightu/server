@@ -1,0 +1,86 @@
+<!DOCTYPE HTML>
+{% load staticfiles %}
+<!--
+	Striped by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+<head>
+    <title>LAJI - Auto-Highlight Editor</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
+    <!-- Custom styles for this template -->
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'mypage/css/main.css' %}"/>
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'mypage/css/frame.css' %}"/>
+    {% block style %}
+    {% endblock %}
+
+</head>
+<body class="is-preload">
+<!-- Content -->
+
+<div id="content">
+    <div class="inner">
+
+        <!-- Post -->
+        {% block content %}
+        {% endblock %}
+
+    </div>
+
+
+</div>
+
+<!-- Sidebar -->
+<div id="leftsidebar">
+
+    <!-- Logo -->
+    <a href="/home/"><img src="{% static 'images/logo2.png' %}" width="200" height="40"
+                          alt="logo"></a>
+
+    <!-- Nav -->
+    {% block nav_list %}
+    {% endblock %}
+
+    <!-- Search -->
+
+
+    <!-- Text -->
+    <section class="box text-style1">
+        <div class="inner">
+            <p>
+                <strong>LAJI: <br/>
+                </strong> A team who have a large dream to give true happiness to the streamers.<br/><br/>
+                Our <a href="https://github.com/hyunjae-lee/Capstone-Project-2019">github</a> is open to public. Visit
+                our website at <a href="/home/">here</a>!
+            </p>
+        </div>
+    </section>
+
+    <!-- Logout -->
+    <nav id="nav">
+        <ul>
+            <li><a href="/logout/">Logout</a></li>
+        </ul>
+    </nav>
+
+
+    <!-- Calendar -->
+    <br/><br/><br/><br/><br/><br/><br/><br/>
+
+
+</div>
+
+
+<!-- Scripts -->
+{% block scripts %}
+{% endblock %}
+</body>
+</html>
