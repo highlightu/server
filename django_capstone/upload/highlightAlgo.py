@@ -1,6 +1,7 @@
 from mypage.models import MergedVideo
 from django.core.files import File
 from .face_detection import face_detection
+from .face_detection import No_facedetection
 from .chatAnalyze import ChatAnalyze
 from .video_util import *
 from django.conf import settings
@@ -202,6 +203,7 @@ def makeHighlight(highlight_request, user_instance, video_object):
     else:
 
         cand = makeCandidatesByChatlog(chatlog=chatlog, numOfHighlights=numOfHighlights)
+        cand = No_facedetection(cand)
 
     video_length = get_video_length(clip=highlight_request.videoFile.path)
 
