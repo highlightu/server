@@ -49,20 +49,7 @@ def index(request):
             print("new user")
 
     # User.objects.new.create(user_name=request.user.username)
-    # date
-    date = str(timezone.localtime())
-    date = re.split('[ ]', date)[0]
-    date = re.sub('[-]', '.', date)
-    request.session['today'] = date
-
-    date = re.split("[.]", date)
-    year = date[0]
-    month = dateDict[date[1]]
-    day = date[2]
-
-    request.session['year'] = year
-    request.session['month'] = month
-    request.session['day'] = day
+        return render(request, 'home/index.html', {'newbie':not token})
     return render(request, 'home/index.html')
 
 
@@ -80,4 +67,18 @@ def logout(request):
 
 
 def social_login(request):
+    # date
+    date = str(timezone.localtime())
+    date = re.split('[ ]', date)[0]
+    date = re.sub('[-]', '.', date)
+    request.session['today'] = date
+
+    date = re.split("[.]", date)
+    year = date[0]
+    month = dateDict[date[1]]
+    day = date[2]
+
+    request.session['year'] = year
+    request.session['month'] = month
+    request.session['day'] = day
     return render(request, 'user_management/social_login.html')

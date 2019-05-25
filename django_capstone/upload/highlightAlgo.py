@@ -1,7 +1,6 @@
 from mypage.models import MergedVideo
 from django.core.files import File
 from .face_detection import face_detection
-from .face_detection import No_facedetection
 from .chatAnalyze import ChatAnalyze
 from .video_util import *
 from django.conf import settings
@@ -11,6 +10,9 @@ import re
 import platform
 from .video_util import cropVideo
 from mypage.views import send_mail
+import shutil
+
+HIGHLIGHT_DEBUG = True
 
 
 class Error(Exception):
@@ -26,10 +28,19 @@ class AlgorithmError(Error):
 
 def getTwitchChat(videoID, savePath):
 
-    chatLogPath = os.path.join(savePath, videoID + ".txt")
+    text_file =  videoID + ".txt"
+    chatLogPath = os.path.join(savePath, text_file)
     if os.path.isfile(chatLogPath):
         print("Chatlog already exists ! ")
         return chatLogPath
+    else:
+        for (path,dir,files) in os.walk(settings.MEDIA_ROOT):
+            for filename in files:
+                if filename == text_file:
+                    print("Chatlog found in previous request ! ")
+                    shutil.copy2(os.path.join(path,filename),chatLogPath)
+                    return chatLogPath
+
 
     system = platform.system()
     if system == "Linux":
@@ -130,12 +141,19 @@ def second(timestamp):
         return int(arr[0])*3600 + int(arr[1])*60 + int(arr[2])
     return -1
 
+def No_facedetection(dictionary):
+    output = dict()
+    for k,v in dictionary.items():
+        changed_time = second(k)
+        output[changed_time] = v
+    return output
 
 def getTimeSection(candidates, videoLen, delay):
     # make raw candidate list (must be sorted by key)
     candidates = list(candidates.keys())
 
     # if picked points are too close
+    mergeList = {}
     deleteList = []
     for i in range(len(candidates) - 1):
         if i in deleteList:
@@ -144,15 +162,21 @@ def getTimeSection(candidates, videoLen, delay):
             j = 1
             while i+j < len(candidates) and candidates[i+j] - candidates[i] < delay:
                 deleteList.append(i + j)
+                mergeList[candidates[i]] = candidates[i+j]  # ex) 300: 310 -> 300: 320 -> 300: 330
                 j += 1
 
-    print(deleteList)
-    print(candidates)
+    if HIGHLIGHT_DEBUG:
+        print(deleteList)
+        print(candidates)
 
     for i in deleteList:
         candidates[i] = -1
 
-    candidates = [[i-delay, i+delay] for i in candidates if i != -1]
+    candidates = [[i-2*delay, mergeList[i]+delay] for i in candidates if i != -1]
+
+    if HIGHLIGHT_DEBUG:
+        print("using -2*delay ~ +delay]")
+        print(candidates)
 
     # post-processing
     for i in range(len(candidates)):
@@ -183,6 +207,8 @@ def makeHighlight(highlight_request, user_instance, video_object):
     #
     # Make Highlights
     #
+
+    delay = int(video_object.delay)  # add input delay value
     if video_object.face == True:
 
 
@@ -196,7 +222,7 @@ def makeHighlight(highlight_request, user_instance, video_object):
         y = video_object.rect_y
         width = video_object.rect_width
         height = video_object.rect_height
-        delay = 10 # add input delay value
+
 
         cand = face_detection(videopath, temp_cand, x, y, width, height, round(delay/2))
 
@@ -208,7 +234,7 @@ def makeHighlight(highlight_request, user_instance, video_object):
     video_length = get_video_length(clip=highlight_request.videoFile.path)
 
     sections = getTimeSection(
-        candidates=cand, videoLen=video_length, delay=int(video_object.delay))
+        candidates=cand, videoLen=video_length, delay=delay)
 
     print(sections)
 

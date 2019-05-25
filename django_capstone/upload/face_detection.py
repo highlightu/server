@@ -270,15 +270,4 @@ def check_framelist(eachTime, fps):
 
     return sorted(output)
 
-
-def No_facedetection(dictionary):
-    output = dict()
-    for key, value in dictionary:
-        int_timelist = key.split(":")
-        changed_time =(int(int_timelist[0]) * 3600) + \
-                (int(int_timelist[1]) * 60) + \
-                (int(int_timelist[2]))
-        output[changed_time] = value
-
-    return output
                
