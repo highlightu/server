@@ -11,8 +11,13 @@ import platform
 from .video_util import cropVideo
 from mypage.views import send_mail
 import shutil
+from queue import Queue
 
 HIGHLIGHT_DEBUG = True
+
+# queueing system using producer-consumer logic
+queue = Queue()
+queue.put(object())
 
 
 class Error(Exception):
@@ -189,7 +194,7 @@ def getTimeSection(candidates, videoLen, delay):
 
 
 def makeHighlight(highlight_request, user_instance, video_object):
-
+    queue.get()
     numOfHighlights = 10
     multiplier = 4
     #
@@ -265,3 +270,5 @@ def makeHighlight(highlight_request, user_instance, video_object):
     mail_address = user_instance.user_name+'@gmail.com'
 
     send_mail(to=mail_address)
+
+    queue.put(object())
