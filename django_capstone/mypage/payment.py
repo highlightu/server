@@ -32,15 +32,15 @@ def payment_request(request, amount):
         "productDesc":"테스트 결제",
         "apiKey": "sk_test_apikey1234567890",
         "resultCallback": "https://myshop.com/toss/result.php",
-        # "retUrl": "https://moyak.kr"
-        "retUrl": "http://localhost:8000"
+        "retUrl": "https://moyak.kr"
+        #"retUrl": "http://localhost:8000"
         + reverse('payment_success', kwargs={'amount': amount, 'owner':owner}), #결제 유효성 확인
         "cashRecipt": False
     }
 
     r = requests.post(url, data=params)
     data = json.loads(r.text)
-    
+
     if data['code'] == 0:
         user_instance = User.objects.filter(user_name=owner).get()
         #결제가 제대로 되어있는지 확인하기 위해 payToken 변수를 저장해야 함.
@@ -62,6 +62,7 @@ def payment_success(request, amount, owner):
     if "PAY_APPROVED" != payment_check(payToken):
         return redirect('payment_fail')
 
+    pay_complete(payToken,orderNo,amount)
     # Update user DB
     user_instance = User.objects.filter(user_name=owner).get()
     user_instance.membership_remaining += 30
@@ -75,7 +76,7 @@ def payment_success(request, amount, owner):
 def payment_fail(request):
     #진우형 payment_fail.html 대신에 형 fail html 파일 만든다음 경로 설정해주세요.
     return render(request, 'payment_fail.html')
-    
+
 ##### request-handling function end #######
 ###### non-request-handling function ######
 def payment_check(token):
@@ -91,3 +92,12 @@ def payment_check(token):
     else:
         return None
 
+def pay_complete(payToken,orderNo,amount):
+    url = tossapi_url + "execute"
+    params = {
+        "payToken": payToken,
+        "orderNo" : orderNo,
+        "apiKey": "sk_test_apikey1234567890",
+        "amount": amount
+    }
+    r = requests.post(url, data=params)
