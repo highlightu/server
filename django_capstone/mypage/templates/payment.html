@@ -46,51 +46,105 @@
     <div class="row">
         <div style="float: left; width: 33%; ">
             <div class="container">
+                <div style="margin: -20px 0 20px 45px;">
+                    # of you can request
+                </div>
                 <div class="de">
                     <div class="den">
                         <div class="dene">
                             <a href="#">
                                 <div class="denem">
-                                    <div class="deneme">
+                                    <script src="{% static 'mypage/js/jquery.min.js' %}"></script>
+                                    <div class="deneme" id="membership">
                                         Membership <br/>
                                         Remaining <br/>
-                                        [{{request.session.remaining}}]
                                     </div>
+                                    <script>
+                                        $('#membership').hover(function() {
+                                          $(this).text("Coupons: " + {{request.session.remaining}});
+                                          $(this).css("margin","-30px 0 0 -60px");
+                                        }, function(){
+                                          $(this).text("Membership\nRemaining");
+                                          $(this).css("margin","-35px 0 0 -62px");
+                                        });
+
+                                    </script>
                                 </div>
                             </a>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
         <div style="float: left; width: 33%; ">
             <div class="container">
+                <div style="margin: -20px 0 20px 65px;">
+                    +30 coupons
+                </div>
                 <div class="de">
                     <div class="den">
                         <div class="dene">
                             <a href="{% url 'request' 9900 %}">
                                 <div class="denem">
-                                    <div class="deneme" style="margin: -30px 0 0 -65px;">
-                                        Continuation<br/>
-                                        [&#8361;9,900]
+                                    <div class="deneme" style="margin: -35px 0 0 -60px;" id="purchase">
+                                        Purchase<br/>
+                                        [￦9,900]
                                     </div>
+                                    <script>
+                                        $('#purchase').hover(function() {
+                                          $(this).text("Toss Pay\n결제");
+                                          $(this).css("margin","-30px 0 0 -60px");
+                                        }, function(){
+                                          $(this).text("Purchase\n[￦9,900]");
+                                          $(this).css("margin","-35px 0 0 -60px");
+                                        });
+
+                                    </script>
                                 </div>
                             </a>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
         <div style="float: left; width: 33%;">
             <div class="container">
+                <div style="margin: -20px 0 20px 70px;">
+                    No refund
+                </div>
                 <div class="de">
                     <div class="den">
                         <div class="dene">
-                            <a href="{% url 'withdraw' %}">
+                            <script>
+                                $(document).ready(function (){
+                                    $('#withdraw').click(function(event){
+                                        if ( confirm("Are you sure?") ){
+                                            alert("Bye Bye ! ");
+                                            $('#withdraw').attr('href','{% url 'withdraw' %}');
+                                        }else{
+                                            alert("Good choice!");
+                                        }
+                                    });
+                                });
+                            </script>
+                            <a id="withdraw" href="">
                                 <div class="denem">
-                                    <div class="deneme" style="margin: -20px 0 0 -60px;">
-                                        Withdrawl
+                                    <div class="deneme" style="margin: -35px 0 0 -60px;" id="delete">
+                                        Delete<br/>
+                                        Account
                                     </div>
+                                    <script>
+                                        $('#delete').hover(function() {
+                                          $(this).text("탈퇴");
+                                          $(this).css("margin","-25px 0 0 -60px");
+                                        }, function(){
+                                          $(this).text("Delete\nAccount");
+                                          $(this).css("margin","-35px 0 0 -60px");
+                                        });
+
+                                    </script>
                                 </div>
                             </a>
                         </div>
@@ -113,7 +167,7 @@
     <ul>
         <li><a href="/mypage/archive/?page=1">Archive</a></li>
 
-        <li class="current"><a href="/mypage/payment">Payment</a></li>
+        <li class="current"><a href="/mypage/payment">&gt; Payment</a></li>
 
     </ul>
 </nav>

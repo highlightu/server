@@ -6,23 +6,8 @@ from .models import User
 # 썸네일 이미지를 얻기 위해 추가
 import requests
 import json
-from django.utils import timezone
-import re
 
-dateDict = {
-    '01': 'Jan',
-    '02': 'Feb',
-    '03': 'Mar',
-    '04': 'Apr',
-    '05': 'May',
-    '06': 'Jun',
-    '07': 'Jul',
-    '08': 'Aug',
-    '09': 'Sep',
-    '10': 'Oct',
-    '11': 'Nov',
-    '12': 'Dec',
-}
+
 
 
 def index(request):
@@ -39,7 +24,7 @@ def index(request):
                 token = True
                 break
         if (token is False):
-            new_user = User.objects.create(user_name=request.user.username)
+            new_user = User.objects.create(user_name=request.user.username,user_email=request.user.email)
             # print(new_user)
             # new_instance = deepcopy(new_user)
             # new_instance.id = None
@@ -67,18 +52,4 @@ def logout(request):
 
 
 def social_login(request):
-    # date
-    date = str(timezone.localtime())
-    date = re.split('[ ]', date)[0]
-    date = re.sub('[-]', '.', date)
-    request.session['today'] = date
-
-    date = re.split("[.]", date)
-    year = date[0]
-    month = dateDict[date[1]]
-    day = date[2]
-
-    request.session['year'] = year
-    request.session['month'] = month
-    request.session['day'] = day
     return render(request, 'user_management/social_login.html')

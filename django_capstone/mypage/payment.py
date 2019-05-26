@@ -32,8 +32,8 @@ def payment_request(request, amount):
         "productDesc":"테스트 결제",
         "apiKey": "sk_test_apikey1234567890",
         "resultCallback": "https://myshop.com/toss/result.php",
-        "retUrl": "https://mayak.kr"
-        # "retUrl": "http://localhost:8000"
+        # "retUrl": "https://moyak.kr"
+        "retUrl": "http://localhost:8000"
         + reverse('payment_success', kwargs={'amount': amount, 'owner':owner}), #결제 유효성 확인
         "cashRecipt": False
     }
@@ -49,6 +49,7 @@ def payment_request(request, amount):
         return HttpResponseRedirect(data['checkoutPage'])
     else:
         return redirect('payment_fail')
+
 
 #결제를 제대로 실행됬는지 확인하기 위해 필요.
 @login_required(login_url='/social/')
@@ -68,6 +69,7 @@ def payment_success(request, amount, owner):
     user_instance.save()
 
     return render(request, 'payment_success.html')
+
 
 @login_required(login_url='/social/')
 def payment_fail(request):

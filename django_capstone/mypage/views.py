@@ -1,16 +1,38 @@
 ﻿# -*- coding:utf-8 -*-
 from django.shortcuts import render
-from django.http import *
-from .models import MergedVideo
-from main.models import User
 from django.core.paginator import Paginator
 from django.conf import settings
-from django.http import HttpResponse, Http404
+from django.http import *
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from django.contrib import auth
+
+
+from .models import MergedVideo
+from main.models import User
+
+
+import os, re
 import smtplib
-import os
 from email.mime.text import MIMEText
 from email.header import Header
-from django.contrib.auth.decorators import login_required
+
+
+dateDict = {
+    '01': 'Jan',
+    '02': 'Feb',
+    '03': 'Mar',
+    '04': 'Apr',
+    '05': 'May',
+    '06': 'Jun',
+    '07': 'Jul',
+    '08': 'Aug',
+    '09': 'Sep',
+    '10': 'Oct',
+    '11': 'Nov',
+    '12': 'Dec',
+}
+
 
 @login_required(login_url='/social/')
 def archive(request):
@@ -29,6 +51,7 @@ def archive(request):
         'page': page,
         "MEDIA_URL": settings.MEDIA_URL
     })
+
 
 @login_required(login_url='/social/')
 def download(request, id):
@@ -67,8 +90,26 @@ def download(request, id):
 #
 #     return render(request, "video_template.html", {"url":video_url})
 
+
+def get_date(request):
+    date = str(timezone.localtime())
+    date = re.split('[ ]', date)[0]
+    date = re.sub('[-]', '.', date)
+    request.session['today'] = date
+
+    date = re.split("[.]", date)
+    year = date[0]
+    month = dateDict[date[1]]
+    day = date[2]
+
+    request.session['year'] = year
+    request.session['month'] = month
+    request.session['day'] = day
+
+
 @login_required(login_url='/social/')
 def payment(request):
+    get_date(request)
     user_instance = User.objects.filter(user_name=request.user.username).get()
     request.session['remaining'] = user_instance.membership_remaining
     request.session['total_pay'] = user_instance.total_pay
@@ -78,12 +119,15 @@ def payment(request):
 @login_required(login_url='/social/')
 def withdraw(request):
     user_instance = User.objects.filter(user_name=request.user.username).get()
-    user_instance.membership_remaining = 0
-    user_instance.save()
+    # user_instance.membership_remaining = 0
+    # user_instance.save()
+    #
+    # request.session['remaining'] = user_instance.membership_remaining
+    # request.session['total_pay'] = user_instance.total_pay
+    user_instance.delete()
+    auth.logout(request)
+    return HttpResponseRedirect('/home/')
 
-    request.session['remaining'] = user_instance.membership_remaining
-    request.session['total_pay'] = user_instance.total_pay
-    return render(request, 'payment.html')
 
 def send_mail(to, reason="finished"):
     # 메시지 내용 작성
@@ -112,8 +156,6 @@ def send_mail(to, reason="finished"):
         msg['Subject'] = Header('[LAJI] Notification mail for your highlight request', 'utf-8')
 
     elif reason == "expired":
-        content = 'Your membership period is over. \n\nPlease visit our website to extend your membership.' \
-                  + '\n\nAll data will be deleted after 5 days if you don\'t purchase our membership.\n\n'
         content = """\
         <html>
          <head></head>
@@ -127,7 +169,23 @@ def send_mail(to, reason="finished"):
         </html>
         """
         msg = MIMEText(content, 'html')
-        msg['Subject'] = Header('[LAJI] Notification mail for your membership expiration', 'utf-8')
+        msg['Subject'] = Header('[LAJI] Notification mail for your MEMBERSHIP EXPIRATION', 'utf-8')
+
+    elif reason == "failed":
+        content = """\
+        <html>
+         <head></head>
+          <body>
+            <h2>Sorry.</h2>
+            <p>We failed to create a video. Please check your video is the right one.</p>
+            <br/>
+            <a href="https://moyak.kr">LAJI - Auto Highlight Editor</a>
+            <br/>
+          </body>
+        </html>
+        """
+        msg = MIMEText(content, 'html')
+        msg['Subject'] = Header('[LAJI] Notification mail for FAILURE processing your request', 'utf-8')
 
     else:
         content = '메일을 보내지 않을 이유가 없다.'

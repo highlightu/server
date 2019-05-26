@@ -1,22 +1,43 @@
-from django.shortcuts import render, redirect
-from django.http import *
+from django.shortcuts import render
+from django.utils import timezone
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+
+
 from mypage.models import Video
 from main.models import User
 from .models import VideoUploadModel
 from .forms import VideoUploadForm
-import re, os
-import threading
-from .highlightAlgo import makeHighlight
-from django.views.decorators.csrf import csrf_exempt
 from .forms import RequestForm
-from django.contrib.auth.decorators import login_required
-import requests
+from .highlightAlgo import makeHighlight
+from mypage.views import get_date
+
+import os
+import threading
 import re
+import requests
+
 
 thSize = {'width': '1168', 'height': '657'}
+dateDict = {
+    '01': 'Jan',
+    '02': 'Feb',
+    '03': 'Mar',
+    '04': 'Apr',
+    '05': 'May',
+    '06': 'Jun',
+    '07': 'Jul',
+    '08': 'Aug',
+    '09': 'Sep',
+    '10': 'Oct',
+    '11': 'Nov',
+    '12': 'Dec',
+}
+
 
 @login_required(login_url='/social/')
 def dashboard(request):
+    get_date(request)
     keys = list(request.session.keys())
     if request.method == 'POST':  # if form is send by POST...
         form = RequestForm(request.POST)  # bind it to the request form
@@ -49,6 +70,7 @@ def dashboard(request):
 def getVideoId(url):
     VideoId = url.split("/")[-1]
     return VideoId
+
 
 def getThumb(videoId):
     # API요청을 보내기 위한 헤더
@@ -169,7 +191,6 @@ def uploadVideo(request):
             ############# test code #############
             print('new video object created.')
             # settings.MEDIA_ROOT = temp
-
 
 
 

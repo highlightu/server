@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 
 class User(models.Model):
     user_name = models.CharField(max_length=50, primary_key=True)
+    user_email = models.EmailField(max_length=70, default="zinuzian@naver.com")
     membership_remaining = models.PositiveIntegerField(default=3)
     total_pay = models.PositiveIntegerField(default=0)
 

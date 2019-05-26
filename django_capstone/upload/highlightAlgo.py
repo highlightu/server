@@ -159,6 +159,7 @@ def getTimeSection(candidates, videoLen, delay):
         if i in deleteList:
             continue
         else:
+            mergeList[candidates[i]] = candidates[i]
             j = 1
             while i+j < len(candidates) and candidates[i+j] - candidates[i] < delay:
                 deleteList.append(i + j)
@@ -166,7 +167,11 @@ def getTimeSection(candidates, videoLen, delay):
                 j += 1
 
     if HIGHLIGHT_DEBUG:
+        print("Merge List : ", end=' ')
+        print(mergeList)
+        print("Will be deleted : ", end=' ')
         print(deleteList)
+        # print("Will be deleted : ", end=' ')
         print(candidates)
 
     for i in deleteList:
@@ -175,7 +180,7 @@ def getTimeSection(candidates, videoLen, delay):
     candidates = [[i-2*delay, mergeList[i]+delay] for i in candidates if i != -1]
 
     if HIGHLIGHT_DEBUG:
-        print("using -2*delay ~ +delay]")
+        print("using -2*delay ~ +delay")
         print(candidates)
 
     # post-processing
@@ -192,76 +197,84 @@ def makeHighlight(highlight_request, user_instance, video_object):
 
     numOfHighlights = 10
     multiplier = 4
-    #
-    # Chat Download
-    #
-    chat_save_path = os.path.join(settings.MEDIA_ROOT, highlight_request.path)
-    print("The downloaded chat will be stored at --> " + chat_save_path)
-    chatlog = getTwitchChat(str(video_object.videoNumber), chat_save_path)
 
-    # If TCD fails, there will be no highlight
-    if chatlog is None:
-        print("Fail to create chatlog !!!")
-        raise AlgorithmError
+    try:
 
-    #
-    # Make Highlights
-    #
+        # Chat Download
+        chat_save_path = os.path.join(settings.MEDIA_ROOT, highlight_request.path)
+        print("The downloaded chat will be stored at --> " + chat_save_path)
+        chatlog = getTwitchChat(str(video_object.videoNumber), chat_save_path)
 
-    delay = int(video_object.delay)  # add input delay value
-    if video_object.face == True:
+        # If TCD fails, there will be no highlight
+        if chatlog is None:
+            print("Fail to create chatlog !!!")
+            raise AlgorithmError
 
+        #
+        # Make Highlights
+        #
 
-
-        temp_cand = makeCandidatesByChatlog(chatlog=chatlog, numOfHighlights=numOfHighlights*multiplier)
-        # TODO videopath should be input
-
-        # Get video path and resized frame info
-        videopath = video_object.videoFileURL.path
-        x = video_object.rect_x
-        y = video_object.rect_y
-        width = video_object.rect_width
-        height = video_object.rect_height
-
-
-        cand = face_detection(videopath, temp_cand, x, y, width, height, round(delay/2))
-
-    else:
-
-        cand = makeCandidatesByChatlog(chatlog=chatlog, numOfHighlights=numOfHighlights)
-        cand = No_facedetection(cand)
-
-    video_length = get_video_length(clip=highlight_request.videoFile.path)
-
-    sections = getTimeSection(
-        candidates=cand, videoLen=video_length, delay=delay)
-
-    print(sections)
+        delay = int(video_object.delay)  # add input delay value
+        if video_object.face == True:
 
 
 
-    highlights = split_video(video_path=highlight_request.videoFile.path,
-                             save_path=chat_save_path,
-                             video_id=video_object.videoNumber,
-                             split_times=sections)
+            temp_cand = makeCandidatesByChatlog(chatlog=chatlog, numOfHighlights=numOfHighlights*multiplier)
+            # TODO videopath should be input
+
+            # Get video path and resized frame info
+            videopath = video_object.videoFileURL.path
+            x = video_object.rect_x
+            y = video_object.rect_y
+            width = video_object.rect_width
+            height = video_object.rect_height
 
 
-    #
-    # Register them on DB
-    #
-    for highlight in highlights:
-        with open(highlight, 'rb') as file:
-            highlight_obj = MergedVideo.objects.create(
-                owner=user_instance,
-                videoNumber=video_object.videoNumber,
-                date=video_object.date,
-                path=highlight_request.path,
-                video=None,
-            )
+            cand = face_detection(videopath, temp_cand, x, y, width, height, round(delay/2))
 
-            # Link DB and files
-            highlight_obj.video.save(highlight_request.title + ".mp4", File(file))
-            os.remove(highlight)
-    mail_address = user_instance.user_name+'@gmail.com'
+        else:
 
-    send_mail(to=mail_address)
+            cand = makeCandidatesByChatlog(chatlog=chatlog, numOfHighlights=numOfHighlights)
+            cand = No_facedetection(cand)
+
+        video_length = get_video_length(clip=highlight_request.videoFile.path)
+
+        sections = getTimeSection(
+            candidates=cand, videoLen=video_length, delay=delay)
+
+        print(sections)
+
+
+
+        highlights = split_video(video_path=highlight_request.videoFile.path,
+                                 save_path=chat_save_path,
+                                 video_id=video_object.videoNumber,
+                                 split_times=sections)
+
+
+        #
+        # Register them on DB
+        #
+        for highlight in highlights:
+            with open(highlight, 'rb') as file:
+                highlight_obj = MergedVideo.objects.create(
+                    owner=user_instance,
+                    videoNumber=video_object.videoNumber,
+                    date=video_object.date,
+                    path=highlight_request.path,
+                    video=None,
+                )
+
+                # Link DB and files
+                highlight_obj.video.save(highlight_request.title + ".mp4", File(file))
+                os.remove(highlight)
+
+        send_mail(to=user_instance.user_email)
+
+        user_instance.membership_remaining -= 1
+        user_instance.save()
+
+    except:
+
+        # When highlight process fails
+        send_mail(to=user_instance.user_email,reason="failed")
