@@ -160,7 +160,7 @@ def getTimeSection(candidates, videoLen, delay):
     # if picked points are too close
     mergeList = {}
     deleteList = []
-    for i in range(len(candidates) - 1):
+    for i in range(len(candidates)):
         if i in deleteList:
             continue
         else:
@@ -181,6 +181,9 @@ def getTimeSection(candidates, videoLen, delay):
 
     for i in deleteList:
         candidates[i] = -1
+
+    if HIGHLIGHT_DEBUG:
+        print(candidates)
 
     candidates = [[i-2*delay, mergeList[i]+delay] for i in candidates if i != -1]
 
@@ -260,6 +263,7 @@ def makeHighlight(highlight_request, user_instance, video_object):
         # Register them on DB
         #
         for highlight in highlights:
+            nov=1 # number of video
             with open(highlight, 'rb') as file:
                 highlight_obj = MergedVideo.objects.create(
                     owner=user_instance,
@@ -270,8 +274,11 @@ def makeHighlight(highlight_request, user_instance, video_object):
                 )
 
                 # Link DB and files
-                highlight_obj.video.save(highlight_request.title + ".mp4", File(file))
-                os.remove(highlight)
+                highlight_obj.video.save(highlight_request.title + str(nov) + ".mp4", File(file))
+                nov += 1
+
+        for highlight in highlights:
+            os.remove(highlight)
 
         send_mail(to=user_instance.user_email)
 
