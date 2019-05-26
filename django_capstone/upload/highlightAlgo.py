@@ -11,8 +11,13 @@ import platform
 from .video_util import cropVideo
 from mypage.views import send_mail
 import shutil
+from queue import Queue
 
 HIGHLIGHT_DEBUG = True
+
+# queueing system using producer-consumer logic
+queue = Queue()
+queue.put(object())
 
 
 class Error(Exception):
@@ -194,7 +199,7 @@ def getTimeSection(candidates, videoLen, delay):
 
 
 def makeHighlight(highlight_request, user_instance, video_object):
-
+    queue.get()
     numOfHighlights = 10
     multiplier = 4
 
@@ -245,7 +250,6 @@ def makeHighlight(highlight_request, user_instance, video_object):
         print(sections)
 
 
-
         highlights = split_video(video_path=highlight_request.videoFile.path,
                                  save_path=chat_save_path,
                                  video_id=video_object.videoNumber,
@@ -273,8 +277,10 @@ def makeHighlight(highlight_request, user_instance, video_object):
 
         user_instance.membership_remaining -= 1
         user_instance.save()
-
+        queue.put(object())
     except:
 
         # When highlight process fails
         send_mail(to=user_instance.user_email,reason="failed")
+        queue.put(object())
+
