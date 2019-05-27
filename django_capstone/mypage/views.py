@@ -10,7 +10,7 @@ from django.contrib import auth
 
 from .models import MergedVideo
 from main.models import User
-
+from main.models import WithdrawnUser
 
 import os, re
 import smtplib
@@ -124,6 +124,14 @@ def withdraw(request):
     #
     # request.session['remaining'] = user_instance.membership_remaining
     # request.session['total_pay'] = user_instance.total_pay
+
+    # register user as a withdrawn user, all data will be saved.
+    WithdrawnUser.objects.create(
+        user_name=user_instance.user_name,
+        user_email=user_instance.user_email,
+        membership_remaining=user_instance.membership_remaining,
+        total_pay=user_instance.total_pay,
+    )
     user_instance.delete()
     auth.logout(request)
     return HttpResponseRedirect('/home/')

@@ -120,11 +120,13 @@
                             <script>
                                 $(document).ready(function (){
                                     $('#withdraw').click(function(event){
-                                        if ( confirm("Are you sure?") ){
+                                        var name = prompt("Please enter your user id (ex. 00000001 )");
+                                        if ( name == "{{ request.user.username }}" ){
                                             alert("Bye Bye ! ");
                                             $('#withdraw').attr('href','{% url 'withdraw' %}');
                                         }else{
-                                            alert("Good choice!");
+
+                                            alert("Please check your input. Withdrawn failed.");
                                         }
                                     });
                                 });

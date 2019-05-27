@@ -185,7 +185,7 @@ def getTimeSection(candidates, videoLen, delay):
     if HIGHLIGHT_DEBUG:
         print(candidates)
 
-    candidates = [[i-2*delay, mergeList[i]+delay] for i in candidates if i != -1]
+    candidates = [[i-2*delay, mergeList[i]] for i in candidates if i != -1]
 
     if HIGHLIGHT_DEBUG:
         print("using -2*delay ~ +delay")

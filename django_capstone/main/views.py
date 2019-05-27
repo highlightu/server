@@ -3,6 +3,7 @@ from django.http import *
 from django.contrib import auth
 from django.shortcuts import redirect
 from .models import User
+from .models import WithdrawnUser
 # 썸네일 이미지를 얻기 위해 추가
 import requests
 import json
@@ -24,17 +25,28 @@ def index(request):
                 token = True
                 break
         if (token is False):
-            new_user = User.objects.create(user_name=request.user.username,user_email=request.user.email)
-            # print(new_user)
-            # new_instance = deepcopy(new_user)
-            # new_instance.id = None
-            # getUserInstance(new_instance)
+            try:
+                test = WithdrawnUser.objects.filter(user_name=request.user.username).get()
+                new_user = User.objects.create(
+                    user_name=test.user_name,
+                    user_email=test.user_email,
+                    membership_remaining=test.membership_remaining,
+                    total_pay=test.total_pay
+                )
+                test.delete()
+                print("user is back")
+                return render(request, 'home/index.html', {'newbie': False,
+                                                           'comeback':True,
+                                                           })
 
-            new_user.save()
-            print("new user")
-
-    # User.objects.new.create(user_name=request.user.username)
-        return render(request, 'home/index.html', {'newbie':not token})
+            except:
+                new_user = User.objects.create(
+                    user_name=request.user.username,
+                    user_email=request.user.email
+                )
+                print("new user")
+            return render(request, 'home/index.html', {'newbie':not token,
+                                                       'comeback': False,})
     return render(request, 'home/index.html')
 
 
