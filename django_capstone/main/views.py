@@ -4,11 +4,10 @@ from django.contrib import auth
 from django.shortcuts import redirect
 from .models import User
 from .models import WithdrawnUser
+from .userCount import userCreated
 # 썸네일 이미지를 얻기 위해 추가
 import requests
 import json
-
-
 
 
 def index(request):
@@ -26,8 +25,12 @@ def index(request):
                 break
         if (token is False):
             try:
-                test = WithdrawnUser.objects.filter(user_name=request.user.username).get()
+                test = WithdrawnUser.objects.filter(
+                    # HYUNJAE
+                    # user_name=request.user.username).get()
+                    user_name=userCreated()).get()
                 new_user = User.objects.create(
+                    # HYUNJAE
                     user_name=test.user_name,
                     user_email=test.user_email,
                     membership_remaining=test.membership_remaining,
@@ -36,7 +39,7 @@ def index(request):
                 test.delete()
                 print("user is back")
                 return render(request, 'home/index.html', {'newbie': False,
-                                                           'comeback':True,
+                                                           'comeback': True,
                                                            })
 
             except:
@@ -45,8 +48,8 @@ def index(request):
                     user_email=request.user.email
                 )
                 print("new user")
-            return render(request, 'home/index.html', {'newbie':not token,
-                                                       'comeback': False,})
+            return render(request, 'home/index.html', {'newbie': not token,
+                                                       'comeback': False, })
     return render(request, 'home/index.html')
 
 
