@@ -37,6 +37,7 @@ class MergedVideo(models.Model):
     date = models.CharField(max_length=50)
     path = models.CharField(max_length=200, default="path")
     video = models.FileField(upload_to=content_file_name,max_length=500)
+    title = models.CharField(max_length=100)
     # videoFileURL = models.CharField(max_length=200)
 
     def __str__(self):

@@ -12,7 +12,8 @@
         if they get too long. You can also remove the <p> entirely if you don't
         need a subtitle.
     -->
-    <h2><strong>{{o.date|slice:"0:4"}}.{{o.date|slice:"4:6"}}.{{o.date|slice:"6:8"}}</strong></h2>
+
+    <h2>Title : <strong>{{o.title}}</strong></h2>
 
     <div class="info">
         <!--
@@ -24,8 +25,27 @@
 
         -->
         <span class=date>
-            <span class="month">{{request.session.month}}</span>
-            <span class="day">{{request.session.day}}</span>
+            <script>
+                var dateDict = {
+                    '01': 'Jan',
+                    '02': 'Feb',
+                    '03': 'Mar',
+                    '04': 'Apr',
+                    '05': 'May',
+                    '06': 'Jun',
+                    '07': 'Jul',
+                    '08': 'Aug',
+                    '09': 'Sep',
+                    '10': 'Oct',
+                    '11': 'Nov',
+                    '12': 'Dec',
+                };
+                var jbSplit = '{{o.date}}'.split('.');
+
+                document.write( '<span class="month">' + dateDict[jbSplit[1]] + '</span>' );
+                document.write( '<span class="day">' + jbSplit[2] + '</span><br/>' );
+                document.write( '<span >' + jbSplit[0] + '</span>' );
+            </script>
         </span>
         <!--
             Note: You can change the number of list items in "stats" to whatever you want.
@@ -35,10 +55,10 @@
             <li><a href="#" class="icon fa-comment">0</a></li>
         </ul>
     </div>
-    <a href="#" class="image featured"><img src="images/pic01.jpg" alt=""/></a>
-    <p>
 
-        <video width='1168' height='720' controls poster="thumb.png">
+    <p>
+        <br/>
+        <video width='1168' height='720' controls>
             <source src="{{ o.video.url }}" type="video/mp4">
             <source src="{{ o.video.url }}" type="video/wmv">
             <source src="{{ o.video.url }}" type="video/ogg">
@@ -65,6 +85,9 @@
     </div>
     <script>
         $('.pagination').children('.pages').children("a[name='{{page}}']").addClass("active");
+
+
+
 
     </script>
 </div>

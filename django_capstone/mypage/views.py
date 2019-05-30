@@ -91,6 +91,9 @@ def download(request, id):
 #     return render(request, "video_template.html", {"url":video_url})
 
 
+
+
+
 def get_date(request):
     date = str(timezone.localtime())
     date = re.split('[ ]', date)[0]

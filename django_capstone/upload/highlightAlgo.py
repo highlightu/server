@@ -262,8 +262,8 @@ def makeHighlight(highlight_request, user_instance, video_object):
         #
         # Register them on DB
         #
+        nov = 1  # number of video
         for highlight in highlights:
-            nov=1 # number of video
             with open(highlight, 'rb') as file:
                 highlight_obj = MergedVideo.objects.create(
                     owner=user_instance,
@@ -271,6 +271,7 @@ def makeHighlight(highlight_request, user_instance, video_object):
                     date=video_object.date,
                     path=highlight_request.path,
                     video=None,
+                    title=highlight_request.title + str(nov)
                 )
 
                 # Link DB and files

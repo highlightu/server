@@ -21,16 +21,11 @@
             the entire "date" element.
 
         -->
-        <span class="date"><span
-                class="month">{{ request.session.month }}<span>{{ request.session.year }}</span></span> <span
-                class="day">{{ request.session.day }}</span></span>
-        <!--
-            Note: You can change the number of list items in "stats" to whatever you want.
-        -->
-        <ul class="stats">
-            <li><a href="#" class="icon fa-heart">0</a></li>
-            <li><a href="#" class="icon fa-comment">0</a></li>
-        </ul>
+        <span class="date">
+            <span class="month">{{ request.session.month }}</span>
+            <span class="day">{{ request.session.day }}</span><br/>
+            <span class="month">{{ request.session.year }}</span>
+        </span>
     </div>
     <a href="#" class="image featured"><img src="images/pic01.jpg" alt=""/></a>
     <p>
