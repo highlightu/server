@@ -1,11 +1,18 @@
-# LAJI : Auto Highlighting Web service
+# :high_brightness: LAJI : Auto Highlighting :arrow_forward: Web service
 
-> We analyze your Twitch videos
 
-> We give you a list of highlights back
+> &#9989; &#10102; We analyze your Twitch videos &#127916;
 
-> We take care of your values
+> &#9989; &#10103; We give you a list of highlights back &#128140;
 
+> &#9989; &#10104; We take care of your values &#128142;
+
+
+<!-- blank line -->
+<figure class="video_container">
+  <iframe src="https://www.youtube.com/embed/B0WQcqKOryY" frameborder="0" allowfullscreen="true"> </iframe>
+</figure>
+<!-- blank line -->
 
 - build status
 - issues (waffle.io maybe)
@@ -22,21 +29,9 @@
 
 - For more on these wonderful ~~badgers~~ badges, refer to <a href="http://badges.github.io/badgerbadgerbadger/" target="_blank">`badgerbadgerbadger`</a>.
 
-***INSERT ANOTHER GRAPHIC HERE***
-
-- Most people will glance at your `README`, *maybe* star it, and leave
-- Ergo, people should understand instantly what your project is about based on your repo
-
-> Tips
-
-- HAVE WHITE SPACE
-- MAKE IT PRETTY
-- GIFS ARE REALLY COOL
-
 > GIF Tools
+[![Little red ridning hood](http://i.imgur.com/7YTMFQp.png)](https://youtu.be/B0WQcqKOryY "LAJI Demo Video")
 
-- Use <a href="http://recordit.co/" target="_blank">**Recordit**</a> to create quicks screencasts of your desktop and export them as `GIF`s.
-- For terminal sessions, there's <a href="https://github.com/chjj/ttystudio" target="_blank">**ttystudio**</a> which also supports exporting `GIF`s.
 
 **Requirements**
 
@@ -44,16 +39,6 @@ Python : 3.7.0 or later
 
 Opencv-Python : 4.0.0 or later
 
-
-**Recordit**
-
-![Recordit GIF](http://g.recordit.co/iLN6A0vSD8.gif)
-
-**ttystudio**
-
-![ttystudio GIF](https://raw.githubusercontent.com/chjj/ttystudio/master/img/example.gif)
-
----
 
 ## Table of Contents (Optional)
 
