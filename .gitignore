@@ -2,7 +2,9 @@
 *.sqlite3
 .idea/
 .vscode/
-django_capstone/media/
-django_capstone/mypage/migrations/
-django_capstone/main/migrations/
-django_capstone/upload/migrations/
+media/
+mypage/migrations/
+main/migrations/
+upload/migrations/
+__init__.py
+
