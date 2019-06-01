@@ -111,9 +111,7 @@ def getTwitchChat(videoID, savePath):
         return None
 
 
-def makeCandidatesByChatlog(chatlog, numOfHighlights):
-
-    cummulative_sec = 5
+def makeCandidatesByChatlog(chatlog, numOfHighlights, cummulative_sec):
 
     labeldwords = ['pog', 'poggers', 'pogchamp', 'holy', 'shit', 'wow', 'ez', 'clip', 'nice',
                    'omg', 'wut', 'gee', 'god', 'dirty', 'way', 'moly', 'wtf', 'fuck', 'crazy',
@@ -205,7 +203,8 @@ def makeHighlight(highlight_request, user_instance, video_object):
     queue.get()
     numOfHighlights = 10
     multiplier = 4
-
+    cummulative_sec = 5
+    
     try:
 
         # Chat Download
@@ -223,11 +222,13 @@ def makeHighlight(highlight_request, user_instance, video_object):
         #
 
         delay = int(video_object.delay)  # add input delay value
+        
         if video_object.face == True:
 
 
 
-            temp_cand = makeCandidatesByChatlog(chatlog=chatlog, numOfHighlights=numOfHighlights*multiplier)
+            temp_cand = makeCandidatesByChatlog(chatlog=chatlog, 
+            numOfHighlights=numOfHighlights*multiplier, cummulative_sec=cummulative_sec)
             # TODO videopath should be input
 
             # Get video path and resized frame info
@@ -238,11 +239,12 @@ def makeHighlight(highlight_request, user_instance, video_object):
             height = video_object.rect_height
 
 
-            cand = face_detection(videopath, temp_cand, x, y, width, height, round(delay/2))
+            cand = face_detection(videopath, temp_cand, x, y, width, height, cummulative_sec)
 
         else:
 
-            cand = makeCandidatesByChatlog(chatlog=chatlog, numOfHighlights=numOfHighlights)
+            cand = makeCandidatesByChatlog(chatlog=chatlog, 
+            numOfHighlights=numOfHighlights, cummulative_sec=cummulative_sec)
             cand = No_facedetection(cand)
 
         video_length = get_video_length(clip=highlight_request.videoFile.path)
@@ -250,8 +252,10 @@ def makeHighlight(highlight_request, user_instance, video_object):
         sections = getTimeSection(
             candidates=cand, videoLen=video_length, delay=delay)
 
-        print(sections)
-
+        ''' Print highlight list'''
+        i = 0
+        for eachHighlight in sections:
+            print("[{}] highlight : {}".format(i,eachHighlight))
 
         highlights = split_video(video_path=highlight_request.videoFile.path,
                                  save_path=chat_save_path,

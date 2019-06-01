@@ -113,8 +113,8 @@ class ChatAnalyze:
                 iteration += 1
             else:
                 i += 1
-
-        print(self.labeledwords)
+        print("[Label words]")
+        print(self.labeledwords, end="\n")
 
         # Scoring
         for eachData in self.table_data:
@@ -177,7 +177,7 @@ def normalizing(Sectioned_Result):
     # Normalization
     max_sum = max(Sectioned_Result.items(),
                   key=operator.itemgetter(1))[1]
-    print('max sum is ', max_sum)
+                  
     for key, value in Sectioned_Result.items():
         Sectioned_Result[key] = value / max_sum
 
@@ -193,4 +193,4 @@ if __name__ == '__main__':
     result = chatanlyze.Scoring(score)
     sectined_result = chatanlyze.Sectioned_Scoring(result, 5)
 
-    #print(cand)
+    # print(cand)
