@@ -241,10 +241,20 @@ def makeHighlight(highlight_request, user_instance, video_object):
         # 채팅로그의 마지막 시간 <= 업로드한 비디오 시간.
         #
         lasttime = getLasttime(chatlog)
-        clip = VideoFileClip(video_object.videoFileURL)
-        
-        if lasttime >= round(clip.duration):
-            print("do what you need")
+        # clip = VideoFileClip(video_object.videoFileURL)
+        # if lasttime >= round(clip.duration):
+            # print("do what you need")
+
+        video_length = get_video_length(clip=highlight_request.videoFile.path)
+
+        if lasttime >= video_length:
+            highlight_request.delete()
+            video_object.delete()
+            os.remove(highlight_request.videoFile.path)
+            send_mail(to=user_instance.user_email, reason="failed")
+            queue.put(object())
+            return
+
 
         #
         # Make Highlights
@@ -253,7 +263,7 @@ def makeHighlight(highlight_request, user_instance, video_object):
         delay = int(video_object.delay)  # add input delay value
 
         if video_object.face == True:
-
+            print("Face Detection On !!")
             temp_cand = makeCandidatesByChatlog(chatlog=chatlog,
                                                 numOfHighlights=numOfHighlights*multiplier, cummulative_sec=cummulative_sec)
             # TODO videopath should be input
@@ -269,12 +279,12 @@ def makeHighlight(highlight_request, user_instance, video_object):
                                   y, width, height, cummulative_sec)
 
         else:
-
+            print("Face Detection Off !!")
             cand = makeCandidatesByChatlog(chatlog=chatlog,
                                            numOfHighlights=numOfHighlights, cummulative_sec=cummulative_sec)
             cand = No_facedetection(cand)
 
-        video_length = get_video_length(clip=highlight_request.videoFile.path)
+
 
         sections = getTimeSection(
             candidates=cand, videoLen=video_length, delay=delay)
