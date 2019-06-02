@@ -188,7 +188,7 @@ def getTimeSection(candidates, videoLen, delay):
     if HIGHLIGHT_DEBUG:
         print(candidates)
 
-    candidates = [[i-2*delay, mergeList[i]] for i in candidates if i != -1]
+    candidates = [[i-2*delay, mergeList[i]+delay] for i in candidates if i != -1]
 
     if HIGHLIGHT_DEBUG:
         print("using -2*delay ~ +delay")
@@ -223,7 +223,7 @@ def makeHighlight(highlight_request, user_instance, video_object):
     queue.get()
     numOfHighlights = 10
     multiplier = 4
-    cummulative_sec = 5
+    cummulative_sec = 10
 
     try:
 
