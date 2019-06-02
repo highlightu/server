@@ -1,17 +1,19 @@
-from mypage.models import MergedVideo
-from django.core.files import File
 from .face_detection import face_detection
 from .chatAnalyze import ChatAnalyze
 from .video_util import *
+from .video_util import cropVideo
+from mypage.models import MergedVideo
+from django.core.files import File
 from django.conf import settings
+from mypage.views import send_mail
+from queue import Queue
+from moviepy.editor import VideoFileClip
+
 import subprocess
 import os
 import re
 import platform
-from .video_util import cropVideo
-from mypage.views import send_mail
 import shutil
-from queue import Queue
 
 HIGHLIGHT_DEBUG = True
 
@@ -130,6 +132,7 @@ def makeCandidatesByChatlog(chatlog, numOfHighlights, cummulative_sec):
     sorted_list = dict(sorted([(t, v) for t, v in sorted_list]))
     print("[Chat analyze result]")
     print(sorted_list)
+    f.close()
 
     return sorted_list
 
@@ -200,6 +203,21 @@ def getTimeSection(candidates, videoLen, delay):
 
     return candidates
 
+def getLasttime(chatlog):
+    f = open(chatlog, 'rt', encoding='UTF8')
+    lineList = f.readlines() 
+    f.close()
+
+    lastline = lineList[-1]
+    lasttime = lastline.split(" ")
+    inttime = lasttime[0].split(":")
+
+    output = (int(inttime[0]) * 3600) + \
+                (int(inttime[1]) * 60) + \
+                (int(inttime[2]))
+    
+    return output
+
 
 def makeHighlight(highlight_request, user_instance, video_object):
     queue.get()
@@ -222,6 +240,11 @@ def makeHighlight(highlight_request, user_instance, video_object):
         #
         # 채팅로그의 마지막 시간 <= 업로드한 비디오 시간.
         #
+        lasttime = getLasttime(chatlog)
+        clip = VideoFileClip(video_object.videoFileURL)
+        
+        if lasttime >= round(clip.duration):
+            print("do what you need")
 
         #
         # Make Highlights
