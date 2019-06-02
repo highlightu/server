@@ -13,7 +13,7 @@
         need a subtitle.
     -->
 
-    <h2>Title : <strong>{{o.title}}</strong></h2>
+    <h2><strong>Title : </strong>{{o.title}}</h2>
 
     <div class="info">
         <!--
@@ -40,11 +40,13 @@
                     '11': 'Nov',
                     '12': 'Dec',
                 };
-                var jbSplit = '{{o.date}}'.split('.');
+                var year = '{{o.date}}'.substring(0,4);
+                var month = '{{o.date}}'.substring(4,6);
+                var day = '{{o.date}}'.substring(6);
 
-                document.write( '<span class="month">' + dateDict[jbSplit[1]] + '</span>' );
-                document.write( '<span class="day">' + jbSplit[2] + '</span><br/>' );
-                document.write( '<span >' + jbSplit[0] + '</span>' );
+                document.write( '<span class="month">' + day + '</span>' );
+                document.write( '<span class="day">' + day + '</span><br/>' );
+                document.write( '<span >' + year + '</span>' );
             </script>
         </span>
         <!--
