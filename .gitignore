@@ -7,4 +7,4 @@ mypage/migrations/
 main/migrations/
 upload/migrations/
 __init__.py
-
+staticfiles/

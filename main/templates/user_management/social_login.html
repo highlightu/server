@@ -11,7 +11,10 @@
         <!--THIS IS IMPORTANT FOR YOU, COPY THE URL IN YOUR BUTTON or for extact google button also copy css from style section -->
         <!--GOOGLE BUTTON START HERE-->
 
-        <a href="{% url 'social:begin' 'google-oauth2' %}?{{ request.META.QUERY_STRING }}">
+	<a href="{% url 'social:begin' 'google-oauth2' %}?{{ request.META.QUERY_STRING }}">
+	<!--<a href="{% url 'social:begin' 'google-oauth2' %}?redirect_uri=http://moyak.kr">-->
+		
+		
             <button class="loginBtn loginBtn--google">
                 Login with Google
             </button>

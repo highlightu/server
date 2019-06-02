@@ -27,6 +27,8 @@ from django.conf import settings
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
 
 LOGIN_REDIRECT_URL = '/'
+#LOGIN_REDIRECT_URL = 'http://moyak.kr/'
+#OAUTH_CALLBACK_URL = 'http://moyak.kr/'
 
 urlpatterns = [
     # base
