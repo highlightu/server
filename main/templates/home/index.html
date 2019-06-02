@@ -32,6 +32,8 @@
 <script>
     alert("Login First");
     window.location.href = '/home/';
+
+
 </script>
 {% endif %}
 
@@ -39,11 +41,15 @@
 {% if newbie %}
 <script>
     alert("Welcome to our service, Newbie!\nWe gave you 3 coupons for highlight request.\nTest our service for FREE.\nYou can check your remaining coupons at MYPAGE -> PAYMENT.");
+
+
 </script>
 {% endif %}
 {% if comeback %}
 <script>
     alert("Welcome back to our service!\nYou can check your remaining coupons at MYPAGE -> PAYMENT.");
+
+
 </script>
 {% endif %}
 
@@ -67,27 +73,22 @@
             <ul class="nav navbar-nav navbar-right">
                 <li class="hidden">
                     <a href="#page-top"></a>
+                <li>
+                    <a class="page-scroll" href="#about">About</a>
                 </li>
-                {% if request.session.session_key == None %}
-
+                </li>
+                {% if request.session.session_key == None or user.username == "" %}
+                <li>
+                    <a class="page-scroll" href="/social/">Login</a>
+                </li>
                 {% else %}
                 <li>
                     <a class="page-scroll" href="/mypage/archive?page=1">Mypage</a>
                 </li>
+                <li>
+                    <a class="page-scroll" href="/logout/">Logout</a>
+                </li>
                 {% endif %}
-                <li>
-                    <a class="page-scroll" href="#about">About</a>
-                </li>
-                <li>
-                    {% if request.session.session_key == None %}
-                    <a class="page-scroll" href="/social/">
-                        Login</a>
-                    {% else %}
-                    <a class="page-scroll" href="/logout/">
-                        Logout</a>
-                    {% endif %}
-
-                </li>
                 <li>
                     <a class="page-scroll" href="#why">Why Laji?</a>
                 </li>
@@ -109,16 +110,17 @@
         <div class="slider-container">
             <div class="intro-text">
 
-                {% if request.session.session_key != None %}
-                <div class="intro-lead-in">Mr/Ms "{{user.username}}"</div>
-                {% endif %}
+                {% if request.session.session_key == None or user.username == "" %}
                 <div class="intro-lead-in">Be a Famous Streamer</div>
                 <div class="intro-heading">Auto-Highlight Editor</div>
-
-
-                {% if request.session.session_key == None %}
                 <a href="/social/" class="page-scroll btn btn-xl">Sign In!</a>
+
                 {% else %}
+
+
+                <div class="intro-lead-in">Mr/Ms "{{user.username}}"</div>
+                <div class="intro-lead-in">Be a Famous Streamer</div>
+                <div class="intro-heading">Auto-Highlight Editor</div>
                 <div>
                     <form action="/upload/dashboard/" method="post" class="form-group">
                         {% csrf_token %}
@@ -129,14 +131,12 @@
                                        placeholder="Enter your Twitch URL"><br/><br/>
                             </div>
                             <div class="col-xs-3">
-                                <input id="sender" name="sender" value="{{ request.user.email }}" hidden >
+                                <input id="sender" name="sender" value="{{ request.user.email }}" hidden>
                             </div>
                         </div>
                         <button type="submit" class="page-scroll btn btn-xl">Get Highlight!</button>
                     </form>
                 </div>
-
-
                 {% endif %}
 
             </div>
@@ -364,7 +364,8 @@
             <div class="col-lg-12 text-center">
                 <div class="section-title">
                     <h2>Contact Us</h2>
-                    <p>If you have some Questions or need Help! Please Contact Us!<br>We make Cool and Clean Highlight for
+                    <p>If you have some Questions or need Help! Please Contact Us!<br>We make Cool and Clean Highlight
+                        for
                         your Business</p>
                 </div>
             </div>

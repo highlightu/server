@@ -34,35 +34,37 @@
     </div>
     <p>
         <br/><br/><br/>
-        <strong>Total pay : KRW&#8361; {{ request.session.total_pay }}<br/></strong>
-        <br/><br/>
+    <h3 style="font-size:2em ;line-height:1.25em;"><strong>Client ID : </strong>{{ request.user.username }}<br/></h3>
+    <h3 style="font-size:2em ;line-height:1.25em;"><strong>Total pay : </strong>KRW&#8361; {{ request.session.total_pay }}<br/></h3>
+    <br/><br/><br/><br/>
     <div class="row">
         <div style="float: left; width: 33%; ">
             <div class="container">
-                <div style="margin: -20px 0 20px 45px;">
-                    # of you can request
+                <div style="margin: -20px 0 20px 0px;">
+                    <h3 style="font-size:1.5em ;line-height:1.25em;"># of you can request</h3>
                 </div>
                 <div class="de">
                     <div class="den">
                         <div class="dene">
                             <a href="#">
-                                <div class="denem">
+                                <div class="denem" id="membership">
                                     <script src="{% static 'mypage/js/jquery.min.js' %}"></script>
-                                    <div class="deneme" id="membership">
+                                    <div class="deneme">
                                         Membership <br/>
                                         Remaining <br/>
                                     </div>
-                                    <script>
+
+                                </div>
+                                <script>
                                         $('#membership').hover(function() {
-                                          $(this).text("Coupons: " + {{request.session.remaining}});
-                                          $(this).css("margin","-30px 0 0 -60px");
+                                          $(this).children('div.deneme').text("Coupons: " + {{request.session.remaining}});
+                                          $(this).children('div.deneme').css("margin","-30px 0 0 -60px");
                                         }, function(){
-                                          $(this).text("Membership\nRemaining");
-                                          $(this).css("margin","-35px 0 0 -62px");
+                                          $(this).children('div.deneme').text("Membership\nRemaining");
+                                          $(this).children('div.deneme').css("margin","-35px 0 0 -62px");
                                         });
 
-                                    </script>
-                                </div>
+                                </script>
                             </a>
                         </div>
                     </div>
@@ -72,29 +74,31 @@
         </div>
         <div style="float: left; width: 33%; ">
             <div class="container">
-                <div style="margin: -20px 0 20px 65px;">
-                    +30 coupons
+                <div style="margin: -20px 0 20px 40px;">
+                    <h3 style="font-size:1.5em ;line-height:1.25em;">+30 coupons</h3>
                 </div>
                 <div class="de">
                     <div class="den">
                         <div class="dene">
                             <a href="{% url 'request' 9900 %}">
-                                <div class="denem">
-                                    <div class="deneme" style="margin: -35px 0 0 -60px;" id="purchase">
+                                <div class="denem" id="purchase">
+                                    <div class="deneme" style="margin: -35px 0 0 -60px;">
                                         Purchase<br/>
                                         [￦9,900]
                                     </div>
-                                    <script>
+                                </div>
+                                <script>
                                         $('#purchase').hover(function() {
-                                          $(this).text("Toss Pay\n결제");
-                                          $(this).css("margin","-30px 0 0 -60px");
+                                          $(this).children('div.deneme').text("Toss Pay\n결제");
+                                          $(this).children('div.deneme').css("margin","-30px 0 0 -60px");
                                         }, function(){
-                                          $(this).text("Purchase\n[￦9,900]");
-                                          $(this).css("margin","-35px 0 0 -60px");
+                                          $(this).children('div.deneme').text("Purchase\n[￦9,900]");
+                                          $(this).children('div.deneme').css("margin","-35px 0 0 -60px");
                                         });
 
-                                    </script>
-                                </div>
+
+
+                                </script>
                             </a>
                         </div>
                     </div>
@@ -104,8 +108,8 @@
         </div>
         <div style="float: left; width: 33%;">
             <div class="container">
-                <div style="margin: -20px 0 20px 70px;">
-                    No refund
+                <div style="margin: -20px 0 20px 60px;">
+                    <h3 style="font-size:1.5em ;line-height:1.25em;">No refund</h3>
                 </div>
                 <div class="de">
                     <div class="den">
@@ -123,24 +127,26 @@
                                         }
                                     });
                                 });
+
                             </script>
                             <a id="withdraw" href="">
-                                <div class="denem">
-                                    <div class="deneme" style="margin: -35px 0 0 -60px;" id="delete">
+                                <div class="denem" id="delete">
+                                    <div class="deneme" style="margin: -35px 0 0 -60px;">
                                         Delete<br/>
                                         Account
                                     </div>
-                                    <script>
+
+                                </div>
+                                <script>
                                         $('#delete').hover(function() {
-                                          $(this).text("탈퇴");
-                                          $(this).css("margin","-25px 0 0 -60px");
+                                          $(this).children('div.deneme').text("탈퇴");
+                                          $(this).children('div.deneme').css("margin","-25px 0 0 -60px");
                                         }, function(){
-                                          $(this).text("Delete\nAccount");
-                                          $(this).css("margin","-35px 0 0 -60px");
+                                          $(this).children('div.deneme').text("Delete\nAccount");
+                                          $(this).children('div.deneme').css("margin","-35px 0 0 -60px");
                                         });
 
-                                    </script>
-                                </div>
+                                </script>
                             </a>
                         </div>
                     </div>
