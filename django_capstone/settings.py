@@ -67,6 +67,7 @@ ALLOWED_HOSTS = [
     'moyak.kr',
     '0.0.0.0',
     'localhost',
+    '127.0.0.1',
     'www.baidu.com',
 ]
 
@@ -145,6 +146,7 @@ DATABASES = {
 # SocialLogin: Google
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = GOOGLE_KEY
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = GOOGLE_SECRET
+#SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'http://moyak.kr'
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -181,7 +183,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles/')
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
