@@ -4,6 +4,18 @@
 
 <!-- Post -->
 {% block content %}
+
+{% if not merged_videos %}
+<article class="box post post-excerpt">
+
+    <h2><strong>Your Archive is Empty </strong></h2>
+    <br/><br/><br/>
+    <h3 style="font-size:2em ;line-height:1.25em;"><strong>To Request Highlight: </strong><br/><br/>Get your Twitch Stream URL to Us!</h3>
+
+</article>
+
+{% else %}
+
 {% for o in merged_videos %}
 <article class="box post post-excerpt">
 
@@ -41,7 +53,7 @@
                     '12': 'Dec',
                 };
                 var year = '{{o.date}}'.substring(0,4);
-                var month = '{{o.date}}'.substring(4,6);
+                var month = dateDict['{{o.date}}'.substring(4,6)];
                 var day = '{{o.date}}'.substring(6);
 
                 document.write( '<span class="month">' + day + '</span>' );
@@ -78,22 +90,32 @@
 <div class="pagination">
     <!--<a href="#" class="button previous">Previous Page</a>-->
     <div class="pages">
-        <a href="?page=1" name="1">1</a>
-        <a href="?page=2" name="2">2</a>
-        <a href="?page=3" name="3">3</a>
-        <a href="?page=4" name="4">4</a>
-        <span>&hellip;</span>
-        <a href="?page=20" name="20">20</a>
+        {% if merged_videos.has_previous %}
+
+        <a href="?page={{ merged_videos.previous_page_number  }}"
+           name="{{ merged_videos.previous_page_number  }}">Prev</a>
+
+        {% endif %}
+        {% for page in page_range %}
+        <a href="?page={{ page }}" name="{{ page }}">{{ page }}</a>
+        {% endfor %}
+        {% if merged_videos.has_next %}
+
+        <a href="?page={{ merged_videos.next_page_number }}" name="{{ merged_videos.next_page_number }}">Next</a>
+
+        {% endif %}
     </div>
+
+
     <script>
-        $('.pagination').children('.pages').children("a[name='{{page}}']").addClass("active");
-
-
+        $('.pagination').children('.pages').children("a[name='{{now}}']").addClass("active");
 
 
     </script>
 </div>
 
+
+{% endif %}
 {% endblock %}
 
 

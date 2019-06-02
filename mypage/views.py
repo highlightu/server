@@ -1,6 +1,7 @@
 ﻿# -*- coding:utf-8 -*-
 from django.shortcuts import render
 from django.core.paginator import Paginator
+from django.core.paginator import InvalidPage
 from django.conf import settings
 from django.http import *
 from django.contrib.auth.decorators import login_required
@@ -36,21 +37,50 @@ dateDict = {
 
 @login_required(login_url='/social/')
 def archive(request):
-    # Get result video set
-    user_instance = User.objects.filter(user_name=request.user.username).get()
-    myMergedVideoSet = MergedVideo.objects.filter(owner=user_instance)
-    if myMergedVideoSet is None:
-        return HttpResponse("No video found")
-    # video_url=myMergedVideoSet[0].video.url
-    # pagination
-    paginator = Paginator(myMergedVideoSet, 2)  # Show 2 video per page
-    page = request.GET.get('page')
-    myMergedVideoSet = paginator.get_page(page)
-    return render(request, 'archive.html', {
-        'merged_videos': myMergedVideoSet,
-        'page': page,
-        "MEDIA_URL": settings.MEDIA_URL
-    })
+
+    videoPerPage = 2
+
+    try:
+        # Get result video set
+        user_instance = User.objects.filter(user_name=request.user.username).get()
+        myMergedVideoSet = MergedVideo.objects.filter(owner=user_instance)
+
+        # video_url=myMergedVideoSet[0].video.url
+        # pagination
+        paginator = Paginator(myMergedVideoSet, videoPerPage)  # Show 2 video per page
+
+        page_numbers_range = 5  # Display only 5 page numbers
+        max_index = len(paginator.page_range)
+
+
+        page = request.GET.get('page')
+        current_page = int(page) if page else 1
+
+        start_index = int((current_page - 1) / page_numbers_range) * page_numbers_range
+        end_index = start_index + page_numbers_range
+        if end_index >= max_index:
+            end_index = max_index
+
+        page_range = paginator.page_range[start_index:end_index]
+
+        myMergedVideoSet = paginator.get_page(page)
+        return render(request, 'archive.html', {
+            'merged_videos': myMergedVideoSet,
+            'now': page,
+            "MEDIA_URL": settings.MEDIA_URL,
+            'page_range' : page_range
+        })
+    except User.DoesNotExist:
+        return HttpResponse("No user found")
+    except InvalidPage:
+        return render(request, 'archive.html', {
+            'merged_videos': None,
+            'now': page,
+            "MEDIA_URL": settings.MEDIA_URL,
+            'page_range' : page_range
+        })
+
+
 
 
 @login_required(login_url='/social/')

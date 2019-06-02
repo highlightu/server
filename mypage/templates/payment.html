@@ -34,7 +34,7 @@
     </div>
     <p>
         <br/><br/><br/>
-    <h3 style="font-size:2em ;line-height:1.25em;"><strong>Client ID : </strong>{{ request.user.username }}<br/></h3>
+    <h3 style="font-size:2em ;line-height:1.25em;"><strong>User ID : </strong>{{ request.user.username }}<br/></h3>
     <h3 style="font-size:2em ;line-height:1.25em;"><strong>Total pay : </strong>KRW&#8361; {{ request.session.total_pay }}<br/></h3>
     <br/><br/><br/><br/>
     <div class="row">
@@ -117,7 +117,7 @@
                             <script>
                                 $(document).ready(function (){
                                     $('#withdraw').click(function(event){
-                                        var name = prompt("Please enter your user id (ex. 00000001 )");
+                                        var name = prompt("Please enter your User ID...");
                                         if ( name == "{{ request.user.username }}" ){
                                             alert("Bye Bye ! ");
                                             $('#withdraw').attr('href','{% url 'withdraw' %}');
