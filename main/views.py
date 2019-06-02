@@ -42,7 +42,7 @@ def index(request):
 
             except:
                 new_user = User.objects.create(
-                    user_name=request.user.name,
+                    user_name=request.user.username,
                     user_email=request.user.email
                 )
                 print("new user")
