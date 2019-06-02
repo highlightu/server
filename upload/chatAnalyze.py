@@ -127,9 +127,6 @@ class ChatAnalyze:
 
             score[self.table_data.index(eachData)] = target_score
 
-        # Normalization
-        # skip
-
         # Result
         result = sorted(Counter(self.table_time).items())
         index = 0
@@ -177,7 +174,7 @@ def normalizing(Sectioned_Result):
     # Normalization
     max_sum = max(Sectioned_Result.items(),
                   key=operator.itemgetter(1))[1]
-                  
+
     for key, value in Sectioned_Result.items():
         Sectioned_Result[key] = value / max_sum
 

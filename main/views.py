@@ -27,8 +27,7 @@ def index(request):
             try:
                 test = WithdrawnUser.objects.filter(
                     # HYUNJAE
-                    # user_name=request.user.username).get()
-                    user_name=userCreated()).get()
+                    user_name=request.user.username).get()
                 new_user = User.objects.create(
                     # HYUNJAE
                     user_name=test.user_name,
@@ -44,7 +43,7 @@ def index(request):
 
             except:
                 new_user = User.objects.create(
-                    user_name=request.user.username,
+                    user_name=userCreated(),
                     user_email=request.user.email
                 )
                 print("new user")

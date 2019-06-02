@@ -33,19 +33,18 @@ class AlgorithmError(Error):
 
 def getTwitchChat(videoID, savePath):
 
-    text_file =  videoID + ".txt"
+    text_file = videoID + ".txt"
     chatLogPath = os.path.join(savePath, text_file)
     if os.path.isfile(chatLogPath):
         print("Chatlog already exists ! ")
         return chatLogPath
     else:
-        for (path,dir,files) in os.walk(settings.MEDIA_ROOT):
+        for (path, dir, files) in os.walk(settings.MEDIA_ROOT):
             for filename in files:
                 if filename == text_file:
                     print("Chatlog found in previous request ! ")
-                    shutil.copy2(os.path.join(path,filename),chatLogPath)
+                    shutil.copy2(os.path.join(path, filename), chatLogPath)
                     return chatLogPath
-
 
     system = platform.system()
     if system == "Linux":
@@ -117,7 +116,7 @@ def makeCandidatesByChatlog(chatlog, numOfHighlights, cummulative_sec):
                    'omg', 'wut', 'gee', 'god', 'dirty', 'way', 'moly', 'wtf', 'fuck', 'crazy',
                    'omfg', 'kappa', 'trihard', '4head', 'cmonbruh', 'lul', 'haha', 'sourpls',
                    'feelsbadman', 'feelsgoodman', 'gachigasm',  'monkas', 'pepehands',
-                   'destructroid', 'jebaited' ]
+                   'destructroid', 'jebaited']
 
     f = open(chatlog, 'rt', encoding='UTF8')
 
@@ -128,12 +127,11 @@ def makeCandidatesByChatlog(chatlog, numOfHighlights, cummulative_sec):
     sectioned_result = chat_analyzer.Sectioned_Scoring(result, cummulative_sec)
     sorted_list = sorted(sectioned_result.items(),
                          key=lambda t: t[1], reverse=True)[:numOfHighlights]
-    print(sorted_list)
     sorted_list = dict(sorted([(t, v) for t, v in sorted_list]))
+    print("[Chat analyze result]")
     print(sorted_list)
 
     return sorted_list
-
 
 
 def second(timestamp):
@@ -144,12 +142,14 @@ def second(timestamp):
         return int(arr[0])*3600 + int(arr[1])*60 + int(arr[2])
     return -1
 
+
 def No_facedetection(dictionary):
     output = dict()
-    for k,v in dictionary.items():
+    for k, v in dictionary.items():
         changed_time = second(k)
         output[changed_time] = v
     return output
+
 
 def getTimeSection(candidates, videoLen, delay):
     # make raw candidate list (must be sorted by key)
@@ -166,7 +166,8 @@ def getTimeSection(candidates, videoLen, delay):
             j = 1
             while i+j < len(candidates) and candidates[i+j] - candidates[i] < delay:
                 deleteList.append(i + j)
-                mergeList[candidates[i]] = candidates[i+j]  # ex) 300: 310 -> 300: 320 -> 300: 330
+                # ex) 300: 310 -> 300: 320 -> 300: 330
+                mergeList[candidates[i]] = candidates[i+j]
                 j += 1
 
     if HIGHLIGHT_DEBUG:
@@ -175,6 +176,7 @@ def getTimeSection(candidates, videoLen, delay):
         print("Will be deleted : ", end=' ')
         print(deleteList)
         # print("Will be deleted : ", end=' ')
+        print("[Candidates]")
         print(candidates)
 
     for i in deleteList:
@@ -204,11 +206,12 @@ def makeHighlight(highlight_request, user_instance, video_object):
     numOfHighlights = 10
     multiplier = 4
     cummulative_sec = 5
-    
+
     try:
 
         # Chat Download
-        chat_save_path = os.path.join(settings.MEDIA_ROOT, highlight_request.path)
+        chat_save_path = os.path.join(
+            settings.MEDIA_ROOT, highlight_request.path)
         print("The downloaded chat will be stored at --> " + chat_save_path)
         chatlog = getTwitchChat(str(video_object.videoNumber), chat_save_path)
 
@@ -216,19 +219,20 @@ def makeHighlight(highlight_request, user_instance, video_object):
         if chatlog is None:
             print("Fail to create chatlog !!!")
             raise AlgorithmError
+        #
+        # 채팅로그의 마지막 시간 <= 업로드한 비디오 시간.
+        #
 
         #
         # Make Highlights
         #
 
         delay = int(video_object.delay)  # add input delay value
-        
+
         if video_object.face == True:
 
-
-
-            temp_cand = makeCandidatesByChatlog(chatlog=chatlog, 
-            numOfHighlights=numOfHighlights*multiplier, cummulative_sec=cummulative_sec)
+            temp_cand = makeCandidatesByChatlog(chatlog=chatlog,
+                                                numOfHighlights=numOfHighlights*multiplier, cummulative_sec=cummulative_sec)
             # TODO videopath should be input
 
             # Get video path and resized frame info
@@ -238,13 +242,13 @@ def makeHighlight(highlight_request, user_instance, video_object):
             width = video_object.rect_width
             height = video_object.rect_height
 
-
-            cand = face_detection(videopath, temp_cand, x, y, width, height, cummulative_sec)
+            cand = face_detection(videopath, temp_cand, x,
+                                  y, width, height, cummulative_sec)
 
         else:
 
-            cand = makeCandidatesByChatlog(chatlog=chatlog, 
-            numOfHighlights=numOfHighlights, cummulative_sec=cummulative_sec)
+            cand = makeCandidatesByChatlog(chatlog=chatlog,
+                                           numOfHighlights=numOfHighlights, cummulative_sec=cummulative_sec)
             cand = No_facedetection(cand)
 
         video_length = get_video_length(clip=highlight_request.videoFile.path)
@@ -255,13 +259,12 @@ def makeHighlight(highlight_request, user_instance, video_object):
         ''' Print highlight list'''
         i = 0
         for eachHighlight in sections:
-            print("[{}] highlight : {}".format(i,eachHighlight))
+            print("[{}] highlight : {}".format(i, eachHighlight))
 
         highlights = split_video(video_path=highlight_request.videoFile.path,
                                  save_path=chat_save_path,
                                  video_id=video_object.videoNumber,
                                  split_times=sections)
-
 
         #
         # Register them on DB
@@ -279,7 +282,8 @@ def makeHighlight(highlight_request, user_instance, video_object):
                 )
 
                 # Link DB and files
-                highlight_obj.video.save(highlight_request.title + str(nov) + ".mp4", File(file))
+                highlight_obj.video.save(
+                    highlight_request.title + str(nov) + ".mp4", File(file))
                 nov += 1
 
         for highlight in highlights:
@@ -293,6 +297,5 @@ def makeHighlight(highlight_request, user_instance, video_object):
     except:
 
         # When highlight process fails
-        send_mail(to=user_instance.user_email,reason="failed")
+        send_mail(to=user_instance.user_email, reason="failed")
         queue.put(object())
-
