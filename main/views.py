@@ -4,7 +4,6 @@ from django.contrib import auth
 from django.shortcuts import redirect
 from .models import User
 from .models import WithdrawnUser
-from .userCount import userCreated
 # 썸네일 이미지를 얻기 위해 추가
 import requests
 import json
@@ -43,7 +42,7 @@ def index(request):
 
             except:
                 new_user = User.objects.create(
-                    user_name=userCreated(),
+                    user_name=request.user.name,
                     user_email=request.user.email
                 )
                 print("new user")
