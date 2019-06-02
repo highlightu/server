@@ -19,7 +19,31 @@ Expected Outputs :
 
 def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, height, inputsection):
     # Open the input movie file
+    print("face detection start")
     input_video = cv2.VideoCapture(video_file)
+    # Resizing about video resolution
+    video_width = int(input_video.get(cv2.CAP_PROP_FRAME_WIDTH))
+    video_height = int(input_video.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    video_ratio_width = video_width / 1920
+    video_ratio_height = video_height / 1080
+
+
+    print(video_width, video_height, video_ratio_width, video_ratio_height)
+
+    print(pixel_x, pixel_y, width, height)
+
+    pixel_x *= video_ratio_width
+    width *= video_ratio_width
+
+    pixel_y *= video_ratio_height
+    height *= video_ratio_height
+    
+    pixel_x = int(pixel_x)
+    pixel_y = int(pixel_y)
+    width = int(width)
+    height = int(height)
+    print(pixel_x, pixel_y, width, height)
+
     # the number of total frame of the video
     length = int(input_video.get(cv2.CAP_PROP_FRAME_COUNT))
     # frame per second of the video
@@ -64,6 +88,7 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
     global_iter = 1
 
     for eachTime in Checklist_withframe:
+        #print("---------------------------------------------------------------------------")
         print(' face detecting ... {} % '.format(
             (round(global_iter/len(Checklist_withframe)* 100, 2))))
         global_iter += 1
@@ -75,6 +100,7 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
 
         maxValue = list()
         framelist = check_framelist(eachTime, fps)
+        # print("{} frame list is {}".format(global_iter, framelist))
 
         '''Check each frame in the specific time 
            and append all emotional probability to maxValue array
@@ -94,9 +120,8 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
             ret, frame = input_video.read()
             #time = input_video.get(cv2.CAP_PROP_POS_MSEC)
 
-            index = input_video.get(cv2.CAP_PROP_POS_FRAMES)
+            index = int(input_video.get(cv2.CAP_PROP_POS_FRAMES))
 
-            # print('current frame number is ', ret)
             # print('current time is ', (index/fps))
 
             if frame is None:
@@ -107,8 +132,10 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
                 continue
 
             # Find all the faces in the frame
+            #print('previou frame :', frame)
 
             frame = frame[pixel_y:pixel_y+height, pixel_x:pixel_x+width]
+            #print('after :', frame)
             grayed = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             face_locations = face_cascade.detectMultiScale(grayed, 1.3, 5)
 
@@ -119,13 +146,14 @@ def face_detection(video_file, original_candidate, pixel_x, pixel_y, width, heig
             ''' 3 STEP '''
             for (x, y, w, h) in face_locations:
 
-                # print("Face is detected at {} at time {} sec".format(
-                #     face_locations, round((index/fps))))
+                #print("1")
+                #print("Face is detected at {} at time {} sec".format(
+                #    face_locations, round((index/fps))))
 
                 # TODO IF YOU WANT TO SEE THE IMAGE THAT HAS DETECTED FACE
-                # if ret == True:
-                #     cv2.imshow("", frame)
-
+                #if ret == True:
+                #    cv2.imshow("", frame)
+                
                 y_offset = y
                 x_offset = x+w
 

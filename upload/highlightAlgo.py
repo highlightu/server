@@ -216,7 +216,7 @@ def getLasttime(chatlog):
                 (int(inttime[1]) * 60) + \
                 (int(inttime[2]))
     
-    return output
+    return output-300
 
 
 def makeHighlight(highlight_request, user_instance, video_object):
@@ -248,6 +248,7 @@ def makeHighlight(highlight_request, user_instance, video_object):
         video_length = get_video_length(clip=highlight_request.videoFile.path)
 
         if lasttime >= video_length:
+            print(lasttime, video_length)
             highlight_request.delete()
             video_object.delete()
             os.remove(highlight_request.videoFile.path)
@@ -259,8 +260,9 @@ def makeHighlight(highlight_request, user_instance, video_object):
         #
         # Make Highlights
         #
-
+        
         delay = int(video_object.delay)  # add input delay value
+        print(delay)
 
         if video_object.face == True:
             print("Face Detection On !!")
