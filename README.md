@@ -59,9 +59,9 @@ ALLOWED_HOSTS = [
 ```
 
 This service provides with google login.<br/>
-So, you have to activate [GOOGLE+ API](https://console.developers.google.com/apis/api/plus.googleapis.com),<br/>
-and to create [OAuth 2.0 Client](https://console.developers.google.com/apis/credentials) as a 'web application'<br/>
-and get API Key/Secret<br/>
+So, you have to activate [GOOGLE+ API](https://console.developers.google.com/apis/api/plus.googleapis.com),
+and to create [OAuth 2.0 Client](https://console.developers.google.com/apis/credentials) as a 'web application'
+and get API Key/Secret
 ```bash
 $ vim Bash_dir/envs.json
 ```
