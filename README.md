@@ -19,9 +19,11 @@
 
 **Requirements**
 
-Python : 3.7.0 or later
+Python : 3.7.0 or later (3.6 may compatible)
 
 Opencv-Python : 4.0.0 or later
+
+Twitch-Chat-Downloader : 3.1.0 [referenc link](https://pypi.org/project/tcd/)
 
 ### Clone
 
@@ -73,31 +75,33 @@ $ vim Bash_dir/envs.json
 ```
 
 ```bash
-python manage.py makemigrations
-python manage.py migrate
-python manage.py runserver 0.0.0.0:8080
+$ python manage.py makemigrations
+$ python manage.py migrate
+$ python manage.py runserver 0.0.0.0:8080
 ```
 
 Now, you can use LAJI-HIGHLIGHTING service
 
 ## Features
 
-```python
-   def features():
-       pass
-```
+> :thumbsup: Chat analyze
+>> `We download a chatlog of a given Twitch video URL.`
+
+>> `We analyze it by scoring each time with labeled words.`
+
+> :astonished: Face recognition
+>> `We check resized frames in the video whether there are detected faces.`
+
+>> `We use Residual Network model to get face expression percentages`
+
+- Check out [Final Report](https://github.com/laji-cau/Capstone-Project-2019-Doc/blob/master/Documents/final_report.pdf)
 
 ## Usage
 
+- Check out [Use-case scenario](https://github.com/laji-cau/Capstone-Project-2019-Doc/blob/master/Documents/team8_manual.pdf)
+- This will help you use this service from beginning
 
-```python
-
-```
-
-## Documentation
-
-- Check out `https://github.com/laji-cau/Capstone-Project-2019-Doc`
----
+## How to contribute
 
 ### Step 1
 
@@ -105,7 +109,7 @@ Now, you can use LAJI-HIGHLIGHTING service
     - 🍴 Fork this repo!
 
 - **Option 2**
-    - 👯 Clone this repo to your local machine using `https://github.com/joanaz/HireDot2.git`
+    - 👯 Clone this repo to your local machine using `https://github.com/laji-cau/LAJI-HIGHLIGHTING`
 
 ### Step 2
 
@@ -131,4 +135,4 @@ Now, you can use LAJI-HIGHLIGHTING service
 [![License](http://img.shields.io/:license-gpl-blue.svg?style=flat-square)](http://badges.gpl-license.org)
 
 - **[GPL-3.0 license](https://opensource.org/licenses/gpl-license.php)**
-- Copyright 2019 © <a href="https://moyak.kr" target="_blank">LAJI</a>.
+- Copyright 2019 © LAJI
