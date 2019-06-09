@@ -33,7 +33,7 @@ Opencv-Python : 4.0.0 or later
 
 ### Setup
 
-To install the current release for Ubunto server.
+To install the current release for Ubuntu server.
 ```bash
 sudo apt update
 sudo apt install git python3-venv libsm6 libxext6 libxrender1 ffmpeg
@@ -46,7 +46,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 #### *Try run LAJI-HIGHLIGHTING*
-Add allow hosts
+Add your public IP or DNS to allow hosts.
 ```bash
 $ vim django_capstone/settings
 ```
@@ -58,10 +58,10 @@ ALLOWED_HOSTS = [
 ]
 ```
 
-This service provides with google login
-So, you have to activate [GOOGLE+ API](https://console.developers.google.com/apis/api/plus.googleapis.com),
-and to create [OAuth 2.0 Client](https://console.developers.google.com/apis/credentials) as a 'web application'
-and get API Key/Secret
+This service provides with google login.<br/>
+So, you have to activate [GOOGLE+ API](https://console.developers.google.com/apis/api/plus.googleapis.com),<br/>
+and to create [OAuth 2.0 Client](https://console.developers.google.com/apis/credentials) as a 'web application'<br/>
+and get API Key/Secret<br/>
 ```bash
 $ vim Bash_dir/envs.json
 ```
