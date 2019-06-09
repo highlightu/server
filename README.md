@@ -33,12 +33,52 @@ Opencv-Python : 4.0.0 or later
 
 ### Setup
 
-> Jisu An
-```python
-   def setup():
-       pass
+To install the current release for Ubunto server.
+```bash
+sudo apt update
+sudo apt install git python3-venv libsm6 libxext6 libxrender1 ffmpeg
+
+git clone https://github.com/laji-cau/LAJI-HIGHLIGHTING
+cd LAJI-HIGHLIGHTING/
+
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
 ```
----
+#### *Try run LAJI-HIGHLIGHTING*
+Add allow hosts
+```bash
+$ vim django_capstone/settings
+```
+```python
+ALLOWED_HOSTS = [
+    'ADD YOUR PUBLIC IP or DNS',
+    'localhost',
+    '127.0.0.1',
+]
+```
+
+This service provides with google login
+So, you have to activate [GOOGLE+ API](https://console.developers.google.com/apis/api/plus.googleapis.com),
+and to create [OAuth 2.0 Client](https://console.developers.google.com/apis/credentials) as a 'web application'
+and get API Key/Secret
+```bash
+$ vim Bash_dir/envs.json
+```
+```python
+{
+  "GOOGLE_KEY": "YOUR API_KEY",
+  "GOOGLE_SECRET": "YOUR API_SECRET"
+}
+```
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+python manage.py runserver 0.0.0.0:8080
+```
+
+Now, you can use LAJI-HIGHLIGHTING service
 
 ## Features
 
@@ -49,9 +89,9 @@ Opencv-Python : 4.0.0 or later
 
 ## Usage
 
+
 ```python
-   def usage():
-       pass
+
 ```
 
 ## Documentation
