@@ -1,0 +1,48 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+
+
+{% block content %}
+<!-- Content -->
+<div class="container">
+    <br><br><br><br><br><br><br><br><br><br><br><br>
+    <center>
+        <!--THIS IS IMPORTANT FOR YOU, COPY THE URL IN YOUR BUTTON or for extact google button also copy css from style section -->
+        <!--GOOGLE BUTTON START HERE-->
+
+	<a href="{% url 'social:begin' 'google-oauth2' %}?{{ request.META.QUERY_STRING }}">
+	<!--<a href="{% url 'social:begin' 'google-oauth2' %}?redirect_uri=http://moyak.kr">-->
+		
+		
+            <button class="loginBtn loginBtn--google">
+                Login with Google
+            </button>
+        </a>
+
+        <!--URL FOR GOOGLE END HERE-->
+        <br><br><br><br><br><br><br><br><br><br>
+    </center>
+</div>
+{% endblock %}
+
+{% block nav_list %}
+<nav id="nav">
+    <p>After you login, you can go:</p>
+
+    <ul>
+        <li><a href="/upload/dashboard/">Dashboard</a></li>
+
+        <li><a href="/mypage/archive/">Archives</a></li>
+
+    </ul>
+</nav>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'mypage/js/jquery.min.js' %}"></script>
+<script src="{% static 'mypage/js/browser.min.js' %}"></script>
+<script src="{% static 'mypage/js/breakpoints.min.js' %}"></script>
+<script src="{% static 'mypage/js/util.js' %}"></script>
+<script src="{% static 'mypage/js/main.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,185 @@
+{% extends 'dashboard/base.html' %}
+{% load staticfiles %}
+
+
+{% block style %}
+<link href="{% static 'payment/payment.css' %}" rel="stylesheet">
+{% endblock %}
+
+<!-- Post -->
+{% block content %}
+<article class="box post post-excerpt">
+
+    <!--
+        Note: Titles and subtitles will wrap automatically when necessary, so don't worry
+        if they get too long. You can also remove the <p> entirely if you don't
+        need a subtitle.
+    -->
+    <h2>Membership Status</h2>
+
+    <div class="info">
+        <!--
+            Note: The date should be formatted exactly as it's shown below. In particular, the
+            "least significant" characters of the month should be encapsulated in a <span>
+            element to denote what gets dropped in 1200px mode (eg. the "uary" in "January").
+            Oh, and if you don't need a date for a particular page or post you can simply delete
+            the entire "date" element.
+
+        -->
+        <span class="date">
+            <span class="month">{{ request.session.month }}</span>
+            <span class="day">{{ request.session.day }}</span><br/>
+            <span class="month">{{ request.session.year }}</span>
+        </span>
+    </div>
+    <p>
+        <br/><br/><br/>
+    <h3 style="font-size:2em ;line-height:1.25em;"><strong>User ID : </strong>{{ request.user.username }}<br/></h3>
+    <h3 style="font-size:2em ;line-height:1.25em;"><strong>Total pay : </strong>KRW&#8361; {{ request.session.total_pay }}<br/></h3>
+    <br/><br/><br/><br/>
+    <div class="row">
+        <div style="float: left; width: 33%; ">
+            <div class="container">
+                <div style="margin: -20px 0 20px 0px;">
+                    <h3 style="font-size:1.5em ;line-height:1.25em;"># of you can request</h3>
+                </div>
+                <div class="de">
+                    <div class="den">
+                        <div class="dene">
+                            <a href="#">
+                                <div class="denem" id="membership">
+                                    <script src="{% static 'mypage/js/jquery.min.js' %}"></script>
+                                    <div class="deneme">
+                                        Membership <br/>
+                                        Remaining <br/>
+                                    </div>
+
+                                </div>
+                                <script>
+                                        $('#membership').hover(function() {
+                                          $(this).children('div.deneme').text("Coupons: " + {{request.session.remaining}});
+                                          $(this).children('div.deneme').css("margin","-30px 0 0 -60px");
+                                        }, function(){
+                                          $(this).children('div.deneme').text("Membership\nRemaining");
+                                          $(this).children('div.deneme').css("margin","-35px 0 0 -62px");
+                                        });
+
+                                </script>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div style="float: left; width: 33%; ">
+            <div class="container">
+                <div style="margin: -20px 0 20px 40px;">
+                    <h3 style="font-size:1.5em ;line-height:1.25em;">+30 coupons</h3>
+                </div>
+                <div class="de">
+                    <div class="den">
+                        <div class="dene">
+                            <a href="{% url 'request' 9900 %}">
+                                <div class="denem" id="purchase">
+                                    <div class="deneme" style="margin: -35px 0 0 -60px;">
+                                        Purchase<br/>
+                                        [￦9,900]
+                                    </div>
+                                </div>
+                                <script>
+                                        $('#purchase').hover(function() {
+                                          $(this).children('div.deneme').text("Toss Pay\n결제");
+                                          $(this).children('div.deneme').css("margin","-30px 0 0 -60px");
+                                        }, function(){
+                                          $(this).children('div.deneme').text("Purchase\n[￦9,900]");
+                                          $(this).children('div.deneme').css("margin","-35px 0 0 -60px");
+                                        });
+
+
+
+                                </script>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div style="float: left; width: 33%;">
+            <div class="container">
+                <div style="margin: -20px 0 20px 60px;">
+                    <h3 style="font-size:1.5em ;line-height:1.25em;">No refund</h3>
+                </div>
+                <div class="de">
+                    <div class="den">
+                        <div class="dene">
+                            <script>
+                                $(document).ready(function (){
+                                    $('#withdraw').click(function(event){
+                                        var name = prompt("Please enter your User ID...");
+                                        if ( name == "{{ request.user.username }}" ){
+                                            alert("Bye Bye ! ");
+                                            $('#withdraw').attr('href','{% url 'withdraw' %}');
+                                        }else{
+
+                                            alert("Please check your input. Withdrawn failed.");
+                                        }
+                                    });
+                                });
+
+                            </script>
+                            <a id="withdraw" href="">
+                                <div class="denem" id="delete">
+                                    <div class="deneme" style="margin: -35px 0 0 -60px;">
+                                        Delete<br/>
+                                        Account
+                                    </div>
+
+                                </div>
+                                <script>
+                                        $('#delete').hover(function() {
+                                          $(this).children('div.deneme').text("탈퇴");
+                                          $(this).children('div.deneme').css("margin","-25px 0 0 -60px");
+                                        }, function(){
+                                          $(this).children('div.deneme').text("Delete\nAccount");
+                                          $(this).children('div.deneme').css("margin","-35px 0 0 -60px");
+                                        });
+
+                                </script>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <br/><br/>
+    </p>
+</article>
+
+{% endblock %}
+
+
+<!-- Nav -->
+{% block nav_list %}
+<nav id="nav">
+    <ul>
+        <li><a href="/mypage/archive/?page=1">Archive</a></li>
+
+        <li class="current"><a href="/mypage/payment">&gt; Payment</a></li>
+
+    </ul>
+</nav>
+{% endblock %}
+
+
+<!-- Scripts -->
+{% block scripts %}
+<script src="{% static 'mypage/js/browser.min.js' %}"></script>
+<script src="{% static 'mypage/js/breakpoints.min.js' %}"></script>
+<script src="{% static 'mypage/js/util.js' %}"></script>
+<script src="{% static 'mypage/js/main.js' %}"></script>
+{% endblock %}
+

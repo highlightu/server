@@ -1,0 +1,10 @@
+*.py[cod]
+*.sqlite3
+.idea/
+.vscode/
+media/
+mypage/migrations/
+main/migrations/
+upload/migrations/
+__init__.py
+staticfiles/

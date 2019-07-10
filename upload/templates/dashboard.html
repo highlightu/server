@@ -1,0 +1,209 @@
+{% extends 'dashboard/base.html' %}
+{% load staticfiles %}
+
+
+<!-- Post -->
+{% block content %}
+<article class="box post post-excerpt">
+
+    <!--
+        Note: Titles and subtitles will wrap automatically when necessary, so don't worry
+        if they get too long. You can also remove the <p> entirely if you don't
+        need a subtitle.
+    -->
+    <h2>Request New Highlight</h2>
+
+
+    <div class="info">
+        <!--
+            Note: The date should be formatted exactly as it's shown below. In particular, the
+            "least significant" characters of the month should be encapsulated in a <span>
+            element to denote what gets dropped in 1200px mode (eg. the "uary" in "January").
+            Oh, and if you don't need a date for a particular page or post you can simply delete
+            the entire "date" element.
+
+        -->
+
+        <span class="date">
+            <span class="month">{{ request.session.month }}</span>
+            <span class="day">{{ request.session.day }}</span><br/>
+            <span class="month">{{ request.session.year }}</span>
+        </span>
+    </div>
+
+
+    <div class="dim-layer">
+        <div class="dimBg"></div>
+        <div id="layer2" class="pop-layer">
+            <div class="pop-container">
+                <div class="pop-conts">
+
+                    <!-- Frame resizing-->
+                    <div style="position:absolute;">
+                        <div style="position:relative;top:0px;left:0px;">
+                            {% comment %} thSize = {'width': '1168', 'height': '657'} {% endcomment %}
+                            <canvas id="canvas" width="1168" height="657"></canvas>
+                            <!--<div id=output></div>-->
+                        </div>
+                    </div>
+                    <iframe id='backThumb' src="{{ thumb }}" frameborder="0"
+                            allowfullscreen="false" scrolling="no" width="1168" height="657"></iframe>
+                    <div class="btn-r">
+                        <a href="#" class="btn-layerClose">Close</a>
+                    </div>
+                    <!--// content-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <!--<iframe src="https://player.twitch.tv/?autoplay=false&video=v402913218" frameborder="0"-->
+    <!--allowfullscreen="true" scrolling="no" height="657" width="1168"></iframe>-->
+
+    <iframe src="{{ thumb }}" frameborder="0"
+            allowfullscreen="true" scrolling="no" height="657" width="1168"></iframe>
+
+    <form action="/upload/uploading/" method="POST" class="container form-group" id="option-box">
+        {% csrf_token %}
+        <div class="row">
+
+            <!-- Delay Time -->
+            <div class="col-sm-3" id="delay">
+
+                <!-- 10 sec -->
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" value="10" id="delay_10" name="delay" checked>
+                    <label class="form-check-label" for="delay_10">
+                        10 seconds delay
+                    </label>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" value="20" id="delay_20" name="delay">
+                    <label class="form-check-label" for="delay_20">
+                        20 seconds delay
+                    </label>
+                </div>
+
+
+                <!-- 10 sec -->
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" value="30" id="delay_30" name="delay">
+                    <label class="form-check-label" for="delay_30">
+                        30 seconds delay
+                    </label>
+                </div>
+
+            </div>
+            <div class="col-sm-3" id="delay2">
+
+
+                <!-- 10 sec -->
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" value="60" id="delay_60" name="delay">
+                    <label class="form-check-label" for="delay_60">
+                        1 minute delay
+                    </label>
+                </div>
+
+
+                <!-- 10 sec -->
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" value="120" id="delay_120" name="delay">
+                    <label class="form-check-label" for="delay_120">
+                        2 minutes delay
+                    </label>
+                </div>
+
+            </div>
+
+            <!-- Check Options -->
+            <div class="col-sm-3" id="recognition">
+
+
+                <!-- Check Face Recognition -->
+                <div class="form-check">
+                    <a href="#layer2" class="btn-example">
+                        <input class="form-check-input" type="checkbox" value="on" id="face" name="face">
+                        <label class="form-check-label" for="face">
+                            Face Recognition
+                        </label>
+                    </a>
+                </div>
+
+
+                <!-- Check Speech Recognition -->
+                <!--<div class="form-check">-->
+                <!--<input class="form-check-input" type="checkbox" value="on" id="speech" name="speech">-->
+                <!--<label class="form-check-label" for="speech">-->
+                <!--Speech Recognition-->
+                <!--</label>-->
+                <!--</div>-->
+
+
+                <!-- Check Chat Analysis -->
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="on" id="chat" name="chat" checked disabled>
+                    <label class="form-check-label" for="chat">
+                        Chat Analysis(default)
+                    </label>
+                </div>
+            </div>
+
+
+            <!-- Youtube Post -->
+            <!--<div class="col-sm-3" id="upload">-->
+            <!--<div class="form-check">-->
+            <!--<input class="form-check-input" type="checkbox" value="on" id="youtube" name="youtube">-->
+            <!--<label class="form-check-label" for="youtube">-->
+            <!--Want to post in YouTube-->
+            <!--</label>-->
+            <!--</div>-->
+            <!--</div>-->
+
+
+            <!-- Run -->
+
+            <input name="sender" value="{{ request.user.email }}" hidden>
+            <input type="hidden" value="0" name="rect_x"/>
+            <input type="hidden" value="0" name="rect_y"/>
+            <input type="hidden" value="0" name="rect_width"/>
+            <input type="hidden" value="0" name="rect_height"/>
+
+            <div class="col-sm-3" id="run">
+                <div class="form-check">
+                    <button type="submit" class="page-scroll btn btn-xl">Get Highlight!</button>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</article>
+{% endblock %}
+
+
+<!-- Nav -->
+{% block nav_list %}
+<nav id="nav">
+    <ul>
+        <li>Procedure</li>
+
+        <li class="current"><a href="/upload/dashboard/"> &gt; Dashboard</a></li>
+
+        <li><a href="">Video Upload</a></li>
+
+    </ul>
+</nav>
+{% endblock %}
+
+
+<!-- Scripts -->
+{% block scripts %}
+<script src="{% static 'mypage/js/jquery.min.js' %}"></script>
+<script src="{% static 'mypage/js/browser.min.js' %}"></script>
+<script src="{% static 'mypage/js/breakpoints.min.js' %}"></script>
+<script src="{% static 'mypage/js/util.js' %}"></script>
+<script src="{% static 'mypage/js/main.js' %}"></script>
+<script type="text/javascript" src="{% static 'mypage/js/frameresizing.js' %}"></script>
+{% endblock %}
+
