@@ -1,4 +1,4 @@
-# :high_brightness: LAJI : Auto Highlighting :arrow_forward: Web service
+# :high_brightness: HighlightU : Auto Highlighting :arrow_forward: Web service
 
 
 > &#9989; &#10102; We analyze your Twitch videos &#127916;
@@ -94,11 +94,11 @@ Now, you can use LAJI-HIGHLIGHTING service
 
 >> `We use Residual Network model to get face expression percentages`
 
-- Check out [Final Report](https://github.com/laji-cau/Capstone-Project-2019-Doc/blob/master/Documents/final_report.pdf)
+- Check out [Final Report](https://github.com/highlightu/documentation/blob/master/Documents/final_report.pdf)
 
 ## Usage
 
-- Check out [Use-case scenario](https://github.com/laji-cau/Capstone-Project-2019-Doc/blob/master/Documents/team8_manual.pdf)
+- Check out [Use-case scenario](https://github.com/highlightu/documentation/blob/master/Documents/team8_manual.pdf)
 - This will help you use this service from beginning
 
 ## How to contribute
@@ -109,7 +109,7 @@ Now, you can use LAJI-HIGHLIGHTING service
     - 🍴 Fork this repo!
 
 - **Option 2**
-    - 👯 Clone this repo to your local machine using `https://github.com/laji-cau/LAJI-HIGHLIGHTING`
+    - 👯 Clone this repo to your local machine using `https://github.com/highlightu/server`
 
 ### Step 2
 
