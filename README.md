@@ -1,31 +1,33 @@
-# :high_brightness: LAJI : Auto Highlighting :arrow_forward: Web service
+# :high_brightness: HighlightU : Auto Highlighting :arrow_forward: Web service
 
 
-> &#9989; &#10102; We analyze your Twitch videos &#127916;
+> &#9989; &#10102; Analyzing your Twitch videos &#127916;
 
-> &#9989; &#10103; We give you a list of highlights back &#128140;
+> &#9989; &#10103; Giving you a list of highlights back &#128140;
 
-> &#9989; &#10104; We take care of your values &#128142;
+> &#9989; &#10104; Taking care of your values &#128142;
 
 
 <!-- blank line -->
 ![demo gif](static/images/demo.gif)
 <!-- blank line -->
 
-[![Build Status](http://img.shields.io/travis/badges/badgerbadgerbadger.svg?style=flat-square)](https://travis-ci.org/badges/badgerbadgerbadger) [![Coverage Status](http://img.shields.io/coveralls/badges/badgerbadgerbadger.svg?style=flat-square)](https://coveralls.io/r/badges/badgerbadgerbadger) [![License](http://img.shields.io/:license-gpl-blue.svg?style=flat-square)](http://badges.gpl-license.org)
+[![Build Status](http://img.shields.io/travis/badges/badgerbadgerbadger.svg?style=flat-square)](https://travis-ci.org/badges/badgerbadgerbadger) [![Coverage Status](http://img.shields.io/coveralls/badges/badgerbadgerbadger.svg?style=flat-square)](https://coveralls.io/r/badges/badgerbadgerbadger) [![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](http://badges.mit-license.org)
 
 
 ## Installation
 
 **Requirements**
 
-Python : 3.7.0 or later
+Python : 3.7.0 or later (3.6 may compatible)
 
 Opencv-Python : 4.0.0 or later
 
+Twitch-Chat-Downloader : 3.1.0 [referenc link](https://pypi.org/project/tcd/)
+
 ### Clone
 
-- Clone this repo to your local machine using `https://github.com/laji-cau/LAJI-HIGHLIGHTING.git`
+- Clone this repo to your local machine using `https://github.com/highlightu/server.git`
 
 ### Dockerizing
 
@@ -38,14 +40,14 @@ To install the current release for Ubuntu server.
 sudo apt update
 sudo apt install git python3-venv libsm6 libxext6 libxrender1 ffmpeg
 
-git clone https://github.com/laji-cau/LAJI-HIGHLIGHTING
-cd LAJI-HIGHLIGHTING/
+git clone https://github.com/highlightu/server.git
+cd server/
 
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 ```
-#### *Try run LAJI-HIGHLIGHTING*
+#### *Try to run HighlightU*
 Add your public IP or DNS to allow hosts.
 ```bash
 $ vim django_capstone/settings
@@ -73,31 +75,33 @@ $ vim Bash_dir/envs.json
 ```
 
 ```bash
-python manage.py makemigrations
-python manage.py migrate
-python manage.py runserver 0.0.0.0:8080
+$ python manage.py makemigrations
+$ python manage.py migrate
+$ python manage.py runserver 0.0.0.0:8080
 ```
 
-Now, you can use LAJI-HIGHLIGHTING service
+Now, you can use HighlightU service
 
 ## Features
 
-```python
-   def features():
-       pass
-```
+> :thumbsup: Chat analyze
+>> `Download a chatlog of a given Twitch video URL.`
+
+>> `Analyze it by scoring each time with labeled words.`
+
+> :astonished: Face recognition
+>> `Check resized frames in the video whether there are detected faces.`
+
+>> `Use Residual Network model to get face expression percentages`
+
+- Check out [Final Report](https://github.com/highlightu/documentation/blob/master/Documents/final_report.pdf)
 
 ## Usage
 
+- Check out [Use-case scenario](https://github.com/highlightu/documentation/blob/master/Documents/team8_manual.pdf)
+- This will help you use this service from beginning
 
-```python
-
-```
-
-## Documentation
-
-- Check out `https://github.com/laji-cau/Capstone-Project-2019-Doc`
----
+## How to contribute
 
 ### Step 1
 
@@ -105,7 +109,7 @@ Now, you can use LAJI-HIGHLIGHTING service
     - 🍴 Fork this repo!
 
 - **Option 2**
-    - 👯 Clone this repo to your local machine using `https://github.com/joanaz/HireDot2.git`
+    - 👯 Clone this repo to your local machine using `https://github.com/highlightu/server`
 
 ### Step 2
 
@@ -128,7 +132,7 @@ Now, you can use LAJI-HIGHLIGHTING service
 
 ## License
 
-[![License](http://img.shields.io/:license-gpl-blue.svg?style=flat-square)](http://badges.gpl-license.org)
+[![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](http://badges.mit-license.org)
 
-- **[GPL-3.0 license](https://opensource.org/licenses/gpl-license.php)**
-- Copyright 2019 © <a href="https://moyak.kr" target="_blank">LAJI</a>.
+- **[MIT license](https://opensource.org/licenses/mit-license.php)**
+- Copyright 2019 © LAJI
