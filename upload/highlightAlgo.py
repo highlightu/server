@@ -222,7 +222,7 @@ def getLasttime(chatlog):
 def makeHighlight(highlight_request, user_instance, video_object):
     queue.get()
     numOfHighlights = 10
-    multiplier = 4 // 후보군을 몇배수로 추출할지 결정
+    multiplier = 4 # 후보군을 몇배수로 추출할지 결정
     cummulative_sec = 10
 
     try:
