@@ -828,3 +828,23 @@ and (max-width : 480px) {
 .loginBtn--google:focus {
   background: #E74B37;
 }
+
+.option_name{
+  font-size: 18px;
+}
+.options {
+  font-family: "Montserrat",sans-serif;
+}
+
+.option_on {
+  color: #00FF00;
+}
+
+.option_off {
+  color: #FF0000;
+}
+
+
+form label{
+    font-size: 20px;
+}

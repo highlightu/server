@@ -72,7 +72,7 @@ def getVideoId(url):
     return VideoId
 
 
-def getThumb(videoId):
+def getThumb(videoId, size=thSize):
     # API요청을 보내기 위한 헤더
     TWITCH_CLIENT_ID = "37v97169hnj8kaoq8fs3hzz8v6jezdj"
     TWITCH_CLIENT_ID_HEADER = "Client-ID"
@@ -93,7 +93,6 @@ def getThumb(videoId):
     thumb_template_url = str(video_request_json['preview']['template'])
 
     # 1920x1080크기의 썸네일 이미지를 얻는다.
-    size = thSize
 
     return thumb_template_url.format(**size)
 
@@ -125,7 +124,7 @@ def upload(request):
     # Redirect after POST
     return render(request, 'uploading.html', {
         'form': VideoUploadForm(), 
-        'thumb': getThumb(str(vid)), 
+        'thumb': getThumb(str(vid),{'width': '1920', 'height': '1080'}),
         })
 
 @login_required(login_url='/social/')

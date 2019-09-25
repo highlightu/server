@@ -29,44 +29,93 @@
             <span class="month">{{ request.session.year }}</span>
         </span>
     </div>
-    {% comment %} <br/>
-    <div style="position:static;">
-        <iframe id="backThumb" src="{{ thumb }}"
-                marginwidth="-{{request.session.rect_x}}px"
-                marginheight="-{{request.session.rect_y}}px"
-                width="{{request.session.rect_width}}"
-                height="{{request.session.rect_height}}" scrolling="no" frameborder="0"></iframe>
-    </div>
-    <br/><br/>
-    {% endcomment %}
-    <div>
-        <p>Delay : {{ request.session.delay }}</p>
 
-        <p>Face Recognition : {{ request.session.face }}</p>
 
-        {% if request.session.face == True %}
-
-        <ul>
-
-            <li>rect_x: {{ request.session.rect_x }}</li>
-            <li>rect_y: {{ request.session.rect_y }}</li>
-            <li>width: {{ request.session.rect_width }}</li>
-            <li>height: {{ request.session.rect_height }}</li>
-        </ul>
-
-        {% endif %}
-
-        <p>Speech Recognition : {{ request.session.speech }}</p>
-        <p>Chat Analysis : {{ request.session.chat }}</p>
-        <p>YouTube Upload : {{ request.session.youtube }}</p>
-    </div>
-
-    <form action="/upload/sendRequest/" method="post" class="form-group" enctype="multipart/form-data"
-          novalidate>
+    <!--<p>YouTube Upload : {{ request.session.youtube }}</p>-->
+    <form action="/upload/sendRequest/" method="post" class="form-group" enctype="multipart/form-data" novalidate="">
         {% csrf_token %}
-        {{ form.as_p }}
-        <br/><br/>
-        <button type="submit" class="page-scroll btn btn-xl">Upload</button>
+
+        <p><label for="id_title">Title:</label>
+            <input type="text" name="title" value="new video" maxlength="200" required="" id="id_title"></p>
+
+        <p><label for="id_videoFile">VideoFile:</label>
+            <input type="file" name="videoFile" required="" id="id_videoFile">
+            <input type="hidden" name="path" value="path" id="id_path"></p>
+        <br>
+
+        <label>Check Your Options for Highlight Request</label>
+        <div class="row option_name" style="text-align:center">
+            <div class="col col-sm-4">
+                <h3>Delay</h3>
+            </div>
+            <div class="col col-sm-4">
+                <h3>Chat Analysis</h3>
+            </div>
+            <div class="col col-sm-4">
+                <h3>Face Recognition</h3>
+            </div>
+        </div>
+        <div class="row options" style="text-align:center">
+            <div class="col col-sm-4">
+                <p>{{ request.session.delay }}s</p>
+                <br/>
+                <p>This delay will be added in front and back of your highlight <strong>spots</strong>.</p>
+                <br/><br/>
+                <p style="text-align:left;">ex) spot:01:17:03<br/>highlight: 01:17:03 - delay ~ 01:17:03 + delay</p>
+                <p></p>
+            </div>
+            <div class="col col-sm-4">
+                {% if request.session.chat %}
+                <p class="option_on">ON</p>
+                <br/>
+                <p><strong>Sample Words</strong></p>
+
+                <p>pog</p>
+                <p>ez</p>
+                <p>holy</p>
+                <p>shit</p>
+                <p>wow</p>
+
+
+
+                {% else %}
+                <p class="option_off">Off</p>
+                {% endif %}
+
+
+
+            </div>
+            <div class="col col-sm-4">
+                {% if request.session.face %}
+                <p class="option_on">ON</p>
+                {% else %}
+                <p class="option_off">Off</p>
+                {% endif %}
+
+                {% if request.session.face == True %}
+                {% comment %}
+                <ul style="list-style-type: none;">
+
+                    <li>rect_x: {{ request.session.rect_x }}</li>
+                    <li>rect_y: {{ request.session.rect_y }}</li>
+                    <li>width: {{ request.session.rect_width }}</li>
+                    <li>height: {{ request.session.rect_height }}</li>
+
+                </ul>
+                {% endcomment %}
+                <div style="width:300px; height: 260px; overflow:auto;">
+                    <div style="width: {{ request.session.rect_width }}px; height: {{ request.session.rect_height }}px; overflow: hidden">
+                        <img src="{{ thumb }}"
+                             style="position: relative; left: -{{ request.session.rect_x }}px; top: -{{ request.session.rect_y }}px;"/>
+                    </div>
+                </div>
+                {% else %}
+                <br/><br/><br/><br/><br/><br/><br/><br/><br/>
+                {% endif %}
+            </div>
+        </div>
+        <br/>
+        <button type="submit" class="page-scroll btn btn-xl">Get Highlight!</button>
     </form>
 
 </article>
