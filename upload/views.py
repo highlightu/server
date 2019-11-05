@@ -34,6 +34,15 @@ dateDict = {
     '12': 'Dec',
 }
 
+labelwordOf = {
+    'ko' : ['와', '오', '으', '쩐다', '미친', '방금', '캬', '키야', '갈고리', '뭐지', '캡처', '클립',
+            'ㅋ', 'ㅎ', 'ㅁㅊ', 'ㄷ', 'ㅇㅅㅇ', 'ㅅ', 'ㄱㅈㅇ', '?', ],
+    'en' : ['pog', 'poggers', 'pogchamp', 'holy', 'shit', 'wow', 'ez', 'clip', 'nice',
+         'omg', 'wut', 'gee', 'god', 'dirty', 'way', 'moly', 'wtf', 'fuck', 'crazy',
+         'omfg', 'kappa', 'trihard', '4head', 'cmonbruh', 'lul', 'haha', 'sourpls',
+         'feelsbadman', 'feelsgoodman', 'gachigasm', 'monkas', 'pepehands',
+         'destructroid', 'jebaited']
+}
 
 @login_required(login_url='/social/')
 def dashboard(request):
@@ -108,7 +117,7 @@ def upload(request):
         request.session['delay'] = int(request.POST.get('delay', ''))
         request.session['face'] = request.POST.get('face', '') == 'on'
         request.session['speech'] = request.POST.get('speech', '') == 'on'
-        request.session['chat'] = True
+        request.session['chat'] = request.POST.get('chat', 'ko')
         request.session['youtube'] = request.POST.get('youtube', '') == 'on'
         request.session['rect_x'] = int(request.POST.get('rect_x', ''))
         request.session['rect_y'] = int(request.POST.get('rect_y', ''))
@@ -125,6 +134,8 @@ def upload(request):
     return render(request, 'uploading.html', {
         'form': VideoUploadForm(), 
         'thumb': getThumb(str(vid),{'width': '1920', 'height': '1080'}),
+        'imageURL' : 'images/flags/' + request.session['chat'],
+        'example_words': labelwordOf[request.session['chat']],
         })
 
 @login_required(login_url='/social/')
@@ -167,7 +178,7 @@ def uploadVideo(request):
                 delay=request.session['delay'],
                 face=request.session['face'],
                 speech=request.session['speech'],
-                chat=request.session['chat'],
+                chat=True,
                 youtube=request.session['youtube'],
                 date=date,
                 videoFileURL=new_request.videoFile,
@@ -184,6 +195,7 @@ def uploadVideo(request):
                                                         new_request,
                                                         user_instance,
                                                         new_video,
+                                                        request.session['chat'],
                                                     ))
             algorithm_thread.start()
 

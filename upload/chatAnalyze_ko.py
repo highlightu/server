@@ -1,12 +1,4 @@
-from nltk.stem import PorterStemmer
-from nltk.tokenize import sent_tokenize, word_tokenize
-from nltk.corpus import stopwords
-from collections import Counter, OrderedDict
-from .repeatReplacer import RepeatReplacer
-# from sklearn.preprocessing import normalize
-import operator
-import re
-
+# -*- coding: utf-8 -*-
 
 '''
 1. Load chatlog and words for scoring
@@ -32,6 +24,57 @@ import re
 '''
 
 
+from collections import Counter
+from konlpy.tag import Komoran
+from konlpy import utils
+import sys
+
+
+#
+# def draw_cloud(tags, filename, fontname='Noto Sans CJK', size=(800, 600)):
+#     pytagcloud.create_tag_image(tags, filename, fontname=fontname, size=size)
+#     webbrowser.open(filename)
+
+import re
+
+def cleansing(text):
+    cleaned_text = re.sub('[a-zA-z]','',text)
+    cleaned_text = re.sub('[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"\♥\♡\ㅋ\ㅠ\ㅜ\ㄱ\ㅎ\ㄲ\ㅡ]','',cleaned_text)
+    return cleaned_text
+
+
+text = utils.read_txt("C:\\Users\\Faust\\PycharmProjects\\SWC\\media\\zinuzian\\20191030\\500347562\\500347562.txt", encoding=u'utf-8').split("\n")
+print(text)
+processed = u""
+k = Komoran()
+i=0
+while text:
+    line = text.pop(0)
+    i += 1
+    if line:
+        timeline, data = line.split(" ", maxsplit=1)
+        try:
+            check = data.encode('utf-8')
+            check.decode('utf-8', 'strict')
+            processed += data + u"\n"
+        except UnicodeDecodeError:
+            pass
+
+
+
+print(processed)
+
+pos = k.pos(processed)
+count = Counter(pos)
+print(count.most_common(10))
+
+# bill_num = '1904882'
+# text = get_bill_text(bill_num)
+# tags = get_tags(text)
+# print(tags)
+# draw_cloud(tags, 'wordcloud.png')
+
+'''
 class ChatAnalyze:
 
     # chatlog <== file = open("test.txt", 'rt', encoding='UTF8')
@@ -106,7 +149,7 @@ class ChatAnalyze:
         # Check if the most freqent word is in labelwords
         # if yes, skip and check next one
         # if no, append it
-        while iteration < 20:
+        while iteration < 10:
             if list(counts.keys())[i] not in self.labeledwords:
                 self.labeledwords.append(list(counts.keys())[i])
                 i += 1
@@ -180,6 +223,7 @@ def normalizing(Sectioned_Result):
 
     return Sectioned_Result
 
+
     # How to use this class
 if __name__ == '__main__':
     labeldwords = ['pog', 'poggers', 'pogchamp', 'holy', 'shit', 'wow', 'ez', 'clip', 'nice',
@@ -191,3 +235,8 @@ if __name__ == '__main__':
     sectined_result = chatanlyze.Sectioned_Scoring(result, 5)
 
     # print(cand)
+
+
+'''
+
+

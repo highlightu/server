@@ -112,13 +112,19 @@ def getTwitchChat(videoID, savePath):
         return None
 
 
-def makeCandidatesByChatlog(chatlog, numOfHighlights, cummulative_sec):
+labelwordOf = {
+    'ko' : ['와', '오', '으', '쩐다', '미친', '방금', '캬', '키야', '갈고리', '뭐지', '캡처', '클립',
+            'ㅋ', 'ㅎ', 'ㅁㅊ', 'ㄷ', 'ㅇㅅㅇ', 'ㅅ', 'ㄱㅈㅇ', '?', ],
+    'en' : ['pog', 'poggers', 'pogchamp', 'holy', 'shit', 'wow', 'ez', 'clip', 'nice',
+         'omg', 'wut', 'gee', 'god', 'dirty', 'way', 'moly', 'wtf', 'fuck', 'crazy',
+         'omfg', 'kappa', 'trihard', '4head', 'cmonbruh', 'lul', 'haha', 'sourpls',
+         'feelsbadman', 'feelsgoodman', 'gachigasm', 'monkas', 'pepehands',
+         'destructroid', 'jebaited']
+}
 
-    labeldwords = ['pog', 'poggers', 'pogchamp', 'holy', 'shit', 'wow', 'ez', 'clip', 'nice',
-                   'omg', 'wut', 'gee', 'god', 'dirty', 'way', 'moly', 'wtf', 'fuck', 'crazy',
-                   'omfg', 'kappa', 'trihard', '4head', 'cmonbruh', 'lul', 'haha', 'sourpls',
-                   'feelsbadman', 'feelsgoodman', 'gachigasm',  'monkas', 'pepehands',
-                   'destructroid', 'jebaited']
+
+def makeCandidatesByChatlog(chatlog, numOfHighlights, cummulative_sec, c):
+    labeldwords = labelwordOf[c]
 
     f = open(chatlog, 'rt', encoding='UTF8')
 
@@ -219,7 +225,7 @@ def getLasttime(chatlog):
     return output-300
 
 
-def makeHighlight(highlight_request, user_instance, video_object):
+def makeHighlight(highlight_request, user_instance, video_object, c):
     queue.get()
     numOfHighlights = 10
     multiplier = 4 # 후보군을 몇배수로 추출할지 결정
@@ -267,7 +273,7 @@ def makeHighlight(highlight_request, user_instance, video_object):
         if video_object.face == True:
             print("Face Detection On !!")
             temp_cand = makeCandidatesByChatlog(chatlog=chatlog,
-                                                numOfHighlights=numOfHighlights*multiplier, cummulative_sec=cummulative_sec)
+                                                numOfHighlights=numOfHighlights*multiplier, cummulative_sec=cummulative_sec, c=c)
             # TODO videopath should be input
 
             # Get video path and resized frame info
@@ -283,7 +289,7 @@ def makeHighlight(highlight_request, user_instance, video_object):
         else:
             print("Face Detection Off !!")
             cand = makeCandidatesByChatlog(chatlog=chatlog,
-                                           numOfHighlights=numOfHighlights, cummulative_sec=cummulative_sec)
+                                           numOfHighlights=numOfHighlights, cummulative_sec=cummulative_sec, c=c)
             cand = No_facedetection(cand)
 
 

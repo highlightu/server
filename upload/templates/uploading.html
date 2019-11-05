@@ -65,22 +65,29 @@
                 <p></p>
             </div>
             <div class="col col-sm-4">
-                {% if request.session.chat %}
-                <p class="option_on">ON</p>
-                <br/>
-                <p><strong>Sample Words</strong></p>
-
-                <p>pog</p>
-                <p>ez</p>
-                <p>holy</p>
-                <p>shit</p>
-                <p>wow</p>
-
+                {% if request.session.chat == 'ko' %}
+                <img src="{% static 'images/flags/ko.png' %}" width="50px">
+                {% elif request.session.chat == 'en' %}
+                <img src="{% static 'images/flags/en.png' %}" width="50px">
+                {% elif request.session.chat == 'gr' %}
+                <img src="{% static 'images/flags/gr.png' %}" width="50px">
+                {% elif request.session.chat == 'jp' %}
+                <img src="{% static 'images/flags/jp.png' %}" width="50px">
+                {% elif request.session.chat == 'fr' %}
+                <img src="{% static 'images/flags/fr.png' %}" width="50px">
 
 
                 {% else %}
                 <p class="option_off">Off</p>
                 {% endif %}
+                <br/>
+                <p><strong>Sample Words</strong></p>
+
+                {% for word in example_words %}
+                    <p>'{{ word }}'</p>
+
+                {% endfor %}
+
 
 
 
