@@ -60,11 +60,18 @@ def dashboard(request):
 
             request.session['videoNumber'] = int(vid)
             request.session['owner'] = owner
+            thumb = getThumb(vid)
+            print(thumb)
+            print(type(thumb))
 
-            # Redirect after POST
-            return render(request, 'dashboard.html', {
-                'thumb': getThumb(vid),
-            })
+            if thumb is not None:
+                # Redirect after POST
+                return render(request, 'dashboard.html', {
+                    'thumb': thumb,
+                })
+            else :
+                return render(request, 'alert.html', {'msg': "video is not available."})
+
         else:
             return render(request, 'alert.html', {'msg': "Invalid Form was sent."})
 
@@ -99,12 +106,15 @@ def getThumb(videoId, size=thSize):
     video_request_json = video_request.json()
 
     # 썸네일 템플릿 url 획득
-    thumb_template_url = str(video_request_json['preview']['template'])
+    try:
+        thumb_template_url = str(video_request_json['preview']['template'])
+        # 1920x1080크기의 썸네일 이미지를 얻는다.
+        return thumb_template_url.format(**size)
 
-    # 1920x1080크기의 썸네일 이미지를 얻는다.
+    except:
+        return 
 
-    return thumb_template_url.format(**size)
-
+   
 
 @csrf_exempt
 @login_required(login_url='/social/')
